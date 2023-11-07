@@ -1,0 +1,48 @@
+.how-to-section {
+  gap: $space-xlarge 0;
+  display: flex;
+  margin: $space-xxxlarge 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  img {
+    flex: 1;
+    width: auto;
+    max-width: 360px;
+  }
+  @include media(xl) {
+    gap: 0 $space-xxxlarge;
+    margin-bottom: 0;
+    flex-direction: row;
+    img {
+      height: auto;
+      min-width: 200px;
+      max-width: none;
+    }
+  }
+  .how-to {
+    flex: 1;
+    background-color: $gray-50;
+    padding: $space-medium;
+    border-radius: $radius-medium;
+    margin: 0 $space-large;
+    @include media(xl) {
+      margin: 0;
+    }
+    &__title {
+      color: $gray-500;
+      font-size: $font-size-paragraph-2;
+      line-height: $line-height-paragraph-2;
+      font-weight: $medium;
+      margin: $space-small 0;
+    }
+    &__list-item {
+      margin-top: $space-small;
+      color: $gray-300;
+      span {
+        color: $gray-500;
+        font-weight: $gray-500;
+      }
+    }
+  }
+}

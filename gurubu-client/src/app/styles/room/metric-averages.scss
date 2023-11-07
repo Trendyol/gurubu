@@ -1,0 +1,20 @@
+.metric-averages {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: $space-large;
+  li {
+    border: 1px solid $blue-600;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $medium;
+    color: $blue-600;
+    border-radius: $space-medium;
+    padding: 0 $space-xlarge;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-small;
+  }
+}

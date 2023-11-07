@@ -1,0 +1,101 @@
+.nickname-form {
+  width: 384px;
+  padding: $space-xlarge $space-medium;
+  max-width: 90%;
+  background-color: $gray-100;
+  border-radius: $radius-large;
+  &__title {
+    color: $blue-700;
+    font-size: $font-size-header-3;
+    line-height: $line-height-header-3;
+    font-weight: $semibold;
+    margin-bottom: $space-xlarge;
+  }
+  &__input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  &__label {
+    color: $blue-900;
+    font-weight: $regular;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-3;
+  }
+  &__input {
+    padding: $space-small $space-large;
+    margin: $space-large 0;
+    border: 1px solid $gray-400;
+    border-radius: $radius-small;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $regular;
+  }
+  &__input:focus {
+    outline: none;
+  }
+  &__grooming-options {
+    margin-top: $space-xlarge;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-xxxlarge;
+  }
+  &__grooming-option {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;   
+    color: $blue-900;
+    padding: $space-large;
+    border: 2px solid $gray-200;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: $radius-small;
+    flex-direction: column;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $medium;
+    background: $body-color;
+    &.selected {
+      border: 2px solid $yellow-500;
+    }
+  }
+  &__grooming-option:hover {
+    cursor: pointer;
+  }
+  &__error-message {
+    margin-top: $space-large;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $regular;
+    color: $red-700;
+  }
+  &__button {
+    display: inline-block;
+    margin-top: $space-xxlarge;
+    padding: $space-small;
+    color: $blue-900;
+    background-color: $yellow-500;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-paragraph-2;
+    font-weight: $medium;
+    border-radius: $radius-small;
+    border: none;
+    min-width: 150px;
+  }
+  &__button:hover {
+    background-color: $yellow-400;
+    cursor: pointer;
+  }
+  &__info-message{
+    margin-top: $space-large;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $semibold;
+    color: $gray-800;
+  }
+}

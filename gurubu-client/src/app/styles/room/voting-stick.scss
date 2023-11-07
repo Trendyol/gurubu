@@ -1,0 +1,19 @@
+.voting-stick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0 $space-xlarge;
+  &__vote-cards {
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__label {
+    color: $blue-700;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $medium;
+    width: 120px;
+  }
+}

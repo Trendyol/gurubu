@@ -1,0 +1,48 @@
+.grooming-navbar {
+  width: 100%;
+  padding: $space-large $space-xxxlarge;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-large;
+  }
+  &__copy-link {
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-medium;
+    padding: $space-small $space-medium;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    color: $gray-800;
+  }
+  &__copy-link:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+  &__participants {
+    min-width: 160px;
+    background: $blue-400;
+    border-radius: $radius-medium;
+    display: flex;
+    align-items: center;
+    color: $gray-100;
+    padding: $space-small $space-medium;
+    gap: 0 $space-medium;
+  }
+  &__participant-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__project-version {
+    color: $blue-400;
+    font-weight: $semibold;
+  }
+}

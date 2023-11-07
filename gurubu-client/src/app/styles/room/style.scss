@@ -1,0 +1,48 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+@import "./not-found.scss";
+@import "./vote-card.scss";
+@import "./voting-stick.scss";
+@import "./nickname-form.scss";
+@import "./grooming-board.scss";
+@import "./connecting-info.scss";
+@import "./grooming-navbar.scss";
+@import "./metric-averages.scss";
+@import "./grooming-board-participants.scss";
+
+.create-room {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  background: $body-color;
+}
+
+.grooming-room {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  &.nickname-form-active {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    background: $body-color;
+  }
+}

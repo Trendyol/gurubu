@@ -1,0 +1,74 @@
+.grooming-board-participants {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: $space-small 0;
+  max-height: 80%;
+  overflow-y: scroll;
+  li {
+    width: 100%;
+    border: 1px solid $gray-100;
+    padding: $space-xsmall $space-large;
+    border-radius: $radius-small;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    label {
+      font-size: $font-size-paragraph-4;
+      line-height: $line-height-paragraph-4;
+      font-weight: $regular;
+      max-width: 100px;
+    }
+  }
+  &__nickname-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-medium;
+  }
+  &__nickname {
+    &.connection-lost {
+      color: red;
+    }
+  }
+  &__icon-plug {
+    color: red;
+  }
+  &__icon-crown {
+    color: $yellow-500;
+  }
+  &__point-cards-container {
+    display: flex;
+    gap: 0 $space-large;
+    justify-content: flex-end;
+  }
+  &__point-card {
+    border-radius: 50%;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $regular;
+    text-align: right;
+    width: 24px;
+    height: 24px;
+    padding: $space-small 0;
+    border: 1px solid $gray-100;
+    display: flex;
+    background: $voting-card-color;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+      0 4px 6px -4px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    color: $gray-500;
+  }
+  &__check-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: green;
+  }
+}

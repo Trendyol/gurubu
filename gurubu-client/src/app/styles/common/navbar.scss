@@ -1,0 +1,16 @@
+.nav {
+  padding: $space-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &__logo {
+    color: $blue-600;
+    font-size: $font-size-paragraph-1;
+    line-height: $line-height-paragraph-1;
+    font-weight: $black;
+    @include media(xl) {
+      font-size: $font-size-header-3;
+      line-height: $line-height-header-3;
+    }
+  }
+}

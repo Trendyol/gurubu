@@ -1,0 +1,5 @@
+export enum ROOM_STATUS {
+  NOT_FOUND = "NOT_FOUND",
+  FOUND = "FOUND",
+  CHECKING = "CHECKING",
+}

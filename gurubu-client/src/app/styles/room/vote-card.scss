@@ -1,0 +1,23 @@
+.vote-card {
+  margin: 10px;
+  width: 30px;
+  height: 45px;
+  border: 1px solid $gray-100;
+  display: flex;
+  background: $voting-card-color;
+  align-items: center;
+  justify-content: center;
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+    0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  color: $gray-500;
+  border-radius: $radius-medium;
+  cursor: pointer;
+  &.selected {
+    background: $yellow-500;
+    color: $blue-900;
+  }
+}

@@ -1,0 +1,197 @@
+.grooming-board {
+  height: 100vh;
+  display: flex;
+  padding: 0 $space-xxxlarge;
+  align-items: center;
+  justify-content: space-between;
+  &__playground {
+    width: 60%;
+    height: 80%;
+    border: 1px solid $gray-200;
+    border-radius: $radius-medium;
+    padding: $space-xxxlarge;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+  &__results {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: $font-size-paragraph-1;
+    line-height: $line-height-paragraph-1;
+    font-weight: $semibold;
+    color: $blue-600;
+  }
+  &__toggle-button-wrapper {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__edit-vote-toggle-button {
+    width: 180px;
+    height: 36px;
+    border: none;
+    background-color: $gray-300;
+    color: $gray-800;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-3;
+    font-weight: $medium;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-small;
+    &.clicked {
+      background-color: transparent;
+      border: 1px solid $blue-600;
+      color: $blue-600;
+    }
+  }
+  &__edit-vote-toggle-button:hover {
+    cursor: pointer;
+    opacity: 0.9;
+  }
+  &__actions-wrapper {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 $space-xlarge;
+  }
+  &__reset-votes-button {
+    border: none;
+    background-color: transparent;
+    height: 36px;
+    cursor: pointer;
+    padding: 0 $space-xlarge;
+    border: 1px solid $gray-200;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-3;
+    font-weight: $medium;
+    width: 180px;
+  }
+  &__reset-votes-button:hover {
+    background-color: $gray-100;
+  }
+  &__show-result-button {
+    border: none;
+    height: 36px;
+    cursor: pointer;
+    padding: 0 $space-xlarge;
+    background-color: $yellow-500;
+    color: $blue-900;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-3;
+    font-weight: $medium;
+    width: 180px;
+    &.disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+  &__show-result-button:hover {
+    &.disabled {
+      background-color: $yellow-500;
+    }
+    background-color: $yellow-400;
+  }
+  &__logs-section {
+    width: 35%;
+    height: 80%;
+    border: 1px solid $gray-200;
+    border-radius: $radius-medium;
+    padding: $space-xxxlarge $space-xlarge;
+  }
+  &__metrics {
+    display: flex;
+    gap: 0 $space-large;
+    justify-content: flex-end;
+    margin-bottom: $space-medium;
+    margin-right: 2px;
+    padding: 0 $space-large;
+    li {
+      color: $blue-700;
+      writing-mode: vertical-rl;
+      transform: scale(-1, -1);
+      font-size: $font-size-paragraph-4;
+      line-height: $line-height-paragraph-4;
+      font-weight: $semibold;
+    }
+  }
+  &__participants-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: $space-small 0;
+    max-height: 80%;
+    overflow-y: scroll;
+    li {
+      width: 100%;
+      border: 1px solid $gray-100;
+      padding: $space-xsmall $space-large;
+      border-radius: $radius-small;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      label {
+        font-size: $font-size-paragraph-4;
+        line-height: $line-height-paragraph-4;
+        font-weight: $regular;
+        max-width: 100px;
+      }
+    }
+  }
+  &__participant-nickname {
+    &.connection-lost {
+      color: red;
+    }
+  }
+  &__point-cards-container {
+    display: flex;
+    gap: 0 $space-large;
+    justify-content: flex-end;
+  }
+  &__point-card {
+    border-radius: 50%;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    font-weight: $regular;
+    text-align: right;
+    width: 24px;
+    height: 24px;
+    padding: $space-small 0;
+    border: 1px solid $gray-100;
+    display: flex;
+    background: $voting-card-color;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+      0 4px 6px -4px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    color: $gray-500;
+  }
+  &__check-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: green;
+  }
+  &__loading {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

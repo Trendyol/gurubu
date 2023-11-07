@@ -1,0 +1,12 @@
+.connecting-info {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &__message {
+    color: $blue-900;
+    font-size: $font-size-paragraph-1;
+    line-height: $line-height-paragraph-1;
+    font-weight: $semibold;
+  }
+}
