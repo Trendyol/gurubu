@@ -1,6 +1,6 @@
 # Gurubu
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Trendyol/gurubu/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://github.com/Trendyol/gurubu/blob/main/LICENSE)
 
 ## Simple, Fast, and Practical Task Estimation and Tech Grooming
 
