@@ -3,10 +3,5 @@
   background-color: $blue-100;
   width: 100%;
   margin-top: auto;
-  &__copyright-text {
-    color: $gray-400;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $medium;
-  }
+  height: 24px;
 }

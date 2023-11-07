@@ -1,11 +1,5 @@
 const Footer = () => {
-  return (
-    <footer className="footer">
-      <p className="footer__copyright-text">
-        Copyright © 2023 Armağan Dalkıran
-      </p>
-    </footer>
-  );
+  return <footer></footer>;
 };
 
 export default Footer;
