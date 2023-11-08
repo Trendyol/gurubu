@@ -8,14 +8,14 @@
 
 Gurubu is a tool designed to streamline task estimation grooming sessions and prioritize tasks using a room-based, user-friendly approach. With a single click, users can create a room, invite team members, and start estimating story points or voting on multiple metrics for tech grooming.
 
-![Ekran Resmi 2023-11-07 17 06 17](https://github.com/Trendyol/gurubu/assets/77741597/7531e45a-c43d-4558-be2f-4285cf1f6ec5)
+![Ekran Resmi 2023-11-07 17 06 17](https://github.com/Trendyol/gurubu/assets/77741597/30dd19b8-84db-49bb-a46f-f2acc7a75011)
 
 ## Features
 
 
 - **One-Click Room Setup:** Quickly create a dedicated room for your task estimation or tech grooming session.
-
-![Ekran Resmi 2023-11-07 17 06 34](https://github.com/Trendyol/gurubu/assets/77741597/4cc8b311-aa16-4cf8-923c-29fc75939599)
+  
+![Ekran Resmi 2023-11-07 17 06 34](https://github.com/Trendyol/gurubu/assets/77741597/c1daa141-fa7a-4758-a967-bc8de1a2242f)
 
 - **User-Friendly Interface:** Easily enter your name and join a room, making collaboration simple and efficient.
 
@@ -23,7 +23,7 @@ Gurubu is a tool designed to streamline task estimation grooming sessions and pr
 
 - **Tech Grooming:** Prioritize tasks effectively by allowing users to vote on multiple metrics.
 
-![Ekran Resmi 2023-11-07 17 08 39](https://github.com/Trendyol/gurubu/assets/77741597/2b913495-a3a3-4d0c-b580-9078a7c62d1e)
+![Ekran Resmi 2023-11-07 17 08 39](https://github.com/Trendyol/gurubu/assets/77741597/d15fdd31-26c4-4914-a517-d2de5177dc09)
 
 ## Getting Started
 
