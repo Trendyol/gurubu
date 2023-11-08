@@ -81,6 +81,10 @@ yarn start
 
 The backend server should now be running at http://localhost:5000.
 
+### Contributing
+
+We welcome and appreciate contributions from the community. Whether it's reporting issues, suggesting improvements, or submitting code, your help is valuable. Thank you for being a part of our project!
+
 
 
 
