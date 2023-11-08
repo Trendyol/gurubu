@@ -76,7 +76,7 @@ yarn
 ```
 5. Start the backend application:
 ```shell
-yarn start:server:dev
+yarn start
 ```
 
 The backend server should now be running at http://localhost:5000.
