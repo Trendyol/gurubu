@@ -1,4 +1,6 @@
-FROM node:20-alpine
+ARG RUNTIME_IMAGE=node:20-alpine
+
+FROM $RUNTIME_IMAGE
 
 WORKDIR /app
 
