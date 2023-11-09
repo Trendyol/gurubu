@@ -10,6 +10,9 @@ RUN yarn
 
 COPY . .
 
+ARG API_URL
+ENV NEXT_PUBLIC_API_URL=$API_URL
+
 RUN yarn build
 
 EXPOSE 3000
