@@ -9,20 +9,14 @@ const {
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
-    console.log("A user connected", socket.id);
 
     socket.on("joinRoom", ({ nickname, roomID, lobby }) => {
+      console.log(`A user connected with nickname ${nickname} to room ${roomID}`);
       socket.join(roomID);
 
-      const isDuplicate = updateUserSocket(lobby.credentials, socket.id);
+      updateUserSocket(lobby.credentials, socket.id);
 
-      socket.emit("welcomeMessage", `${nickname} welcome to the Gurubu!`);
       io.to(roomID).emit("initialize", getGrooming(roomID));
-      if (!isDuplicate) {
-        socket.broadcast
-          .to(roomID)
-          .emit("welcomeMessage", `${nickname} joined BOOM !`);
-      }
     });
 
     socket.on("userVote", (data, roomID) => {

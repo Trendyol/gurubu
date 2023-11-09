@@ -27,19 +27,15 @@ function userJoin(nickname, roomID) {
 }
 
 function updateUserSocket(credentials, socketID) {
-  let isDuplicate = false;
   const user = users.find((user) => user.credentials === credentials);
   if (!user) {
     return;
   }
-  if (user.sockets.length) {
-    isDuplicate = true;
+  if (!user.sockets.includes(socketID)) {
+    user.sockets.push(socketID);
   }
 
   user.connected = true;
-  user.sockets.push(socketID);
-
-  return isDuplicate;
 }
 
 // Get current user

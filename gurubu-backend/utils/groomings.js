@@ -68,10 +68,12 @@ const generateNewRoom = (nickName, groomingType) => {
   user.isAdmin = true;
   user.connected = true;
 
+  const { credentials, ...userWithoutCredentials } = user;
+
   groomings[roomID] = {
     totalParticipants: 1,
     mode: groomingType,
-    participants: { [user.userID]: user },
+    participants: { [user.userID]: userWithoutCredentials },
     metrics: groomingMode[groomingType],
     score: 0,
     status: "ongoing",
@@ -90,6 +92,9 @@ const generateNewRoom = (nickName, groomingType) => {
 
 const handleJoinRoom = (nickName, roomID) => {
   const user = userJoin(nickName, roomID);
+  if (!user) {
+    return;
+  }
 
   user.isAdmin = false;
   user.connected = true;
@@ -99,7 +104,9 @@ const handleJoinRoom = (nickName, roomID) => {
     totalParticipants: user.userID + 1,
   };
 
-  groomings[roomID].participants[user.userID] = user;
+  const { credentials, ...userWithoutCredentials } = user;
+
+  groomings[roomID].participants[user.userID] = userWithoutCredentials;
 
   const room = rooms.find((room) => room.roomID === roomID);
 

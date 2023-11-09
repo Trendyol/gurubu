@@ -1,6 +1,5 @@
 const {
   generateNewRoom,
-  getRooms,
   checkRoomExistance,
   handleJoinRoom,
 } = require("../utils/groomings");
