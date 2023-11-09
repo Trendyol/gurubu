@@ -16,7 +16,9 @@ const corsOptions = {
 app.use(bodyParser.json());
 
 const roomRoutes = require("./routes/roomRoutes");
+const healthCheckRoute = require("./routes/healthCheckRoute");
 app.use("/room", cors(corsOptions), roomRoutes);
+app.use("/healthcheck", cors(corsOptions), healthCheckRoute);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
