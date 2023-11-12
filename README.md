@@ -2,18 +2,18 @@
 
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://github.com/Trendyol/gurubu/blob/main/LICENSE)
 
-## Simple, Fast, and Practical Task Estimation and Tech Grooming
+## Simple, Fast, and Practical Task Estimation and Score Card Grooming
 
 ### Agree with your teammates quickly and reliably! Start by setting up a room.
 
-Gurubu is a tool designed to streamline task estimation grooming sessions and prioritize tasks using a room-based, user-friendly approach. With a single click, users can create a room, invite team members, and start estimating story points or voting on multiple metrics for tech grooming.
+Gurubu is a tool designed to streamline task estimation grooming sessions and prioritize tasks using a room-based, user-friendly approach. With a single click, users can create a room, invite team members, and start estimating story points or voting on multiple metrics for score card grooming.
 
 ![Ekran Resmi 2023-11-07 17 06 17](https://github.com/Trendyol/gurubu/assets/77741597/30dd19b8-84db-49bb-a46f-f2acc7a75011)
 
 ## Features
 
 
-- **One-Click Room Setup:** Quickly create a dedicated room for your task estimation or tech grooming session.
+- **One-Click Room Setup:** Quickly create a dedicated room for your task estimation or score card grooming session.
   
 ![Ekran Resmi 2023-11-07 17 06 34](https://github.com/Trendyol/gurubu/assets/77741597/c1daa141-fa7a-4758-a967-bc8de1a2242f)
 
@@ -21,7 +21,7 @@ Gurubu is a tool designed to streamline task estimation grooming sessions and pr
 
 - **Story Point Estimation:** Streamline the process of estimating story points to better plan and manage your project.
 
-- **Tech Grooming:** Prioritize tasks effectively by allowing users to vote on multiple metrics.
+- **Score Card Grooming:** Prioritize tasks effectively by allowing users to vote on multiple metrics.
 
 ![Ekran Resmi 2023-11-07 17 08 39](https://github.com/Trendyol/gurubu/assets/77741597/d15fdd31-26c4-4914-a517-d2de5177dc09)
 

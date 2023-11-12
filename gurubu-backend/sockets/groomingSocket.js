@@ -4,7 +4,8 @@ const {
   leaveUserFromGrooming,
   updateParticipantsVote,
   getResults,
-  resetVotes
+  resetVotes,
+  updateNickName
 } = require("../utils/groomings");
 
 module.exports = (io) => {
@@ -29,6 +30,10 @@ module.exports = (io) => {
 
     socket.on("resetVotes", (roomID) => {
       io.to(roomID).emit("resetVotes", resetVotes(socket.id));
+    });
+
+    socket.on("updateNickName", (roomID, newNickName) => {
+      io.to(roomID).emit("updateNickName", updateNickName(socket.id, newNickName));
     });
 
     socket.on("disconnect", () => {

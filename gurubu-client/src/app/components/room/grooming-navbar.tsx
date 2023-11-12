@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../room/[id]/enums";
 import { useState } from "react";
+import GroomingBoardProfile from "./grooming-board-profile";
 
 interface IProps {
   showNickNameForm: boolean;
@@ -57,7 +58,7 @@ const GroomingNavbar = ({ showNickNameForm }: IProps) => {
             className="grooming-navbar__copy-link"
             onClick={handleCopyGroomingLinkClick}
           >
-            Grooming Link{" "}
+            Copy Grooming Link
             {isGroomingLinkCopied ? (
               <IconClipboardCheck width={20} color="green" />
             ) : (
@@ -66,7 +67,7 @@ const GroomingNavbar = ({ showNickNameForm }: IProps) => {
           </button>
         </div>
       </div>
-      <div className="grooming-navbar__project-version">0.9.1 Beta</div>
+      <GroomingBoardProfile />
     </nav>
   );
 };

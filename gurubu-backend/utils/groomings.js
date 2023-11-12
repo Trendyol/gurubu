@@ -343,6 +343,24 @@ const cleanRoomsAndUsers = () => {
   }, 60000 * 10); // work every 10 minutes
 };
 
+const updateNickName = (socketID, newNickName) => {
+  const user = getCurrentUser(socketID);
+  if (!user) {
+    return;
+  }
+
+  user.nickname = newNickName;
+  for (const [key, value] of Object.entries(
+    groomings[user.roomID].participants
+  )) {
+    if (Number(key) === user.userID) {
+      groomings[user.roomID].participants[key].nickname = newNickName;
+    }
+  }
+
+  return groomings[user.roomID];
+};
+
 module.exports = {
   checkRoomExistance,
   generateNewRoom,
@@ -354,4 +372,5 @@ module.exports = {
   getResults,
   resetVotes,
   cleanRoomsAndUsers,
+  updateNickName,
 };

@@ -18,6 +18,7 @@ interface GroomingContextValues {
   setGroomingInfo: Function;
   userVote: UserVote;
   setUserVote: Function;
+  setUserinfo: Function;
 }
 
 const GroomingRoomContext = createContext({} as GroomingContextValues);
@@ -58,6 +59,7 @@ export function GroomingRoomProvider({
       setGroomingInfo,
       userVote,
       setUserVote,
+      setUserinfo
     }),
     [
       roomStatus,
@@ -67,6 +69,7 @@ export function GroomingRoomProvider({
       setGroomingInfo,
       userVote,
       setUserVote,
+      setUserinfo
     ]
   );
   return (

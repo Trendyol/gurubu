@@ -178,7 +178,7 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
                 width={100}
                 height={100}
               />
-              <p>Tech Grooming</p>
+              <p>Score Grooming</p>
             </div>
           </div>
         )}

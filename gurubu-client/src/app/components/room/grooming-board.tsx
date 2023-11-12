@@ -41,7 +41,7 @@ const GroomingBoard = ({
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
 
-    if(roomStatus === ROOM_STATUS.FOUND){
+    if (roomStatus === ROOM_STATUS.FOUND) {
       socket.emit("joinRoom", {
         nickname,
         roomID: roomId,
@@ -62,6 +62,10 @@ const GroomingBoard = ({
       setGroomingInfo(data);
     });
 
+    socket.on("updateNickName", (data) => {
+      setGroomingInfo(data);
+    });
+
     socket.on("resetVotes", (data) => {
       setUserVote({});
       setGroomingInfo(data);
@@ -69,7 +73,6 @@ const GroomingBoard = ({
     });
 
     socket.on("userDisconnected", (data) => setGroomingInfo(data));
-
   }, [roomStatus]);
 
   const handleShowResultsClick = () => {
