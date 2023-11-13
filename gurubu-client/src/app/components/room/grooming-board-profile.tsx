@@ -25,6 +25,7 @@ const GroomingBoardProfile = () => {
     if (newNickname.trim()) {
       socket.emit("updateNickName", userInfo.lobby.roomID, newNickname);
       setUserinfo({ ...userInfo, nickname: newNickname.trim() });
+      localStorage.setItem("nickname", newNickname.trim());
     }
   };
 
