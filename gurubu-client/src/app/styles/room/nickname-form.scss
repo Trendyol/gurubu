@@ -2,8 +2,8 @@
   width: 384px;
   padding: $space-xlarge $space-medium;
   max-width: 90%;
-  background-color: $gray-100;
   border-radius: $radius-large;
+  border: 2px solid $blue-600;
   &__title {
     color: $blue-700;
     font-size: $font-size-header-3;

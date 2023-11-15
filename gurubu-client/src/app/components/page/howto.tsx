@@ -16,7 +16,7 @@ const Howto = () => {
         <ul className="how-to__list">
           {HOW_TO_ITEMS.map((item, index) => (
             <li key={item.id} className="how-to__list-item">
-              <span>{index + 1}.</span> {item.text}
+              <span>{"->"}</span> {item.text}
             </li>
           ))}
         </ul>
