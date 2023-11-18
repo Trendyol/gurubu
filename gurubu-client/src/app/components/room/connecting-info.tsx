@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { notFound } from "next/navigation";
 import { RoomService } from "../../services/roomService";
 import { ROOM_STATUS } from "../../room/[id]/enums";

@@ -12,6 +12,10 @@ import MetricAverages from "./metric-averages";
 import GroomingBoardParticipants from "./grooming-board-participants";
 import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../room/[id]/enums";
+import { EncounteredError, GroomingInfo } from "../../shared/interfaces";
+import { notFound } from "next/navigation";
+import { ENCOUTERED_ERROR_TYPE } from "../../shared/enums";
+import GroomingBoardErrorPopup from "./grooming-board-error-popup";
 
 interface IProps {
   roomId: string;
@@ -26,12 +30,52 @@ const GroomingBoard = ({
 }: IProps) => {
   const socket = useSocket();
   const [editVoteClicked, setEditVoteClicked] = useState(false);
-  const { userInfo, setGroomingInfo, groomingInfo, setUserVote, roomStatus } =
-    useGroomingRoom();
+  const {
+    userInfo,
+    setGroomingInfo,
+    groomingInfo,
+    setUserVote,
+    roomStatus,
+    setEncounteredError,
+    encounteredError,
+    setShowErrorPopup,
+  } = useGroomingRoom();
 
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
   useEffect(() => {
+    const handleInitialize = (data: GroomingInfo) => {
+      if (data?.participants[lobby.userID]) {
+        setUserVote(data.participants[lobby.userID].votes);
+        setGroomingInfo(data);
+      }
+    };
+
+    const handleVoteSent = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
+    const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
+
+    const handleUpdateNickName = (data: GroomingInfo) => setGroomingInfo(data);
+
+    const handleResetVotes = (data: GroomingInfo) => {
+      setUserVote({});
+      setGroomingInfo(data);
+      setEditVoteClicked(false);
+    };
+
+    const handleUserDisconnected = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    }
+
+    const handleEncounteredError = (data: EncounteredError) => {
+      if(data.id === ENCOUTERED_ERROR_TYPE.CONNECTION_ERROR){
+        setShowErrorPopup(true);
+      }
+      setEncounteredError(data);
+    }
+
     if (!checkUserJoinedLobbyBefore(roomId)) {
       if (roomStatus === ROOM_STATUS.FOUND) {
         setShowNickNameForm(true);
@@ -49,41 +93,45 @@ const GroomingBoard = ({
       });
     }
 
-    socket.on("initialize", (data) => {
-      if (data?.participants[lobby.userID]) {
-        setUserVote(data.participants[lobby.userID].votes);
-        setGroomingInfo(data);
-      }
-    });
+    socket.on("initialize", handleInitialize);
+    socket.on("voteSent", handleVoteSent);
+    socket.on("showResults", handleShowResults);
+    socket.on("updateNickName", handleUpdateNickName);
+    socket.on("resetVotes", handleResetVotes);
+    socket.on("userDisconnected", handleUserDisconnected);
+    socket.on("encounteredError", handleEncounteredError)
 
-    socket.on("voteSent", (data) => setGroomingInfo(data));
+    return () => {
+      socket.off("initialize", handleInitialize);
+      socket.off("voteSent", handleVoteSent);
+      socket.off("showResults", handleShowResults);
+      socket.off("updateNickName", handleUpdateNickName);
+      socket.off("resetVotes", handleResetVotes);
+      socket.off("userDisconnected", handleUserDisconnected);
+      socket.off("encounteredError", handleEncounteredError)
+    };
+  }, [
+    roomStatus,
+    roomId,
+    socket,
+    setShowNickNameForm,
+    setUserVote,
+    setGroomingInfo,
+    setEditVoteClicked,
+    setEncounteredError,
+    setShowErrorPopup
+  ]);
 
-    socket.on("showResults", (data) => {
-      setGroomingInfo(data);
-    });
-
-    socket.on("updateNickName", (data) => {
-      setGroomingInfo(data);
-    });
-
-    socket.on("resetVotes", (data) => {
-      setUserVote({});
-      setGroomingInfo(data);
-      setEditVoteClicked(false);
-    });
-
-    socket.on("userDisconnected", (data) => setGroomingInfo(data));
-  }, [roomStatus]);
 
   const handleShowResultsClick = () => {
     if (groomingInfo.isResultShown) {
       return;
     }
-    socket.emit("showResults", roomId);
+    socket.emit("showResults", roomId, userInfo.lobby.credentials);
   };
 
   const handleResetVotesClick = () => {
-    socket.emit("resetVotes", roomId);
+    socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
   };
 
   const handleEditButtonClick = () => {
@@ -96,6 +144,10 @@ const GroomingBoard = ({
 
   if (showNickNameForm) {
     return null;
+  }
+
+  if(encounteredError.id === ENCOUTERED_ERROR_TYPE.ROOM_EXPIRED){
+    notFound();
   }
 
   return (
@@ -181,6 +233,7 @@ const GroomingBoard = ({
           {!isGroomingInfoLoaded && renderLoading()}
         </>
       </section>
+      <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId}/>
     </div>
   );
 };

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { ROOM_STATUS } from "../room/[id]/enums";
 import { getCurrentLobby } from "../shared/helpers/lobbyStorage";
-import { GroomingInfo, UserInfo, UserVote } from "../shared/interfaces";
+import { EncounteredError, GroomingInfo, UserInfo, UserVote } from "../shared/interfaces";
 
 interface GroomingContextValues {
   roomStatus: keyof typeof ROOM_STATUS;
@@ -19,6 +19,10 @@ interface GroomingContextValues {
   userVote: UserVote;
   setUserVote: Function;
   setUserinfo: Function;
+  encounteredError: EncounteredError;
+  setEncounteredError: Function;
+  showErrorPopup: boolean;
+  setShowErrorPopup: Function;
 }
 
 const GroomingRoomContext = createContext({} as GroomingContextValues);
@@ -35,6 +39,8 @@ export function GroomingRoomProvider({
   const [userInfo, setUserinfo] = useState({} as UserInfo);
   const [groomingInfo, setGroomingInfo] = useState({} as GroomingInfo);
   const [userVote, setUserVote] = useState({} as UserVote);
+  const [encounteredError, setEncounteredError] = useState({} as EncounteredError);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   useEffect(() => {
     const nickname = localStorage.getItem("nickname");
@@ -59,7 +65,11 @@ export function GroomingRoomProvider({
       setGroomingInfo,
       userVote,
       setUserVote,
-      setUserinfo
+      setUserinfo,
+      encounteredError,
+      setEncounteredError,
+      showErrorPopup,
+      setShowErrorPopup
     }),
     [
       roomStatus,
@@ -69,7 +79,11 @@ export function GroomingRoomProvider({
       setGroomingInfo,
       userVote,
       setUserVote,
-      setUserinfo
+      setUserinfo,
+      encounteredError,
+      setEncounteredError,
+      showErrorPopup,
+      setShowErrorPopup
     ]
   );
   return (

@@ -1,0 +1,63 @@
+.grooming-board-error-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: $space-large;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  min-width: 300px;
+  border-radius: $radius-medium;
+  text-align: center;
+  &.active {
+    display: block;
+  }
+  &__header {
+    color: $blue-700;
+  }
+  &__body {
+    margin-top: $space-medium;
+    color: $gray-700;
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+  }
+  &__close-icon {
+    color: $gray-500;
+    position: absolute;
+    right: $space-large;
+    top: $space-medium;
+    cursor: pointer;
+  }
+  &__overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    &.active {
+      display: block;
+    }
+  }
+  &__button {
+    margin-top: $space-medium;
+    border: none;
+    height: 36px;
+    cursor: pointer;
+    padding: 0 $space-xlarge;
+    background-color: $yellow-500;
+    color: $blue-900;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-3;
+    font-weight: $medium;
+    width: 180px;
+  }
+  &__button:hover {
+    background-color: $yellow-400;
+  }
+}

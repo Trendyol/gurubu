@@ -53,6 +53,11 @@ export interface UserInfo {
   };
 }
 
+export interface EncounteredError {
+  id: number;
+  message: string;
+}
+
 export interface UserVote {
   [key: string]: string;
 }
