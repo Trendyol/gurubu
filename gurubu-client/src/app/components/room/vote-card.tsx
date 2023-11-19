@@ -17,11 +17,21 @@ const VoteCard = ({ id, point, name }: IProps) => {
       const temp = { ...userVote };
       delete temp[name];
       setUserVote({ ...temp });
-      socket.emit("userVote", { ...temp }, userInfo.lobby.roomID);
+      socket.emit(
+        "userVote",
+        { ...temp },
+        userInfo.lobby.roomID,
+        userInfo.lobby.credentials
+      );
       return;
     }
     setUserVote({ ...userVote, [name]: point });
-    socket.emit("userVote", { ...userVote, [name]: point }, userInfo.lobby.roomID);
+    socket.emit(
+      "userVote",
+      { ...userVote, [name]: point },
+      userInfo.lobby.roomID,
+      userInfo.lobby.credentials
+    );
   };
 
   return (

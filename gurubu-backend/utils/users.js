@@ -39,13 +39,17 @@ function updateUserSocket(credentials, socketID) {
 }
 
 // Get current user
-function getCurrentUser(socketID) {
+function getCurrentUser(credentials) {
+  return users.find((user) => user.credentials === credentials);
+}
+
+function getCurrentUserWithSocket(socketID) {
   return users.find((user) => user.sockets.includes(socketID));
 }
 
 // User leaves grooming room
 function userLeave(socketID) {
-  const user = getCurrentUser(socketID);
+  const user = getCurrentUserWithSocket(socketID);
 
   if (!user) {
     return;
@@ -59,7 +63,7 @@ function userLeave(socketID) {
     return user.sockets.splice(index, 1)[0];
   }
 
-  return Boolean(user.sockets.length);
+  return !Boolean(user.sockets.length);
 }
 
 // Get room users
@@ -76,11 +80,19 @@ function clearUser(roomId) {
   });
 }
 
+function logUsers() {
+  setInterval(() => {
+    console.log(users);
+  }, 3000);
+}
+
 module.exports = {
   userJoin,
   getCurrentUser,
   userLeave,
   getRoomUsers,
   updateUserSocket,
-  clearUser
+  clearUser,
+  getCurrentUserWithSocket,
+  logUsers,
 };

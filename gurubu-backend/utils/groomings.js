@@ -1,5 +1,10 @@
 const uuid = require("uuid");
-const { userJoin, getCurrentUser, clearUser } = require("../utils/users");
+const {
+  userJoin,
+  getCurrentUser,
+  clearUser,
+  getCurrentUserWithSocket,
+} = require("../utils/users");
 
 const groomingMode = {
   0: [
@@ -52,9 +57,25 @@ const groomingMode = {
 const rooms = [];
 const groomings = {};
 
+const handleErrors = (errorFunctionName, roomID, socket) => {
+  console.log("A user encountered with error from:", errorFunctionName);
+  if (!rooms.includes(roomID)) {
+    return socket.emit("encounteredError", {
+      id: 1,
+      message:
+        "Room is not exist. Rooms are available for only 6 hours after they are created. You can continue by creating new one.",
+    });
+  }
+
+  return socket.emit("encounteredError", {
+    id: 2,
+    message: "Your connection is lost. Connect again",
+  });
+};
+
 const generateNewRoom = (nickName, groomingType) => {
   const currentTime = new Date().getTime();
-  const expireTime = currentTime + 3 * 60 * 60 * 1000;
+  const expireTime = currentTime + 6 * 60 * 60 * 1000;
   const roomID = uuid.v4();
 
   const user = userJoin(nickName, roomID);
@@ -93,7 +114,7 @@ const generateNewRoom = (nickName, groomingType) => {
 const handleJoinRoom = (nickName, roomID) => {
   const user = userJoin(nickName, roomID);
   if (!user) {
-    return;
+    return handleErrors("handleJoinRoom", roomID);
   }
 
   user.isAdmin = false;
@@ -119,7 +140,7 @@ const handleJoinRoom = (nickName, roomID) => {
 };
 
 const leaveUserFromGrooming = (socketID) => {
-  const user = getCurrentUser(socketID);
+  const user = getCurrentUserWithSocket(socketID);
   if (!user) {
     return;
   }
@@ -138,10 +159,10 @@ const leaveUserFromGrooming = (socketID) => {
   return user.roomID;
 };
 
-const updateParticipantsVote = (socketID, data) => {
-  const user = getCurrentUser(socketID);
+const updateParticipantsVote = (data, credentials, roomID, socket) => {
+  const user = getCurrentUser(credentials);
   if (!user) {
-    return;
+    return handleErrors("updateParticipantsVote", roomID, socket);
   }
 
   const userLobbyData = groomings[user.roomID].participants[user.userID];
@@ -268,10 +289,10 @@ const calculateScore = (mode, participants, roomID) => {
   }
 };
 
-const getResults = (socketID) => {
-  const user = getCurrentUser(socketID);
+const getResults = (credentials, roomID, socket) => {
+  const user = getCurrentUser(credentials);
   if (!user) {
-    return;
+    return handleErrors("getResults", roomID, socket);
   }
 
   groomings[user.roomID].isResultShown = true;
@@ -279,10 +300,10 @@ const getResults = (socketID) => {
   return groomings[user.roomID];
 };
 
-const resetVotes = (socketID) => {
-  const user = getCurrentUser(socketID);
+const resetVotes = (credentials, roomID, socket) => {
+  const user = getCurrentUser(credentials);
   if (!user) {
-    return;
+    return handleErrors("resetVotes", roomID, socket);
   }
 
   groomings[user.roomID].isResultShown = false;
@@ -343,10 +364,10 @@ const cleanRoomsAndUsers = () => {
   }, 60000 * 10); // work every 10 minutes
 };
 
-const updateNickName = (socketID, newNickName) => {
-  const user = getCurrentUser(socketID);
+const updateNickName = (credentials, newNickName, roomID, socket) => {
+  const user = getCurrentUser(credentials);
   if (!user) {
-    return;
+    return handleErrors("updateNickName", roomID, socket);
   }
 
   user.nickname = newNickName;
