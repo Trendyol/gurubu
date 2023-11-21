@@ -2,6 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://github.com/Trendyol/gurubu/blob/main/LICENSE)
 
+Live demo 👉 https://gurubu.vercel.app/
+
 ## Simple, Fast, and Practical Task Estimation and Score Card Grooming
 
 ### Agree with your teammates quickly and reliably! Start by setting up a room.
