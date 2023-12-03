@@ -8,7 +8,12 @@ import React, {
 } from "react";
 import { ROOM_STATUS } from "../room/[id]/enums";
 import { getCurrentLobby } from "../shared/helpers/lobbyStorage";
-import { EncounteredError, GroomingInfo, UserInfo, UserVote } from "../shared/interfaces";
+import {
+  EncounteredError,
+  GroomingInfo,
+  UserInfo,
+  UserVote,
+} from "../shared/interfaces";
 
 interface GroomingContextValues {
   roomStatus: keyof typeof ROOM_STATUS;
@@ -25,6 +30,13 @@ interface GroomingContextValues {
   setShowErrorPopup: Function;
 }
 
+type NicknameData = [
+  {
+    roomId: string;
+    nickname: string;
+  }
+];
+
 const GroomingRoomContext = createContext({} as GroomingContextValues);
 
 export function useGroomingRoom() {
@@ -39,11 +51,15 @@ export function GroomingRoomProvider({
   const [userInfo, setUserinfo] = useState({} as UserInfo);
   const [groomingInfo, setGroomingInfo] = useState({} as GroomingInfo);
   const [userVote, setUserVote] = useState({} as UserVote);
-  const [encounteredError, setEncounteredError] = useState({} as EncounteredError);
+  const [encounteredError, setEncounteredError] = useState(
+    {} as EncounteredError
+  );
   const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   useEffect(() => {
-    const nickname = localStorage.getItem("nickname");
+    const nickname = JSON.parse(
+      localStorage.getItem("nickname") || "[]"
+    ) as NicknameData;
     const lobby = getCurrentLobby(roomId);
 
     if (!nickname || !lobby) {
@@ -51,7 +67,8 @@ export function GroomingRoomProvider({
     }
 
     setUserinfo({
-      nickname,
+      nickname:
+        nickname.find((item) => item.roomId === roomId)?.nickname || "user",
       lobby,
     });
   }, [roomId]);
@@ -69,7 +86,7 @@ export function GroomingRoomProvider({
       encounteredError,
       setEncounteredError,
       showErrorPopup,
-      setShowErrorPopup
+      setShowErrorPopup,
     }),
     [
       roomStatus,
@@ -83,7 +100,7 @@ export function GroomingRoomProvider({
       encounteredError,
       setEncounteredError,
       showErrorPopup,
-      setShowErrorPopup
+      setShowErrorPopup,
     ]
   );
   return (

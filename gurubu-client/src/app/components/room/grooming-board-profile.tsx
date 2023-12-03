@@ -3,6 +3,13 @@ import { IconUserCircle } from "@tabler/icons-react";
 import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
 import { useSocket } from "../../contexts/SocketContext";
 
+type NicknameData = [
+  {
+    roomId: string;
+    nickname: string;
+  }
+];
+
 const GroomingBoardProfile = () => {
   const socket = useSocket();
   const { userInfo, setUserinfo } = useGroomingRoom();
@@ -23,9 +30,20 @@ const GroomingBoardProfile = () => {
 
   const handleUpdateNicknameButtonClick = () => {
     if (newNickname.trim()) {
-      socket.emit("updateNickName", userInfo.lobby.roomID, newNickname, userInfo.lobby.credentials);
+      socket.emit(
+        "updateNickName",
+        userInfo.lobby.roomID,
+        newNickname.trim(),
+        userInfo.lobby.credentials
+      );
       setUserinfo({ ...userInfo, nickname: newNickname.trim() });
-      localStorage.setItem("nickname", newNickname.trim());
+      const nicknameData = JSON.parse(
+        localStorage.getItem("nickname") || "[]"
+      ) as NicknameData;
+      nicknameData.find(
+        (item) => item.roomId === userInfo.lobby.roomID
+      )!.nickname = newNickname.trim();
+      localStorage.setItem("nickname", JSON.stringify(nicknameData));
     }
   };
 
