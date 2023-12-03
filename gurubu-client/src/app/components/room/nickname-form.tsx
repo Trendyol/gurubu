@@ -10,16 +10,8 @@ interface IProps {
   roomId?: string;
 }
 
-const defaultNickname = () => {
-  return (
-    (typeof window !== "undefined" &&
-      window.localStorage.getItem("nickname")) ||
-    ""
-  );
-};
-
 const NicknameForm = ({ joinMode, roomId }: IProps) => {
-  const [nickname, setNickname] = useState(defaultNickname);
+  const [nickname, setNickname] = useState("");
   const [groomingType, setGroomingType] = useState<null | string>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [showInfoMessage, setShowInfoMessage] = useState(false);
@@ -46,9 +38,15 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
     if (trimmedNickName === "") {
       return;
     }
-    localStorage.setItem("nickname", trimmedNickName);
+
     const payload = { nickName: trimmedNickName, groomingType };
     const response = await roomService.createRoom(payload);
+    const nicknameData = JSON.parse(localStorage.getItem("nickname") || "[]");
+    nicknameData.push({
+      roomId: response.roomID,
+      nickname: trimmedNickName,
+    });
+    localStorage.setItem("nickname", JSON.stringify(nicknameData));
 
     if (!response) {
       return;
@@ -80,7 +78,12 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
     if (trimmedNickName === "" || !roomId) {
       return;
     }
-    localStorage.setItem("nickname", trimmedNickName);
+    const nicknameData = JSON.parse(localStorage.getItem("nickname") || "[]");
+    nicknameData.push({
+      roomId,
+      nickname: trimmedNickName,
+    });
+    localStorage.setItem("nickname", JSON.stringify(nicknameData));
     const payload = { nickName: trimmedNickName };
     const response = await roomService.join(roomId, payload);
 
@@ -194,7 +197,9 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
           {joinMode ? "Join Room" : "Create Room"}
         </button>
         {showInfoMessage && (
-          <p className="nickname-form__info-message">{joinMode ? "Joining Room..." : "Creating Room..."}</p>
+          <p className="nickname-form__info-message">
+            {joinMode ? "Joining Room..." : "Creating Room..."}
+          </p>
         )}
       </div>
     </div>
