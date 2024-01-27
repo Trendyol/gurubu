@@ -48,7 +48,7 @@ cd gurubu-client
 ```
 3. Create .env variable root of the project and add this variable:
 ```shell
-NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_API_URL="http://localhost:5000"
 ```
 4. Install the dependencies:
 ```shell
@@ -73,7 +73,7 @@ cd gurubu-backend
 ```
 3. Create .env variable root of the project and add this variable:
 ```shell
-CLIENT_URL=http://localhost:3000
+CLIENT_URL="http://localhost:3000"
 ```
 4. Install the dependencies:
 ```shell
