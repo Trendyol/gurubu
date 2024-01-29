@@ -5,8 +5,8 @@ const Testimonial = () => {
     <section className="testimonial-section">
       <div className="testimonial">
         <Image
-          width={123}
-          height={27}
+          width={140}
+          height={40}
           alt="grubu-logo"
           src="/gurubu-logo.svg"
         />

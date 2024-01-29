@@ -35,6 +35,11 @@
                 font-size: $font-size-paragraph-2;
                 font-weight: $semibold;
             }
+
+            &__title{
+                color: #475467;
+                line-height: $line-height-paragraph-4;
+            }
         }
     }
 }
