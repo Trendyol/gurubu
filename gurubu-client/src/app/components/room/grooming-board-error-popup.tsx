@@ -7,6 +7,7 @@ interface IProps {
   title: string;
   roomId: string;
 }
+
 const GroomingBoardErrorPopup = ({ title, roomId }: IProps) => {
   const socket = useSocket();
   const { showErrorPopup, setShowErrorPopup } = useGroomingRoom();
