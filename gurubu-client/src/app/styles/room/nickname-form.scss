@@ -1,15 +1,28 @@
 .nickname-form {
   width: 384px;
-  padding: $space-xlarge $space-medium;
+  padding: $space-xlarge $space-xlarge;
   max-width: 90%;
   border-radius: $radius-large;
-  border: 2px solid $blue-600;
-  &__title {
-    color: $blue-700;
+  box-shadow: 0px 8px 8px -4px #10182808;
+  box-shadow: 0px 20px 24px -4px #10182814;
+  background-color: $white;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xsmall;
+    font-family: var(--font-space-grotesk);
+    color: $black;
     font-size: $font-size-header-3;
+    font-weight: $font-size-header-3;
+    margin-bottom: $space-xlarge;
+  }
+  &__title {
+    color: $blue-900;
+    font-size: $font-size-paragraph-1;
     line-height: $line-height-header-3;
     font-weight: $semibold;
-    margin-bottom: $space-xlarge;
   }
   &__input-wrapper {
     display: flex;
@@ -17,20 +30,32 @@
     justify-content: center;
     flex-direction: column;
   }
+  &__divider {
+    display: flex;
+    align-items: center;
+  }
+  &__divider-line {
+    width: 100%;
+    background-color: $gray-200;
+    height: 1px;
+  }
   &__label {
-    color: $blue-900;
-    font-weight: $regular;
+    color: $gray-500;
+    font-weight: $light;
     font-size: $font-size-paragraph-3;
     line-height: $line-height-paragraph-3;
+    flex-shrink: 0;
+    margin: 0 $space-small;
   }
   &__input {
     padding: $space-small $space-large;
     margin: $space-large 0;
-    border: 1px solid $gray-400;
+    border: 1px solid $gray-100;
     border-radius: $radius-small;
     font-size: $font-size-paragraph-4;
     line-height: $line-height-paragraph-4;
     font-weight: $regular;
+    width: 100%;
   }
   &__input:focus {
     outline: none;
@@ -39,29 +64,45 @@
     margin-top: $space-xlarge;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0 $space-xxxlarge;
+    overflow: hidden;
+    border-radius: $radius-medium;
+    border: 1px solid $gray-300;
+    position: relative;
+
+    &.divider::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background-color: $gray-300;
+    }
   }
   &__grooming-option {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;   
-    color: $blue-900;
+    border: 1px solid transparent;
+    flex: 1;
+    background-color: $white;
     padding: $space-large;
-    border: 2px solid $gray-200;
-    width: 150px;
-    height: 150px;
-    display: flex;
     align-items: center;
     justify-content: space-between;
-    border-radius: $radius-small;
-    flex-direction: column;
     font-size: $font-size-paragraph-4;
     line-height: $line-height-paragraph-4;
     font-weight: $medium;
-    background: $body-color;
+    cursor: pointer;
+    position: relative;
+
+    p {
+      font-weight: $semibold;
+    }
+
     &.selected {
-      border: 2px solid $yellow-500;
+      background-color: $primary-100;
+      transition: all 0.1s ease-in-out;
+
+      p {
+        color: $white;
+      }
     }
   }
   &__grooming-option:hover {
@@ -76,22 +117,23 @@
   }
   &__button {
     display: inline-block;
-    margin-top: $space-xxlarge;
+    margin-top: $space-xlarge;
     padding: $space-small;
-    color: $blue-900;
-    background-color: $yellow-500;
+    color: $white;
+    background-color: $primary;
     font-size: $font-size-paragraph-2;
     line-height: $line-height-paragraph-2;
     font-weight: $medium;
-    border-radius: $radius-small;
+    border-radius: $radius-large;
     border: none;
-    min-width: 150px;
+    width: 100%;
   }
   &__button:hover {
-    background-color: $yellow-400;
+    background-color: $primary-100;
     cursor: pointer;
   }
-  &__info-message{
+
+  &__info-message {
     margin-top: $space-large;
     font-size: $font-size-paragraph-4;
     line-height: $line-height-paragraph-4;

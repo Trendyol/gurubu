@@ -128,6 +128,15 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
 
   return (
     <div className="nickname-form">
+      <h1 className="nickname-form__header">
+      <Image
+        priority
+        src="/logo.svg"
+        alt="logo"
+        width={30}
+        height={30}
+      /> 
+      GuruBu</h1>
       <h1 className="nickname-form__title">Welcome to Gurubu</h1>
       <div className="nickname-form__action-wrapper">
         <div className="nickname-form__input-wrapper">
@@ -144,42 +153,33 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
           />
         </div>
         {!joinMode && (
-          <label className="nickname-form__label">
+         <div className="nickname-form__divider">
+          <div className="nickname-form__divider-line"></div>
+           <label className="nickname-form__label">
             And select a grooming type.
           </label>
+          <div className="nickname-form__divider-line"></div>
+         </div>
         )}
         {!joinMode && (
-          <div className="nickname-form__grooming-options">
-            <div
+          <div className="nickname-form__grooming-options divider">
+            <button
               className={classNames("nickname-form__grooming-option", {
                 selected: isPlanningOptionSelected,
               })}
               onClick={() => handleOptionClick("0")}
             >
-              <Image
-                priority
-                src="/planning.svg"
-                alt="planning"
-                width={100}
-                height={100}
-              />
               <p>Planning Poker</p>
-            </div>
-            <div
+            </button>
+            <button
               className={classNames("nickname-form__grooming-option", {
                 selected: !isPlanningOptionSelected && groomingType !== null,
               })}
               onClick={() => handleOptionClick("1")}
             >
-              <Image
-                priority
-                src="/gamepad.svg"
-                alt="hammer"
-                width={100}
-                height={100}
-              />
+            
               <p>Score Grooming</p>
-            </div>
+            </button>
           </div>
         )}
         {errorMessage && (

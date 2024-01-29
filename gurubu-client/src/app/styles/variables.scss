@@ -9,13 +9,7 @@ $breakpoints: (
 
 // colors
 $white: #ffffff;
-$body-color: linear-gradient(
-  180deg,
-  #fafbff 0%,
-  #eff1f9 58.61%,
-  #e9ecf6 82.31%,
-  #ced3e8 101.29%
-);
+$body-color: $white;
 $voting-card-color: linear-gradient(
   180deg,
   #fafbff 0%,
@@ -51,7 +45,10 @@ $yellow-300: #fde7b3;
 $yellow-200: #fff2d2;
 $yellow-100: #fff6e0;
 
-$red-700: #DC2626;
+$red-700: #dc2626;
+
+$primary: #7656cc;
+$primary-100: #9a7fe3;
 
 // font size
 $font-size-header-1: 50px;
