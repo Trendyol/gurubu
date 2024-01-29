@@ -1,0 +1,40 @@
+.testimonial-section{
+    width: 100%;
+    margin: $space-xxxxlarge 0;
+    padding: 0 $space-xxlarge;
+
+    .testimonial{
+        max-width: 1280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: $space-xxlarge 0;
+        margin: 0 auto;
+    
+        &__text{
+            font-size: $font-size-body-2;
+            font-weight: $regular;
+            line-height: $line-height-header-3;
+            text-align: center;
+
+            @include media(xl){
+                font-size: $font-size-body-1;
+                line-height: $line-height-header-2;
+            }
+        }
+
+        &__owner{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+
+            &__name{
+                margin: $space-large 0 $space-xsmall 0;
+                font-size: $font-size-paragraph-2;
+                font-weight: $semibold;
+            }
+        }
+    }
+}
