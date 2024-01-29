@@ -1,0 +1,66 @@
+.not-found-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  
+    &__title {
+      color: $primary-700;
+      line-height: $line-height-paragraph-4;
+      font-weight: $semibold;
+      font-size: $font-size-paragraph-3;
+      padding-bottom: $space-medium;
+    }
+    &__subtitle {
+      color: $gray-900;
+      line-height: $line-height-header-1;
+      font-weight: $medium;
+      font-size: $font-size-header-1;
+      padding-bottom: $space-xlarge;
+    }
+    &__description {
+        color: $gray-600;
+        line-height: $line-height-paragraph-2;
+        font-weight: $regular;
+        font-size: $font-size-body-3;
+        padding-bottom: $space-xxxlarge;
+    }
+  
+    &__navigation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $space-medium;
+
+        &__go-back {
+            padding: 16px 28px;
+            border-radius: $radius-large;
+            border: 1px solid $gray-300;
+            display: flex;
+            align-items: center;
+            gap: $space-medium;
+            color: $gray-700;
+            font-weight: $semibold;
+            font-size: $font-size-paragraph-2;
+            cursor: pointer;
+            height: 60px;
+            
+        }
+        &__take-me-home {
+            height: 60px;
+            border-radius: $radius-large;
+            padding: 16px 28px;
+            background: $primary-600;
+            color: $white;
+            font-weight: $semibold;
+            font-size: $font-size-paragraph-2;
+            border: 1px solid $primary-600;
+
+        }
+    }
+    &__link:hover {
+      background-color: $yellow-400;
+    }
+  }
+  

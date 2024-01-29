@@ -24,6 +24,9 @@ $voting-card-color: linear-gradient(
   #ced3e8 101.29%
 );
 
+$primary-700: #6941C6;
+$primary-600: #7F56D9;
+
 $blue-900: #091133;
 $blue-800: #111b47;
 $blue-700: #222f65;
@@ -54,12 +57,14 @@ $yellow-100: #fff6e0;
 $red-700: #DC2626;
 
 // font size
-$font-size-header-1: 50px;
-$font-size-header-2: 42px;
-$font-size-header-3: 26px;
+$font-size-header-1: 60px;
+$font-size-header-2: 50px;
+$font-size-header-3: 42px;
+$font-size-header-4: 26px;
 
 $font-size-body-1: 36px;
 $font-size-body-2: 28px;
+$font-size-body-3: 20px;
 
 $font-size-paragraph-1: 22px;
 $font-size-paragraph-2: 18px;
@@ -68,9 +73,10 @@ $font-size-paragraph-4: 14px;
 $font-size-paragraph-5: 12px;
 
 // line height
-$line-height-header-1: 66px;
-$line-height-header-2: 60px;
-$line-height-header-3: 38px;
+$line-height-header-1: 72px;
+$line-height-header-2: 66px;
+$line-height-header-3: 60px;
+$line-height-header-4: 38px;
 
 $line-height-body-1: 48px;
 $line-height-body-2: 38px;
