@@ -41,7 +41,7 @@ const groomingMode = {
     },
     {
       id: 5,
-      name: "maintanance",
+      name: "maintenance",
       weight: 25,
       points: ["1", "2", "3", "4", "5", "?"],
     },
