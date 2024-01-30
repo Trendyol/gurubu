@@ -4,6 +4,7 @@ import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { RoomService } from "../../services/roomService";
 import Image from "next/image";
 import classNames from "classnames";
+import { GroomingType } from "../../shared/enums";
 
 interface IProps {
   roomId?: string;
@@ -17,13 +18,13 @@ const defaultNickname = () => {
   );
 };
 
-type GroomingType = "PlanningPoker" | "ScoreGrooming";
+
 
 
 // If roomId is provided, then the user is joining a room.
 const NicknameForm = ({ roomId }: IProps) => {
   const [nickname, setNickname] = useState(defaultNickname);
-  const [groomingType, setGroomingType] = useState<GroomingType>("PlanningPoker");
+  const [groomingType, setGroomingType] = useState<GroomingType>(GroomingType.PlanningPoker);
 
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -165,28 +166,26 @@ const NicknameForm = ({ roomId }: IProps) => {
         </div>
         {!roomId && (
           <div className="nickname-form__divider">
-            <div className="nickname-form__divider-line"></div>
             <label className="nickname-form__label-select-grooming">
               And select a grooming type.
             </label>
-            <div className="nickname-form__divider-line"></div>
           </div>
         )}
         {!roomId && (
           <div className="nickname-form__grooming-options divider">
             <button
               className={classNames("nickname-form__grooming-option", {
-                selected: groomingType === "PlanningPoker",
+                selected: groomingType === GroomingType.PlanningPoker,
               })}
-              onClick={() => setGroomingType("PlanningPoker")}
+              onClick={() => setGroomingType(GroomingType.PlanningPoker)}
             >
               <p>Planning Poker</p>
             </button>
             <button
               className={classNames("nickname-form__grooming-option", {
-                selected: groomingType === "ScoreGrooming",
+                selected: groomingType === GroomingType.ScoreGrooming,
               })}
-              onClick={() => setGroomingType("ScoreGrooming")}
+              onClick={() => setGroomingType(GroomingType.ScoreGrooming)}
             >
 
               <p>Score Grooming</p>

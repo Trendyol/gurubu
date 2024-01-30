@@ -33,12 +33,16 @@
   &__divider {
     display: flex;
     align-items: center;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: $gray-200;
+    }
   }
-  &__divider-line {
-    width: 100%;
-    background-color: $gray-200;
-    height: 1px;
-  }
+
   &__label-enter-room {
     color: #475467;
     font-weight: $light;
@@ -48,14 +52,12 @@
     margin: 0 $space-small;
   }
   &__label-select-grooming {
-    color:#475467;
+    color: #475467;
     font-weight: 500;
     font-size: $font-size-paragraph-4;
     flex-shrink: 0;
     margin: 0 $space-small;
-    line-height:20px;
-
-
+    line-height: 20px;
   }
   &__input {
     padding: $space-small $space-large;
