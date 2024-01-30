@@ -14,7 +14,6 @@ const Testimonial = () => {
           I was looking for an application that could quickly determine story
           points without registration, and I finally found it.
         </p>
-
         <div className="testimonial__owner">
           <Image
             src="/testimonial-avatar.png"
