@@ -114,7 +114,7 @@ const NicknameForm = ({ roomId }: IProps) => {
   };
 
 
-  const connectionButtonText = useMemo(() => {
+  const connectionButtonText = () => {
     if (loading && roomId) {
       return "Joining Room...";
     }
@@ -122,7 +122,7 @@ const NicknameForm = ({ roomId }: IProps) => {
       return "Creating Room...";
     }
     return roomId ? "Join Room" : "Create Room";
-  }, [loading, roomId])
+  };
 
   useEffect(() => {
     if (!inputRef.current) {
@@ -200,7 +200,7 @@ const NicknameForm = ({ roomId }: IProps) => {
             roomId ? handleJoinRoomButtonClick : handleCreateRoomButtonClick
           }
         >
-          {connectionButtonText}
+          {connectionButtonText()}
         </button>
 
       </div>
