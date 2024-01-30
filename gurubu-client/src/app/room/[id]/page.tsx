@@ -28,7 +28,7 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
             setShowNickNameForm={setShowNickNameForm}
           />
           {showNickNameForm && (
-            <NicknameForm joinMode={true} roomId={params.id} />
+            <NicknameForm roomId={params.id} />
           )}
         </main>
       </SocketProvider>

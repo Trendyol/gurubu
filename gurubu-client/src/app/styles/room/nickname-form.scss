@@ -19,8 +19,8 @@
     margin-bottom: $space-xlarge;
   }
   &__title {
-    color: $blue-900;
-    font-size: $font-size-paragraph-1;
+    color: $title-color;
+    font-size: $font-size-paragraph-2;
     line-height: $line-height-header-3;
     font-weight: $semibold;
   }
@@ -39,7 +39,7 @@
     background-color: $gray-200;
     height: 1px;
   }
-  &__label {
+  &__label-enter-room {
     color: $gray-500;
     font-weight: $light;
     font-size: $font-size-paragraph-3;
@@ -47,9 +47,19 @@
     flex-shrink: 0;
     margin: 0 $space-small;
   }
+  &__label-select-grooming {
+    color:#475467;
+    font-weight: 500;
+    font-size: $font-size-paragraph-4;
+    flex-shrink: 0;
+    margin: 0 $space-small;
+    line-height:20px;
+
+
+  }
   &__input {
     padding: $space-small $space-large;
-    margin: $space-large 0;
+    margin: $space-base 0;
     border: 1px solid $gray-100;
     border-radius: $radius-small;
     font-size: $font-size-paragraph-4;
@@ -83,7 +93,7 @@
     border: 1px solid transparent;
     flex: 1;
     background-color: $white;
-    padding: $space-large;
+    padding: 10px $space-large;
     align-items: center;
     justify-content: space-between;
     font-size: $font-size-paragraph-4;
@@ -96,9 +106,13 @@
       font-weight: $semibold;
     }
 
+    &:hover {
+      background-color: #f9fafb;
+      transition: all 0.2s ease-in-out;
+    }
+
     &.selected {
-      background-color: $primary-100;
-      transition: all 0.1s ease-in-out;
+      background-color: #7f56d9;
 
       p {
         color: $white;
@@ -117,19 +131,16 @@
   }
   &__button {
     display: inline-block;
-    margin-top: $space-xlarge;
+    margin-top: $space-base;
     padding: $space-small;
     color: $white;
-    background-color: $primary;
+    background-color: #7656cc;
     font-size: $font-size-paragraph-2;
     line-height: $line-height-paragraph-2;
     font-weight: $medium;
     border-radius: $radius-large;
     border: none;
     width: 100%;
-  }
-  &__button:hover {
-    background-color: $primary-100;
     cursor: pointer;
   }
 
