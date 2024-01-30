@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { GoBackButton } from "./components/error/go-back-button";
 
-import "./styles/errors/style.scss";
+import "./styles/error/style.scss";
 
 export default function GlobalError({
 	error,
