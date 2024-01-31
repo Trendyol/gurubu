@@ -66,7 +66,7 @@ const GroomingBoardProfile = () => {
         onClick={handleClick}
       >
         <div className="grooming-board-profile__icon">
-          <Image src="/icon-user.svg" width={10} height={10} alt="" />
+          <Image src="/icon-user.svg" width={10} height={10} alt="User information" />
         </div>
         <p className="grooming-board-profile__text">{userInfo.nickname}</p>
       </button>

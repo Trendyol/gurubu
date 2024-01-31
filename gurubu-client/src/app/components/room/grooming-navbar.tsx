@@ -47,7 +47,7 @@ const GroomingNavbar = ({ showNickNameForm }: IProps) => {
       <div className="grooming-navbar__actions">
         <div className="grooming-navbar__participants">
           <div className="grooming-navbar__participant-number-section">
-            <Image src="/icon-user-group.svg" width={12} height={12} alt="" />
+            <Image src="/icon-user-group.svg" width={12} height={12} alt="Participants" />
             <p className="grooming-navbar__participant-number">{groomingInfo.totalParticipants || "0"}</p>
           </div>
           <p className="grooming-navbar__participant-text">Participants is here</p>
@@ -60,7 +60,7 @@ const GroomingNavbar = ({ showNickNameForm }: IProps) => {
             {isGroomingLinkCopied ? (
               <IconClipboardCheck stroke={3} width={14} height={14} />
             ) : (
-              <Image src="/icon-copy.svg" width={14} height={14} alt="" />
+              <Image src="/icon-copy.svg" width={14} height={14} alt="Copy link" />
               )}
             Copy Link
           </button>
