@@ -1,11 +1,5 @@
 @import "../variables.scss";
 @import "../mixins.scss";
 
-@import "./greeting.scss";
-@import "./howto.scss";
-
-main {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+// Sections
+@import "./hero-section.scss";

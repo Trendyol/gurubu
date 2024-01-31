@@ -1,0 +1,27 @@
+.cta {
+  border-radius: $radius-large;
+  padding: $space-large 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  font-weight: $semibold;
+  font-size: $font-size-paragraph-2;
+  line-height: 1.75rem;
+  gap: $space-small;
+
+  &.primary {
+    background-color: $white;
+    color: $gray-700;
+    border: 1px solid $gray-300;
+  }
+
+  &.secondary {
+    background-color: $purple-700;
+    color: $white;
+    font-size: $font-size-paragraph-3;
+    font-weight: $semibold;
+    line-height: $line-height-paragraph-4;
+    border: 1px solid $purple-700;
+  }
+}

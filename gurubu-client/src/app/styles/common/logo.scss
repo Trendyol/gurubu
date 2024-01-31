@@ -1,0 +1,13 @@
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-right: 4rem;
+  font-weight: $bold;
+  font-size: $font-size-paragraph-2;
+  line-height: $line-height-paragraph-4;
+
+  & span {
+    user-select: none;
+  }
+}
