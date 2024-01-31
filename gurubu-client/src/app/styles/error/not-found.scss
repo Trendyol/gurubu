@@ -15,9 +15,10 @@
     &__subtitle {
       color: $gray-900;
       line-height: $line-height-header-1;
-      font-weight: $medium;
+      font-weight: $semibold;
       font-size: $font-size-header-1;
       padding-bottom: $space-xlarge;
+      letter-spacing: $letter-spacing-1;
     }
     &__description {
         color: $gray-600;
@@ -25,6 +26,9 @@
         font-weight: $regular;
         font-size: $font-size-body-4;
         padding-bottom: $space-xxxlarge;
+        @include media(sm){
+          text-align: center;
+        }
     }
   
     &__navigation {
@@ -45,6 +49,7 @@
             font-size: $font-size-paragraph-2;
             cursor: pointer;
             height: 60px;
+            background: $white;
             
         }
         &__take-me-home {
@@ -56,6 +61,8 @@
             font-weight: $semibold;
             font-size: $font-size-paragraph-2;
             border: 1px solid $primary-600;
+            display: flex;
+            align-items: center;
 
         }
     }
