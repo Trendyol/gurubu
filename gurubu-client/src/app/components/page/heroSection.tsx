@@ -10,7 +10,7 @@ const HeroSection = () => {
           Agree with your teammates quickly and reliably! Start by setting up a
           room.
         </p>
-        <Button as="a" href="/create">
+        <Button as="a" href="/create/room">
           <Image
             src="/play-circle.svg"
             width={24}
