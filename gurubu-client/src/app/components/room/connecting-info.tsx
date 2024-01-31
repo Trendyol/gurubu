@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { notFound } from "next/navigation";
-import { RoomService } from "../../services/roomService";
-import { ROOM_STATUS } from "../../room/[id]/enums";
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
+import { RoomService } from "@/services/roomService";
+import { ROOM_STATUS } from "@/room/[id]/enums";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 
 interface IProps {
   roomId: string;

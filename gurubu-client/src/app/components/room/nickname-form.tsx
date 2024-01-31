@@ -1,7 +1,7 @@
 "use client";
 
 import { SetStateAction, useEffect, useRef, useState } from "react";
-import { RoomService } from "../../services/roomService";
+import { RoomService } from "@/services/roomService";
 import Image from "next/image";
 import classNames from "classnames";
 

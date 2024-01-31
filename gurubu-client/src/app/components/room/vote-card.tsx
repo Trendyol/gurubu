@@ -1,5 +1,5 @@
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
-import { useSocket } from "../../contexts/SocketContext";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { useSocket } from "@/contexts/SocketContext";
 import classNames from "classnames";
 
 interface IProps {
