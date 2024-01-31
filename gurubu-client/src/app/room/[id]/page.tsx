@@ -15,27 +15,28 @@ import "@/styles/room/style.scss";
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
 	const [showNickNameForm, setShowNickNameForm] = useState(false);
 
-	return (
-		<GroomingRoomProvider roomId={params.id}>
-			<SocketProvider>
-				<main
-					className={classnames("grooming-room", {
-						"nickname-form-active": showNickNameForm,
-					})}>
-					<ConnectingInfo roomId={params.id} />
-					<GroomingNavbar showNickNameForm={showNickNameForm} />
-					<GroomingBoard
-						roomId={params.id}
-						showNickNameForm={showNickNameForm}
-						setShowNickNameForm={setShowNickNameForm}
-					/>
-					{showNickNameForm && (
-						<NicknameForm joinMode={true} roomId={params.id} />
-					)}
-				</main>
-			</SocketProvider>
-		</GroomingRoomProvider>
-	);
+  return (
+    <GroomingRoomProvider roomId={params.id}>
+      <SocketProvider>
+        <main
+          className={classnames("grooming-room", {
+            "nickname-form-active": showNickNameForm,
+          })}
+        >
+          <ConnectingInfo roomId={params.id} />
+          <GroomingNavbar showNickNameForm={showNickNameForm} />
+          <GroomingBoard
+            roomId={params.id}
+            showNickNameForm={showNickNameForm}
+            setShowNickNameForm={setShowNickNameForm}
+          />
+          {showNickNameForm && (
+            <NicknameForm roomId={params.id} />
+          )}
+        </main>
+      </SocketProvider>
+    </GroomingRoomProvider>
+  );
 };
 
 export default GroomingRoom;

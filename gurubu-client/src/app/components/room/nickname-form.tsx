@@ -4,9 +4,9 @@ import { SetStateAction, useEffect, useRef, useState } from "react";
 import { RoomService } from "@/services/roomService";
 import Image from "next/image";
 import classNames from "classnames";
+import { GroomingType } from "@/shared/enums";
 
 interface IProps {
-  joinMode?: boolean;
   roomId?: string;
 }
 
@@ -18,14 +18,18 @@ const defaultNickname = () => {
   );
 };
 
-const NicknameForm = ({ joinMode, roomId }: IProps) => {
+
+
+
+// If roomId is provided, then the user is joining a room.
+const NicknameForm = ({ roomId }: IProps) => {
   const [nickname, setNickname] = useState(defaultNickname);
-  const [groomingType, setGroomingType] = useState<null | string>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [showInfoMessage, setShowInfoMessage] = useState(false);
+  const [groomingType, setGroomingType] = useState<GroomingType>(GroomingType.PlanningPoker);
+
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const isPlanningOptionSelected = groomingType === "0";
+
   const roomService = new RoomService(process.env.NEXT_PUBLIC_API_URL || "");
 
   const handleNicknameChange = (e: {
@@ -37,17 +41,19 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
   };
 
   const handleCreateRoomButtonClick = async () => {
-    setShowInfoMessage(true);
-    if (groomingType === null) {
-      setErrorMessage("Please select a grooming type.");
-      return;
-    }
+    setLoading(true);
+
     const trimmedNickName = nickname.trim();
     if (trimmedNickName === "") {
       return;
     }
     localStorage.setItem("nickname", trimmedNickName);
-    const payload = { nickName: trimmedNickName, groomingType };
+
+    const payload = {
+      nickName: trimmedNickName,
+      // TODO?: Actually, backend api should be accept string value for groomingType
+      groomingType: groomingType === 'PlanningPoker' ? "0" : "1"
+    };
     const response = await roomService.createRoom(payload);
 
     if (!response) {
@@ -75,7 +81,7 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
   };
 
   const handleJoinRoomButtonClick = async () => {
-    setShowInfoMessage(true);
+    setLoading(true);
     const trimmedNickName = nickname.trim();
     if (trimmedNickName === "" || !roomId) {
       return;
@@ -108,9 +114,15 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
     window.location.assign(`/room/${response.roomID}`);
   };
 
-  const handleOptionClick = (typeNumber: string) => {
-    setErrorMessage("");
-    setGroomingType(typeNumber);
+
+  const connectionButtonText = () => {
+    if (loading && roomId) {
+      return "Joining Room...";
+    }
+    if (loading && !roomId) {
+      return "Creating Room...";
+    }
+    return roomId ? "Join Room" : "Create Room";
   };
 
   useEffect(() => {
@@ -128,10 +140,19 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
 
   return (
     <div className="nickname-form">
+      <h1 className="nickname-form__header">
+        <Image
+          priority
+          src="/logo.svg"
+          alt="logo"
+          width={30}
+          height={30}
+        />
+        GuruBu</h1>
       <h1 className="nickname-form__title">Welcome to Gurubu</h1>
       <div className="nickname-form__action-wrapper">
         <div className="nickname-form__input-wrapper">
-          <label htmlFor="nickname-input" className="nickname-form__label">
+          <label htmlFor="nickname-input" className="nickname-form__label-enter-room">
             To enter the room, choose a nickname.
           </label>
           <input
@@ -143,59 +164,44 @@ const NicknameForm = ({ joinMode, roomId }: IProps) => {
             onChange={handleNicknameChange}
           />
         </div>
-        {!joinMode && (
-          <label className="nickname-form__label">
-            And select a grooming type.
-          </label>
-        )}
-        {!joinMode && (
-          <div className="nickname-form__grooming-options">
-            <div
-              className={classNames("nickname-form__grooming-option", {
-                selected: isPlanningOptionSelected,
-              })}
-              onClick={() => handleOptionClick("0")}
-            >
-              <Image
-                priority
-                src="/planning.svg"
-                alt="planning"
-                width={100}
-                height={100}
-              />
-              <p>Planning Poker</p>
-            </div>
-            <div
-              className={classNames("nickname-form__grooming-option", {
-                selected: !isPlanningOptionSelected && groomingType !== null,
-              })}
-              onClick={() => handleOptionClick("1")}
-            >
-              <Image
-                priority
-                src="/gamepad.svg"
-                alt="hammer"
-                width={100}
-                height={100}
-              />
-              <p>Score Grooming</p>
-            </div>
+        {!roomId && (
+          <div className="nickname-form__divider">
+            <label className="nickname-form__label-select-grooming">
+              And select a grooming type.
+            </label>
           </div>
         )}
-        {errorMessage && (
-          <p className="nickname-form__error-message">{errorMessage}</p>
+        {!roomId && (
+          <div className="nickname-form__grooming-options divider">
+            <button
+              className={classNames("nickname-form__grooming-option", {
+                selected: groomingType === GroomingType.PlanningPoker,
+              })}
+              onClick={() => setGroomingType(GroomingType.PlanningPoker)}
+            >
+              <p>Planning Poker</p>
+            </button>
+            <button
+              className={classNames("nickname-form__grooming-option", {
+                selected: groomingType === GroomingType.ScoreGrooming,
+              })}
+              onClick={() => setGroomingType(GroomingType.ScoreGrooming)}
+            >
+
+              <p>Score Grooming</p>
+            </button>
+          </div>
         )}
+
         <button
           className="nickname-form__button"
           onClick={
-            joinMode ? handleJoinRoomButtonClick : handleCreateRoomButtonClick
+            roomId ? handleJoinRoomButtonClick : handleCreateRoomButtonClick
           }
         >
-          {joinMode ? "Join Room" : "Create Room"}
+          {connectionButtonText()}
         </button>
-        {showInfoMessage && (
-          <p className="nickname-form__info-message">{joinMode ? "Joining Room..." : "Creating Room..."}</p>
-        )}
+
       </div>
     </div>
   );
