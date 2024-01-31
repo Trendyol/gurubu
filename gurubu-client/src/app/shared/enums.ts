@@ -5,5 +5,10 @@ export enum HTTP_STATUS {
 
 export enum ENCOUTERED_ERROR_TYPE {
   ROOM_EXPIRED = 1,
-  CONNECTION_ERROR = 2
+  CONNECTION_ERROR = 2,
+}
+
+export enum GroomingType {
+  PlanningPoker = "PlanningPoker",
+  ScoreGrooming = "ScoreGrooming",
 }

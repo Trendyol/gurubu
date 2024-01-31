@@ -1,15 +1,28 @@
 .nickname-form {
   width: 384px;
-  padding: $space-xlarge $space-medium;
+  padding: $space-xlarge $space-xlarge;
   max-width: 90%;
   border-radius: $radius-large;
-  border: 2px solid $blue-600;
-  &__title {
-    color: $blue-700;
-    font-size: $font-size-header-4;
-    line-height: $line-height-header-4;
-    font-weight: $semibold;
+  box-shadow: 0px 8px 8px -4px #10182808;
+  box-shadow: 0px 20px 24px -4px #10182814;
+  background-color: $white;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xsmall;
+    font-family: var(--font-space-grotesk);
+    color: $black;
+    font-size: $font-size-header-3;
+    font-weight: $font-size-header-3;
     margin-bottom: $space-xlarge;
+  }
+  &__title {
+    color: $title-color;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-header-3;
+    font-weight: $semibold;
   }
   &__input-wrapper {
     display: flex;
@@ -17,20 +30,44 @@
     justify-content: center;
     flex-direction: column;
   }
-  &__label {
-    color: $blue-900;
-    font-weight: $regular;
+  &__divider {
+    display: flex;
+    align-items: center;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: $gray-200;
+    }
+  }
+
+  &__label-enter-room {
+    color: #475467;
+    font-weight: $light;
     font-size: $font-size-paragraph-3;
     line-height: $line-height-paragraph-3;
+    flex-shrink: 0;
+    margin: 0 $space-small;
+  }
+  &__label-select-grooming {
+    color: #475467;
+    font-weight: 500;
+    font-size: $font-size-paragraph-4;
+    flex-shrink: 0;
+    margin: 0 $space-small;
+    line-height: 20px;
   }
   &__input {
     padding: $space-small $space-large;
-    margin: $space-large 0;
-    border: 1px solid $gray-400;
+    margin: $space-base 0;
+    border: 1px solid $gray-100;
     border-radius: $radius-small;
     font-size: $font-size-paragraph-4;
     line-height: $line-height-paragraph-4;
     font-weight: $regular;
+    width: 100%;
   }
   &__input:focus {
     outline: none;
@@ -39,29 +76,49 @@
     margin-top: $space-xlarge;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0 $space-xxxlarge;
+    overflow: hidden;
+    border-radius: $radius-medium;
+    border: 1px solid $gray-300;
+    position: relative;
+
+    &.divider::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background-color: $gray-300;
+    }
   }
   &__grooming-option {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;   
-    color: $blue-900;
-    padding: $space-large;
-    border: 2px solid $gray-200;
-    width: 150px;
-    height: 150px;
-    display: flex;
+    border: 1px solid transparent;
+    flex: 1;
+    background-color: $white;
+    padding: 10px $space-large;
     align-items: center;
     justify-content: space-between;
-    border-radius: $radius-small;
-    flex-direction: column;
     font-size: $font-size-paragraph-4;
     line-height: $line-height-paragraph-4;
     font-weight: $medium;
-    background: $body-color;
+    cursor: pointer;
+    position: relative;
+
+    p {
+      font-weight: $semibold;
+    }
+
+    &:hover {
+      background-color: #f9fafb;
+      transition: all 0.2s ease-in-out;
+    }
+
     &.selected {
-      border: 2px solid $yellow-500;
+      background-color: #7f56d9;
+
+      p {
+        color: $white;
+      }
     }
   }
   &__grooming-option:hover {
@@ -76,22 +133,21 @@
   }
   &__button {
     display: inline-block;
-    margin-top: $space-xxlarge;
+    margin-top: $space-base;
     padding: $space-small;
-    color: $blue-900;
-    background-color: $yellow-500;
+    color: $white;
+    background-color: #7656cc;
     font-size: $font-size-paragraph-2;
     line-height: $line-height-paragraph-2;
     font-weight: $medium;
-    border-radius: $radius-small;
+    border-radius: $radius-large;
     border: none;
-    min-width: 150px;
-  }
-  &__button:hover {
-    background-color: $yellow-400;
+    width: 100%;
     cursor: pointer;
+    font-family: var(--font-inter);
   }
-  &__info-message{
+
+  &__info-message {
     margin-top: $space-large;
     font-size: $font-size-paragraph-4;
     line-height: $line-height-paragraph-4;
