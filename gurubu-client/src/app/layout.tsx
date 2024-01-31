@@ -21,7 +21,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/gamepad.svg" type="image/x-icon" sizes="7x10" />
       </head>
-      <body className={classNames([inter.className, spaceGrotesk.variable])}>{children}</body>
+      <body className={classNames([inter.className, spaceGrotesk.variable, inter.variable])}>{children}</body>
     </html>
   );
 }
