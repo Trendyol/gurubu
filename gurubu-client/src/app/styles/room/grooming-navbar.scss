@@ -3,7 +3,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $space-xlarge $space-body;
+
+  //replace with this after new score body comes with padding:  padding: $space-xlarge $space-body;
+  padding: $space-xlarge $space-xxxlarge;
+
 
   &__actions {
     display: flex;
