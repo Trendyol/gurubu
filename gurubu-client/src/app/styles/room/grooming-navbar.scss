@@ -1,44 +1,62 @@
 .grooming-navbar {
   width: 100%;
-  padding: $space-large $space-xxxlarge;
   display: flex;
   justify-content: space-between;
-  position: absolute;
+  align-items: center;
+  padding: $space-xlarge $space-body;
+
   &__actions {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0 $space-large;
+    gap: 0 $space-xxxlarge;
   }
-  &__copy-link {
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0 $space-medium;
-    padding: $space-small $space-medium;
-    border-radius: $radius-medium;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    color: $gray-800;
-  }
-  &__copy-link:hover {
-    cursor: pointer;
-    opacity: 0.8;
-  }
+
   &__participants {
-    min-width: 160px;
-    background: $blue-400;
-    border-radius: $radius-medium;
     display: flex;
+    gap: 0 $space-small;
     align-items: center;
-    color: $gray-100;
-    padding: $space-small $space-medium;
-    gap: 0 $space-medium;
+    padding: $space-xsmall $space-semi-medium $space-xsmall $space-xsmall;
+    background-color: $primary-50;
+    border: 1px solid $primary-200;
+    border-radius: $radius-large;
+    font-size: $font-size-paragraph-5;
+    font-weight: $medium;
+    user-select: none;
   }
-  &__participant-number {
+
+  &__participant-number-section {
     display: flex;
     align-items: center;
-    justify-content: center;
+    color: $white;
+    background-color: $primary-700;
+    border: 1px solid $primary-200;
+    border-radius: $radius-xxlarge;
+    gap: $space-xsmall;
+    height: 20px;
+    padding: 0 $space-small 0 $space-semi-small;
+  }
+
+  &__participant-number {
+    line-height: $line-height-paragraph-5;
+  }
+
+  &__participant-text {
+    color: $primary-700;
+    line-height: $line-height-paragraph-5;
+  }
+
+  &__copy-link {
+    display: flex;
+    align-items: center;
+    padding: $space-small $space-medium;
+    gap: 0 $space-small;
+    background-color: $primary-50;
+    color: $primary-700;
+    font-size: $font-size-paragraph-5;
+    font-weight: $semibold;
+    border: none;
+    outline: none;
+    border-radius: $radius-large;
+    height: fit-content;
+    cursor: pointer;
   }
 }

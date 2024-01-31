@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useState } from "react";
-import { IconUserCircle } from "@tabler/icons-react";
 import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
 import { useSocket } from "../../contexts/SocketContext";
+import Image from "next/image";
 
 const GroomingBoardProfile = () => {
   const socket = useSocket();
@@ -65,8 +65,10 @@ const GroomingBoardProfile = () => {
         id="grooming-board-profile"
         onClick={handleClick}
       >
-        <p>{userInfo.nickname}</p>
-        <IconUserCircle />
+        <div className="grooming-board-profile__icon">
+          <Image src="/icon-user.svg" width={10} height={10} alt="" />
+        </div>
+        <p className="grooming-board-profile__text">{userInfo.nickname}</p>
       </button>
       {showProfileBar && (
         <div
