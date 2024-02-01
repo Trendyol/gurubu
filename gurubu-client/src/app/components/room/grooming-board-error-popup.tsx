@@ -1,7 +1,7 @@
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
-import { useSocket } from "../../contexts/SocketContext";
-import { getCurrentLobby } from "../../shared/helpers/lobbyStorage";
 import classNames from "classnames";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { useSocket } from "@/contexts/SocketContext";
+import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
 
 interface IProps {
   title: string;

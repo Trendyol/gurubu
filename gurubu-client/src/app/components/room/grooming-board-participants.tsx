@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
 import { Fragment } from "react";
 import { IconCheck, IconChessRookFilled, IconPlugX } from "@tabler/icons-react";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 
 const GroomingBoardParticipants = () => {
   const { groomingInfo } = useGroomingRoom();

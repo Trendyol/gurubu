@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import { useSocket } from "../../contexts/SocketContext";
+import classNames from "classnames";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { useSocket } from "@/contexts/SocketContext";
 import {
   checkUserJoinedLobbyBefore,
   getCurrentLobby,
-} from "../../shared/helpers/lobbyStorage";
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
+} from "@/shared/helpers/lobbyStorage";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import VotingStick from "./voting-stick";
-import classNames from "classnames";
-import Image from "next/image";
 import MetricAverages from "./metric-averages";
 import GroomingBoardParticipants from "./grooming-board-participants";
 import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../room/[id]/enums";
-import { EncounteredError, GroomingInfo } from "../../shared/interfaces";
-import { notFound } from "next/navigation";
-import { ENCOUTERED_ERROR_TYPE } from "../../shared/enums";
+import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
+import { ENCOUTERED_ERROR_TYPE } from "@/shared/enums";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
 
 interface IProps {
