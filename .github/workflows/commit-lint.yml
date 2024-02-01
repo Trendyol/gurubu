@@ -1,23 +1,21 @@
-name: First commit message adheres to guidelines
+name: Validate Commit Messages
 
-on: [pull_request]
-
-env:
-  NODE_VERSION: lts/*
-
-permissions:
-  contents: read
+on:
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
-  lint-commit-message:
+  validate-commit-message:
     runs-on: ubuntu-latest
     steps:
-      - name: Compute number of commits in the PR
-        id: nb-of-commits
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Validate commit messages
         run: |
-          echo "plusOne=$((${{ github.event.pull_request.commits }} + 1))" >> $GITHUB_OUTPUT
-          echo "minusOne=$((${{ github.event.pull_request.commits }} - 1))" >> $GITHUB_OUTPUT
-      - name: Validate commit message
-        run: |
-          echo "::add-matcher::.github/workflows/commit-lint-problem-matcher.json"
-          git rev-parse HEAD~${{ steps.nb-of-commits.outputs.minusOne }} | xargs npx -q core-validate-commit --no-validate-metadata --tap
+          git log --format=%s ${{ github.event.before }}..${{ github.sha }} -- | while read -r line; do
+            if ! [[ "$line" =~ ^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test){1}(\([\w\-\.]+\))?(!)?: ([\w ])+([\s\S]*)$ ]]; then
+              echo "Invalid commit message format: $line"
+              exit 1
+            fi
+          done
