@@ -94,4 +94,6 @@ const Button = forwardRef<HTMLElement, CustomButtonProps>(
   }
 );
 
+Button.displayName = "Button";
+
 export default Button;
