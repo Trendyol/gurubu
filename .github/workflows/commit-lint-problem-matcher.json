@@ -4,7 +4,7 @@
       "owner": "core-validate-commit",
       "pattern": [
         {
-          "regexp": "^not ok \\d+ (.*)$",
+          "regexp": "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test){1}(\([\w\-\.]+\))?(!)?: ([\w ])+([\s\S]*)",
           "message": 1
         }
       ]
