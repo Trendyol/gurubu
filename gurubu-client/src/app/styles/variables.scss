@@ -13,6 +13,7 @@ $max-width: 1280px;
 // colors
 $white: #ffffff;
 $body-color: $white;
+$body-color: $white;
 $voting-card-color: linear-gradient(
   180deg,
   #fafbff 0%,
@@ -20,6 +21,8 @@ $voting-card-color: linear-gradient(
   #e9ecf6 82.31%,
   #ced3e8 101.29%
 );
+
+$title-color: #101828;
 
 $blue-900: #091133;
 $blue-800: #111b47;
@@ -57,8 +60,9 @@ $font-size-header-1: 60px;
 $font-size-header-2: 42px;
 $font-size-header-3: 26px;
 
-$font-size-body-1: 36px;
-$font-size-body-2: 28px;
+$font-size-body-1: 48px;
+$font-size-body-2: 36px;
+$font-size-body-3: 28px;
 
 $font-size-paragraph-1: 22px;
 $font-size-paragraph-2: 18px;
@@ -97,9 +101,11 @@ $space-xsmall: 4px;
 $space-small: 8px;
 $space-medium: 12px;
 $space-large: 16px;
+$space-base: 20px;
 $space-xlarge: 24px;
 $space-xxlarge: 32px;
 $space-xxxlarge: 48px;
+$space-xxxxlarge: 96px;
 $space-xxxxlarge: 96px;
 
 // radius
