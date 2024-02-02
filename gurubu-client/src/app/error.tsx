@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
 import { GoBackButton } from "./components/error/go-back-button";
-
 import "./styles/error/style.scss";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {

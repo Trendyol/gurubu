@@ -1,7 +1,5 @@
 import Link from "next/link";
-
 import { GoBackButton } from "./components/error/go-back-button";
-
 import "./styles/error/style.scss";
 
 export default function NotFound() {
