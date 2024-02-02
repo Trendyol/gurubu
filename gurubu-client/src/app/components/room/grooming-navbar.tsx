@@ -1,8 +1,8 @@
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import {
   IconClipboardCheck,
 } from "@tabler/icons-react";
-import { ROOM_STATUS } from "../../room/[id]/enums";
+import { ROOM_STATUS } from "@/room/[id]/enums";
 import { useState } from "react";
 import GroomingBoardProfile from "./grooming-board-profile";
 import Image from "next/image";

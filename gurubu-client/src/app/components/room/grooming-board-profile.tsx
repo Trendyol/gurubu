@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useState } from "react";
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
-import { useSocket } from "../../contexts/SocketContext";
 import Image from "next/image";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { useSocket } from "@/contexts/SocketContext";
 
 const GroomingBoardProfile = () => {
   const socket = useSocket();
