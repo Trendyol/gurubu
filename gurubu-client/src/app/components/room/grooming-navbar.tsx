@@ -1,12 +1,11 @@
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import {
   IconClipboardCheck,
-  IconCopy,
-  IconUserFilled,
 } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { useState } from "react";
 import GroomingBoardProfile from "./grooming-board-profile";
+import Image from "next/image";
 
 interface IProps {
   showNickNameForm: boolean;
@@ -47,23 +46,23 @@ const GroomingNavbar = ({ showNickNameForm }: IProps) => {
     <nav className="grooming-navbar">
       <div className="grooming-navbar__actions">
         <div className="grooming-navbar__participants">
-          <p>Participants:</p>
-          <div className="grooming-navbar__participant-number">
-            <IconUserFilled width={20} />
-            <p>{groomingInfo.totalParticipants || "0"}</p>
+          <div className="grooming-navbar__participant-number-section">
+            <Image src="/icon-user-group.svg" width={12} height={12} alt="Participants" />
+            <p className="grooming-navbar__participant-number">{groomingInfo.totalParticipants || "0"}</p>
           </div>
+          <p className="grooming-navbar__participant-text">Participants is here</p>
         </div>
         <div>
           <button
             className="grooming-navbar__copy-link"
             onClick={handleCopyGroomingLinkClick}
           >
-            Copy Grooming Link
             {isGroomingLinkCopied ? (
-              <IconClipboardCheck width={20} color="green" />
+              <IconClipboardCheck stroke={3} width={14} height={14} />
             ) : (
-              <IconCopy width={20} />
-            )}
+              <Image src="/icon-copy.svg" width={14} height={14} alt="Copy link" />
+              )}
+            Copy Link
           </button>
         </div>
       </div>
