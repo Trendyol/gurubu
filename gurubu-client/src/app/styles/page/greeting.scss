@@ -12,13 +12,13 @@
   }
   &__title {
     color: $blue-900;
-    font-size: $font-size-header-3;
-    line-height: $line-height-header-3;
+    font-size: $font-size-header-4;
+    line-height: $line-height-header-4;
     font-weight: $black;
 
     @include media(xl){
-      font-size: $font-size-header-1;
-      line-height: $line-height-header-1;
+      font-size: $font-size-header-2;
+      line-height: $line-height-header-2;
     }
   }
   &__description {
