@@ -1,13 +1,16 @@
 "use client";
-import { useState } from "react";
-import ConnectingInfo from "../../components/room/connecting-info";
-import GroomingBoard from "../../components/room/grooming-board";
-import NicknameForm from "../../components/room/nickname-form";
-import GroomingNavbar from "../../components/room/grooming-navbar";
-import { SocketProvider } from "../../contexts/SocketContext";
-import { GroomingRoomProvider } from "../../contexts/GroomingRoomContext";
+
 import classnames from "classnames";
-import "../../styles/room/style.scss";
+import { useState } from "react";
+
+import ConnectingInfo from "@/components/room/connecting-info";
+import GroomingBoard from "@/components/room/grooming-board";
+import NicknameForm from "@/components/room/nickname-form";
+import GroomingNavbar from "@/components/room/grooming-navbar";
+import { SocketProvider } from "@/contexts/SocketContext";
+import { GroomingRoomProvider } from "@/contexts/GroomingRoomContext";
+
+import "@/styles/room/style.scss";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
   const [showNickNameForm, setShowNickNameForm] = useState(false);
@@ -18,8 +21,7 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
         <main
           className={classnames("grooming-room", {
             "nickname-form-active": showNickNameForm,
-          })}
-        >
+          })}>
           <ConnectingInfo roomId={params.id} />
           <GroomingNavbar showNickNameForm={showNickNameForm} />
           <GroomingBoard
@@ -27,9 +29,7 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
             showNickNameForm={showNickNameForm}
             setShowNickNameForm={setShowNickNameForm}
           />
-          {showNickNameForm && (
-            <NicknameForm roomId={params.id} />
-          )}
+          {showNickNameForm && <NicknameForm roomId={params.id} />}
         </main>
       </SocketProvider>
     </GroomingRoomProvider>

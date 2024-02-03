@@ -51,9 +51,18 @@ $yellow-300: #fde7b3;
 $yellow-200: #fff2d2;
 $yellow-100: #fff6e0;
 
-$red-700: #dc2626;
+$primary-50: #F9F5FF;
+$primary-200: #E9D7FE;
+$primary-600: #7F56D9;
+$primary-700: #6941C6;
 
+$purple-50: #F4F3FF;
+$purple-200: #D9D6FE;
+$purple-600: #6938EF;
 
+$success-500: #17B26A;
+
+$red-700: #DC2626;
 
 // font size
 $font-size-header-1: 60px;
@@ -102,7 +111,9 @@ $black: 900;
 // space
 
 $space-xsmall: 4px;
+$space-semi-small: 6px;
 $space-small: 8px;
+$space-semi-medium: 10px;
 $space-medium: 12px;
 $space-large: 16px;
 $space-base: 20px;
@@ -111,10 +122,13 @@ $space-xxlarge: 32px;
 $space-xxxlarge: 48px;
 $space-xxxxlarge: 96px;
 
+$space-body: 384px;
+
 // letter-spacing
 
 $letter-spacing-1: -1.2px;
 
+$space-body: 384px;
 // radius
 
 $radius-xsmall: 2px;

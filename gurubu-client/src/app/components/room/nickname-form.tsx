@@ -1,10 +1,10 @@
 "use client";
 
-import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
-import { RoomService } from "../../services/roomService";
+import { SetStateAction, useEffect, useRef, useState } from "react";
+import { RoomService } from "@/services/roomService";
 import Image from "next/image";
 import classNames from "classnames";
-import { GroomingType } from "../../shared/enums";
+import { GroomingType } from "@/shared/enums";
 
 interface IProps {
   roomId?: string;
