@@ -13,7 +13,6 @@ $max-width: 1280px;
 // colors
 $white: #ffffff;
 $body-color: $white;
-$body-color: $white;
 $voting-card-color: linear-gradient(
   180deg,
   #fafbff 0%,
@@ -26,24 +25,30 @@ $title-color: #101828;
 
 $blue-900: #091133;
 $blue-800: #111b47;
-$blue-700: #344054;
+$blue-700: #222f65;
 $blue-600: #37447e;
 $blue-500: #505f98;
 $blue-400: #6f7cb2;
-$blue-300: #d0d5dd;
+$blue-300: #929ecc;
 $blue-200: #bac3e5;
 $blue-100: #e7ecff;
+
+$v2-blue-700: #344054;
+$v2-blue-300: #d0d5dd;
 
 $gray-900: #101828;
 $gray-800: #393e41;
 $gray-700: #454e54;
-$gray-600: #475467;
+$gray-600: #5d6970;
 $gray-500: #76848c;
 $gray-400: #939ea4;
 $gray-300: #b0b8bc;
 $gray-200: #cdd1d4;
-$gray-100: #f2f4f7;
+$gray-100: #e9ebec;
 $gray-50: #fbfbfd;
+
+$v2-gray-600: #475467;
+$v2-gray-100: #f2f4f7;
 
 $yellow-500: #ffd166;
 $yellow-400: #fedc8c;
@@ -56,9 +61,11 @@ $red-700: #dc2626;
 $purple-700: #6941c6;
 
 // font size
-$font-size-header-1: 60px;
+$font-size-header-1: 50px;
 $font-size-header-2: 42px;
 $font-size-header-3: 26px;
+
+$v2-font-size-header-1: 60px;
 
 $font-size-body-1: 48px;
 $font-size-body-2: 36px;
@@ -71,9 +78,11 @@ $font-size-paragraph-4: 14px;
 $font-size-paragraph-5: 12px;
 
 // line height
-$line-height-header-1: 72px;
+$line-height-header-1: 66px;
 $line-height-header-2: 60px;
 $line-height-header-3: 38px;
+
+$v2-line-height-header-1: 72px;
 
 $line-height-body-1: 48px;
 $line-height-body-2: 38px;
@@ -105,7 +114,6 @@ $space-base: 20px;
 $space-xlarge: 24px;
 $space-xxlarge: 32px;
 $space-xxxlarge: 48px;
-$space-xxxxlarge: 96px;
 $space-xxxxlarge: 96px;
 
 // radius

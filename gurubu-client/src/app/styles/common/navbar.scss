@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid $gray-100;
+  border-bottom: 1px solid $v2-gray-100;
   position: sticky;
   top: 0;
   background-color: $white;
@@ -25,7 +25,7 @@
       font-size: $font-size-paragraph-3;
       line-height: $line-height-paragraph-4;
       font-weight: $semibold;
-      color: $gray-600;
+      color: $v2-gray-600;
 
       &.--mobile {
         display: flex !important;
@@ -37,7 +37,7 @@
         font-size: $font-size-paragraph-3;
         line-height: $line-height-paragraph-4;
         font-weight: $semibold;
-        color: $gray-600;
+        color: $v2-gray-600;
         margin-top: $space-xxlarge;
       }
     }
@@ -85,7 +85,7 @@
     font-size: $font-size-paragraph-3;
     line-height: $line-height-paragraph-4;
     font-weight: $semibold;
-    color: $gray-600;
+    color: $v2-gray-600;
   }
 
   &__content {
