@@ -1,7 +1,53 @@
 .footer {
-  padding: $space-small;
-  background-color: $blue-100;
+  padding: 12px;
   width: 100%;
   margin-top: auto;
-  height: 24px;
+  padding: 24px 32px;
+  border-top: 1px solid $gray-100;
+  @include media(xl) {
+    padding: 48px 112px 63px;
+    border-top: none;
+    height: 135px;
+  }
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 21px;
+    @include media(xl) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    &__links {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: center;
+      @include media(xl) {
+        flex-direction: row;
+        gap: 32px;
+      }
+      & > a {
+        line-height: $line-height-paragraph-4;
+        color: $gray-600;
+        font-weight: $semibold;
+      }
+    }
+    &__copyright {
+      line-height: $line-height-paragraph-4;
+      color: $gray-500;
+    }
+  }
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font-family-grotest);
+    font-weight: $bold;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-paragraph-4;
+    padding-top: 21px;
+  }
 }

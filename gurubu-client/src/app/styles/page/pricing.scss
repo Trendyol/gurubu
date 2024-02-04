@@ -1,0 +1,43 @@
+.pricing {
+  gap: $space-xlarge 0;
+  display: flex;
+  margin: $space-xxxlarge 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  &__header {
+    text-align: center;
+    padding-bottom: 64px;
+    &__title {
+      line-height: $line-height-paragraph-4;
+      font-weight: $semibold;
+      color: $primary-700;
+      padding-bottom: 12px;
+    }
+    &__subtitle {
+      line-height: 44px;
+      letter-spacing: -2%;
+      font-size: $font-size-body-2;
+      font-weight: $semibold;
+      color: $gray-900-v2;
+      padding-bottom: 20px;
+    }
+    &__description {
+      line-height: $line-height-paragraph-2;
+      color: $gray-600;
+      font-size: $font-size-body-4;
+      max-width: 768px;
+    }
+  }
+  &__content {
+    border: 1px solid $gray-20;
+    border-radius: $radius-xxlarge;
+    &__header {
+      padding: 32px;
+      border-bottom: 1px solid $gray-20;
+    }
+    &__content {
+      padding: 32px;
+    }
+  }
+}
