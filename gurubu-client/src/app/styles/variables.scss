@@ -7,6 +7,9 @@ $breakpoints: (
   xl: 1200px,
 );
 
+// container's max width
+$max-width: 1280px;
+
 // colors
 $white: #ffffff;
 $body-color: $white;
@@ -18,8 +21,8 @@ $voting-card-color: linear-gradient(
   #ced3e8 101.29%
 );
 
-$primary-700: #6941C6;
-$primary-600: #7F56D9;
+$primary-700: #6941c6;
+$primary-600: #7f56d9;
 
 $title-color: #101828;
 
@@ -33,17 +36,22 @@ $blue-300: #929ecc;
 $blue-200: #bac3e5;
 $blue-100: #e7ecff;
 
+$v2-blue-700: #344054;
+$v2-blue-300: #d0d5dd;
 
-$gray-900: #141719;
+$gray-900: #101828;
 $gray-800: #393e41;
 $gray-700: #344054;
 $gray-600: #475467;
 $gray-500: #76848c;
 $gray-400: #939ea4;
-$gray-300: #D0D5DD;
+$gray-300: #d0d5dd;
 $gray-200: #cdd1d4;
 $gray-100: #e9ebec;
 $gray-50: #fbfbfd;
+
+$v2-gray-600: #475467;
+$v2-gray-100: #f2f4f7;
 
 $yellow-500: #ffd166;
 $yellow-400: #fedc8c;
@@ -51,18 +59,19 @@ $yellow-300: #fde7b3;
 $yellow-200: #fff2d2;
 $yellow-100: #fff6e0;
 
-$primary-50: #F9F5FF;
-$primary-200: #E9D7FE;
-$primary-600: #7F56D9;
-$primary-700: #6941C6;
+$primary-50: #f9f5ff;
+$primary-200: #e9d7fe;
+$primary-600: #7f56d9;
+$primary-700: #6941c6;
 
-$purple-50: #F4F3FF;
-$purple-200: #D9D6FE;
-$purple-600: #6938EF;
+$purple-50: #f4f3ff;
+$purple-200: #d9d6fe;
+$purple-600: #6938ef;
+$purple-700: #6941c6;
 
-$success-500: #17B26A;
+$success-500: #17b26a;
 
-$red-700: #DC2626;
+$red-700: #dc2626;
 
 // font size
 $font-size-header-1: 60px;
@@ -70,6 +79,8 @@ $font-size-header-2: 50px;
 $font-size-header-3: 42px;
 $font-size-header-4: 26px;
 $font-size-header-5: 24px;
+
+$v2-font-size-header-1: 60px;
 
 $font-size-body-1: 48px;
 $font-size-body-2: 36px;
@@ -87,6 +98,8 @@ $line-height-header-1: 72px;
 $line-height-header-2: 66px;
 $line-height-header-3: 60px;
 $line-height-header-4: 38px;
+
+$v2-line-height-header-1: 72px;
 
 $line-height-body-1: 48px;
 $line-height-body-2: 38px;
@@ -138,3 +151,12 @@ $radius-large: 8px;
 $radius-xlarge: 12px;
 $radius-xxlarge: 16px;
 $radius-xxxlarge: 24px;
+
+// display
+$none: none;
+$block: block;
+$inline-block: inline-block;
+$flex: flex;
+$inline-flex: inline-flex;
+$grid: grid;
+$inline-grid: inline-grid;
