@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const Testimonial = () => {
   return (
-    <section className="testimonial-section">
+    <section id="testimonials" className="testimonial-section">
       <div className="testimonial">
         <Image
           width={140}
@@ -16,14 +16,15 @@ const Testimonial = () => {
         </p>
         <div className="testimonial__owner">
           <Image
+            className="testimonial__avatar"
             src="/testimonial-avatar.png"
             width={64}
             height={64}
             alt="testmonial-avatar"
           />
-          <span className="testimonial__owner__name">Cihat Bilgiç</span>
+          <span className="testimonial__owner__name">Enes Başpınar</span>
           <span className="testimonial__owner__title">
-            Product Owner, Trendyol
+            Software Engineer, Trendyol
           </span>
         </div>
       </div>

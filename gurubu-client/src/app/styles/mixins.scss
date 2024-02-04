@@ -7,3 +7,9 @@
     @error "Breakpoint #{$breakpoint} is not defined in $breakpoints map.";
   }
 }
+
+@mixin container {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: $space-xxxxlarge $space-xxlarge;
+}
