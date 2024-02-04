@@ -2,6 +2,7 @@ import Footer from "@/components/common/footer";
 import Navbar from "@/components/common/navbar";
 import Greeting from "@/components/page/greeting";
 import Howto from "@/components/page/howto";
+import { Pricing } from "@/components/page/pricing";
 // import Testimonial from "./components/page/testimonial";
 import "@/styles/page/style.scss";
 
@@ -12,6 +13,7 @@ export default function Home() {
       <Greeting />
       <Howto />
       {/*  <Testimonial /> */}
+      <Pricing />
       <Footer />
     </main>
   );
