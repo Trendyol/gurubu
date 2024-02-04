@@ -1,4 +1,4 @@
-import { useGroomingRoom } from "../../contexts/GroomingRoomContext";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 
 const MetricAverages = () => {
   const { groomingInfo } = useGroomingRoom();

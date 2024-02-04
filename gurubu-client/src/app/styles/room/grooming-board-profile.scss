@@ -1,15 +1,47 @@
 .grooming-board-profile {
-  background: $blue-400;
-  border-radius: $radius-medium;
+
   display: flex;
+  height: 30px;
+  justify-content: center;
   align-items: center;
-  color: $gray-100;
-  padding: $space-small $space-medium;
-  justify-content: space-between;
-  gap: 0 $space-medium;
-  border: none;
-  font-size: $font-size-paragraph-3;
-  line-height: $line-height-paragraph-3;
+  padding: 0 $space-semi-medium 0 $space-semi-small;
+  border: 1px solid $purple-200;
+  border-radius: $radius-large;
+  background-color: $purple-50;
+  gap: 0 $space-semi-small;
+  cursor: pointer;
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    border: 1px solid $primary-200;
+    background-color: $primary-50;
+    border-radius: 100%;
+    color: $primary-600;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::after {
+      content: ' ';
+      background-color: $success-500;
+      width: 6px;
+      height: 6px;
+      right: -3px;
+      bottom: -2px;
+      border: 1px solid $white;
+      border-radius: 100%;
+      position: absolute;
+    }
+  }
+
+  &__text {
+    font-size: $font-size-paragraph-4;
+    color: $purple-600;
+  }
+
+  //  legacy part
   &__bar {
     top: 64px;
     right: $space-xxxlarge;
@@ -24,11 +56,13 @@
     flex-direction: column;
     z-index: 100;
   }
+
   &__nickname-label {
     font-size: $font-size-paragraph-5;
     line-height: $line-height-paragraph-5;
     color: $gray-100;
   }
+
   &__nickname-input {
     padding: $space-xsmall $space-medium;
     font-size: $font-size-paragraph-5;
@@ -38,9 +72,11 @@
     border: 1px solid $gray-400;
     border-radius: $radius-small;
   }
+
   &__nickname-input:focus {
     outline: none;
   }
+
   &__update-nickname-button {
     padding: $space-xsmall $space-medium;
     font-size: $font-size-paragraph-5;
@@ -49,12 +85,9 @@
     border: none;
     border-radius: $radius-small;
   }
+
   &__update-nickname-button:hover {
     background-color: $gray-200;
     cursor: pointer;
   }
-}
-.grooming-board-profile:hover {
-  background: $blue-300;
-  cursor: pointer;
 }

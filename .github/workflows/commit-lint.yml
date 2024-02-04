@@ -1,0 +1,21 @@
+name: Validate Commit Messages
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  validate-commit-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Validate commit messages
+        run: |
+          git log --format=%s ${{ github.event.before }}..${{ github.sha }} -- | while read -r line; do
+            if ! [[ "$line" =~ ^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test){1}(\([\w\-\.]+\))?(!)?: ([\w ])+([\s\S]*)$ ]]; then
+              echo "Invalid commit message format: $line"
+              exit 1
+            fi
+          done
