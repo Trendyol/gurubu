@@ -1,0 +1,15 @@
+{
+  "name": "gurubu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://github.com/Trendyol/gurubu/blob/main/LICENSE)",
+  "scripts": {
+    "prepare": "husky install && chmod ug+x .husky/*"
+  },
+  "author": "GuruBu OpenSource team",
+  "devDependencies": {
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
+    "husky": "^8.0.0"
+  }
+}
