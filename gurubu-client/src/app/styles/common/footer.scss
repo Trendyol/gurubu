@@ -1,7 +1,58 @@
 .footer {
-  padding: $space-small;
-  background-color: $blue-100;
+  margin: auto auto 0;
   width: 100%;
-  margin-top: auto;
-  height: 24px;
+  max-width: 1280px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 24px;
+  padding: 8px 32px 18px;
+  @include media(md) {
+    padding: 16px 32px 18px;
+    flex-direction: column;
+  }
+  @media (min-width: 1280px) {
+    padding: 16px 0 18px;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 21px;
+    @include media(md) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    &__links {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: center;
+      @include media(md) {
+        flex-direction: row;
+        gap: 32px;
+      }
+      & > a {
+        line-height: $line-height-paragraph-4;
+        color: $gray-600;
+        font-weight: $semibold;
+      }
+    }
+    &__copyright {
+      line-height: $line-height-paragraph-4;
+      color: $gray-500;
+    }
+  }
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font-family-grotest);
+    font-weight: $bold;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-paragraph-4;
+    padding-top: 21px;
+  }
 }

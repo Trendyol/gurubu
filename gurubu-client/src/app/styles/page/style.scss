@@ -4,3 +4,10 @@
 // Sections
 @import "./hero-section.scss";
 @import "./testimonial.scss";
+@import "./pricing.scss";
+
+main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

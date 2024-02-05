@@ -35,7 +35,7 @@ $blue-100: #e7ecff;
 
 $v2-blue-700: #344054;
 $v2-blue-300: #d0d5dd;
-
+$gray-900-v2: #101828;
 $gray-900: #101828;
 $gray-800: #393e41;
 $gray-700: #344054;
@@ -46,6 +46,7 @@ $gray-300: #d0d5dd;
 $gray-200: #cdd1d4;
 $gray-100: #e9ebec;
 $gray-50: #fbfbfd;
+$gray-20: #EAECF0;
 
 $v2-gray-600: #475467;
 $v2-gray-100: #f2f4f7;
@@ -58,7 +59,7 @@ $yellow-100: #fff6e0;
 
 $primary-50: #f9f5ff;
 $primary-200: #e9d7fe;
-$primary-600: #7f56d9;
+$primary-600: #7F56D9;
 $primary-700: #6941c6;
 
 $purple-50: #f4f3ff;
@@ -107,6 +108,7 @@ $line-height-paragraph-3: 26px;
 $line-height-paragraph-4: 24px;
 $line-height-paragraph-5: 18px;
 
+
 // font weight
 $thin: 100;
 $extralight: 200;
@@ -148,6 +150,11 @@ $radius-large: 8px;
 $radius-xlarge: 12px;
 $radius-xxlarge: 16px;
 $radius-xxxlarge: 24px;
+
+// box shadow
+
+$shadow-lg:  0px 12px 16px -4px #10182814;
+
 
 // display
 $none: none;
