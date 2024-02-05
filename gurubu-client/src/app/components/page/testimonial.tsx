@@ -1,6 +1,8 @@
 import Image from "next/image";
 
 const Testimonial = () => {
+  const testimonialText =
+    "Software processes don't always have to be complex. Meet with your team, score the tasks while the product manager explains their content, and plan your next sprint. No need to log in. It's that easy. I love it.";
   return (
     <section id="testimonials" className="testimonial-section">
       <div className="testimonial">
@@ -10,10 +12,7 @@ const Testimonial = () => {
           alt="grubu-logo"
           src="/gurubu-logo.svg"
         />
-        <p className="testimonial__text">
-          I was looking for an application that could quickly determine story
-          points without registration, and I finally found it.
-        </p>
+        <p className="testimonial__text">{testimonialText}</p>
         <div className="testimonial__owner">
           <Image
             className="testimonial__avatar"
