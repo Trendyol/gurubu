@@ -131,7 +131,9 @@
       @media (max-width: 576px) {
         padding: 16px;
       }
-      & > button {
+      & > a {
+        display: block;
+        text-align: center;
         line-height: $line-height-paragraph-4;
         font-weight: $semibold;
         font-size: $font-size-paragraph-3;

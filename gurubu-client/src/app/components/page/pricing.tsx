@@ -3,7 +3,7 @@ import { PRICING_ITEMS } from "./constants";
 
 export const Pricing = () => {
   return (
-    <section className="pricing">
+    <section id="pricing" className="pricing">
       <div className="pricing__wrapper">
         <div className="pricing__header">
           <h4 className="pricing__header__title">Pricing</h4>
@@ -41,7 +41,7 @@ export const Pricing = () => {
             </ul>
           </div>
           <div className="pricing__content__get-started">
-            <button>Get started</button>
+            <a href="/create/room">Get started</a>
           </div>
         </div>
       </div>
