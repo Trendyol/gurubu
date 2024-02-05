@@ -36,6 +36,10 @@ Gurubu is a tool designed to streamline task estimation grooming sessions and pr
 
 - Node.js and yarn (To manage project dependencies for the frontend and the backend)
 
+### Root Installation
+
+- Run `yarn` at the root of the project to install git hooks.
+
 ### Frontend Installation
 
 1. Clone this repository to your local machine:
