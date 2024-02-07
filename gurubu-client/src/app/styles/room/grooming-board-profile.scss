@@ -1,5 +1,4 @@
 .grooming-board-profile {
-
   display: flex;
   height: 30px;
   justify-content: center;
@@ -10,6 +9,7 @@
   background-color: $purple-50;
   gap: 0 $space-semi-small;
   cursor: pointer;
+  position: relative;
 
   &__icon {
     width: 16px;
@@ -24,7 +24,7 @@
     justify-content: center;
 
     &::after {
-      content: ' ';
+      content: " ";
       background-color: $success-500;
       width: 6px;
       height: 6px;
@@ -43,51 +43,77 @@
 
   //  legacy part
   &__bar {
-    top: 64px;
-    right: $space-xxxlarge;
+    top: 36px;
+    right: 5%;
     position: absolute;
-    background: $gray-800;
-    min-width: 240px;
-    border-radius: $radius-medium;
-    padding: $space-large;
+    background: $gray-50-v2;
+    width: 130px;
+    border: 1px solid $v2-gray-100;
+    border-radius: $radius-large;
+    padding: 4px;
     display: flex;
-    align-items: center;
     justify-content: center;
     flex-direction: column;
-    z-index: 100;
+    gap: 4px;
+    z-index: 90;
+    box-shadow: $shadow-sm;
   }
 
-  &__nickname-label {
-    font-size: $font-size-paragraph-5;
-    line-height: $line-height-paragraph-5;
-    color: $gray-100;
-  }
+  // &__nickname-label {
+  //   font-size: $font-size-paragraph-5;
+  //   line-height: $line-height-paragraph-5;
+  //   color: $gray-100;
+  // }
 
-  &__nickname-input {
-    padding: $space-xsmall $space-medium;
-    font-size: $font-size-paragraph-5;
-    line-height: $line-height-paragraph-5;
-    color: $gray-800;
-    margin: $space-xsmall 0;
-    border: 1px solid $gray-400;
-    border-radius: $radius-small;
-  }
+  // &__nickname-input {
+  //   padding: $space-xsmall $space-medium;
+  //   font-size: $font-size-paragraph-5;
+  //   line-height: $line-height-paragraph-5;
+  //   color: $gray-800;
+  //   margin: $space-xsmall 0;
+  //   border: 1px solid $gray-400;
+  //   border-radius: $radius-small;
+  // }
 
-  &__nickname-input:focus {
-    outline: none;
-  }
+  // &__nickname-input:focus {
+  //   outline: none;
+  // }
 
   &__update-nickname-button {
-    padding: $space-xsmall $space-medium;
-    font-size: $font-size-paragraph-5;
-    line-height: $line-height-paragraph-5;
-    background-color: $gray-300;
     border: none;
-    border-radius: $radius-small;
+    padding: 8px 12px;
+    border-radius: $radius-medium;
+    cursor: pointer;
+    font-weight: $semibold;
+    font-size: $font-size-paragraph-4;
+    color: $gray-500-v2;
+    background: $gray-50-v2;
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  &__leave-room-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: $radius-medium;
+    cursor: pointer;
+    font-weight: $semibold;
+    font-size: $font-size-paragraph-4;
+    color: $gray-500-v2;
+    background: $gray-50-v2;
+    transition: all 0.2s;
+    text-align: left;
   }
 
   &__update-nickname-button:hover {
-    background-color: $gray-200;
-    cursor: pointer;
+    background-color: $white;
+    color: $gray-700;
+    box-shadow: $shadow-sm;
+  }
+
+  &__leave-room-button:hover {
+    background-color: #fff4ed;
+    color: $orange-dark;
+    box-shadow: $shadow-sm;
   }
 }
