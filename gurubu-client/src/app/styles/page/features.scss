@@ -16,7 +16,7 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-        gap: $space-large;
+        
 
         @include media(md) {
             padding: 0 $space-xxxxlarge;
@@ -36,6 +36,7 @@
         }
 
         &__title {
+            margin-top: $space-large;
             color: $gray-900;
             font-size: $font-size-body-2;
             font-weight: $semibold;
@@ -43,6 +44,7 @@
         }
 
         &__subtext {
+            margin-top: $space-base;
             color: $gray-600;
             font-size: $font-size-paragraph-1;
             font-weight: $regular;
@@ -52,8 +54,9 @@
 
     .features-spotlight {
         border-radius: $radius-xlarge;
-        box-shadow: 0 0 20px 4px rgb(0 0 0 / 30%);
+        box-shadow: 0 0 $space-base 4px rgb(0 0 0 / 30%);
         border: 4px solid $gray-900;
+
         img {
             width: 100%;
             height: 100%;
@@ -69,6 +72,7 @@
         }
 
         &__score {
+            width: 100%;
             border-top: 4px solid $gray-100;
             transition: all ease .13s;
             padding: $space-large;
@@ -88,15 +92,13 @@
                 color: $gray-600;
             }
 
-            &:hover {
-                border-top: 4px solid $purple-600;
+            &:hover{
                 cursor: pointer;
             }
-
-
         }
 
         &__planning {
+            width: 100%;
             border-top: 4px solid $gray-100;
             transition: all ease .13s;
             padding: $space-large;
@@ -116,13 +118,14 @@
                 color: $gray-600;
             }
 
-            &:hover {
-                border-top: 4px solid $purple-600;
+            &:hover{
                 cursor: pointer;
             }
 
+        }
 
-
+        .active {
+            border-top: 4px solid $purple-600;
         }
 
 
