@@ -65,6 +65,11 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
       setEditVoteClicked(false);
     };
 
+    const removeUser = (data: GroomingInfo) => {
+      console.log('girdi :', data);
+      setGroomingInfo(data);
+    };
+
     const removeUser = (data: GroomingInfo, userId: string) => {
       if (userInfo.lobby.userID === userId) {
         router.push("/");
@@ -150,6 +155,14 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
   const handleEditButtonClick = () => {
     setEditVoteClicked(!editVoteClicked);
   };
+
+  const handleRemoveUser = () => {
+    setGroomingInfo({});
+    socket.emit("removeUser", roomId, userInfo.lobby.credentials);
+    router.push("/");
+  };
+
+  console.log('groomingInfo :', groomingInfo);
 
   const renderLoading = () => {
     return <div className="grooming-board__loading">Loading..</div>;
