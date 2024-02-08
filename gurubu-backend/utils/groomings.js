@@ -1,10 +1,5 @@
 const uuid = require("uuid");
-const {
-  userJoin,
-  getCurrentUser,
-  clearUser,
-  getCurrentUserWithSocket,
-} = require("../utils/users");
+const { userJoin, getCurrentUser, clearUser, getCurrentUserWithSocket } = require("../utils/users");
 
 const groomingMode = {
   0: [
@@ -159,6 +154,15 @@ const leaveUserFromGrooming = (socketID) => {
   return user.roomID;
 };
 
+const removeUserFromOngoingGrooming = (roomID, userID) => {
+  if (!groomings[roomID]) {
+    return;
+  }
+
+  delete groomings[roomID].participants[userID];
+  groomings[roomID].totalParticipants--;
+};
+
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials);
   if (!user) {
@@ -194,9 +198,7 @@ const calculateScore = (mode, participants, roomID) => {
         participants[participantKey].votes &&
         Object.keys(participants[participantKey].votes).length
       ) {
-        const storyPoint = Number(
-          participants[participantKey].votes.storyPoint
-        );
+        const storyPoint = Number(participants[participantKey].votes.storyPoint);
         if (storyPoint) {
           totalVoter++;
           totalStoryPoint += storyPoint;
@@ -224,16 +226,15 @@ const calculateScore = (mode, participants, roomID) => {
           metricAverages[metricName].missingVotes++;
         }
         if (
-          (participants[participantKey].votes &&
-            !participants[participantKey].votes[metricName]) ||
+          (participants[participantKey].votes && !participants[participantKey].votes[metricName]) ||
           !participants[participantKey].connected
         ) {
           metricAverages[metricName].missingVotes++;
         }
 
         if (
-          (participants[participantKey].votes &&
-            participants[participantKey].votes[metricName]) === "?"
+          (participants[participantKey].votes && participants[participantKey].votes[metricName]) ===
+          "?"
         ) {
           metricAverages[metricName].missingVotes++;
         }
@@ -371,9 +372,7 @@ const updateNickName = (credentials, newNickName, roomID, socket) => {
   }
 
   user.nickname = newNickName;
-  for (const [key, value] of Object.entries(
-    groomings[user.roomID].participants
-  )) {
+  for (const [key, value] of Object.entries(groomings[user.roomID].participants)) {
     if (Number(key) === user.userID) {
       groomings[user.roomID].participants[key].nickname = newNickName;
     }
@@ -394,4 +393,5 @@ module.exports = {
   resetVotes,
   cleanRoomsAndUsers,
   updateNickName,
+  removeUserFromOngoingGrooming,
 };
