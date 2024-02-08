@@ -3,8 +3,11 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import classNames from "classnames";
 import "@/styles/globals.scss";
 
-const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: '--font-space-grotesk' });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+});
 
 export const metadata: Metadata = {
   title: "Gurubu | Simple, fast and practical grooming",
@@ -19,9 +22,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/gamepad.svg" type="image/x-icon" sizes="7x10" />
+        <link rel="icon" href="/favicon.svg" type="image/x-icon" sizes="7x10" />
       </head>
-      <body className={classNames([inter.className, spaceGrotesk.variable, inter.variable])}>{children}</body>
+      <body
+        className={classNames([
+          inter.className,
+          spaceGrotesk.variable,
+          inter.variable,
+        ])}
+      >
+        {children}
+      </body>
     </html>
   );
 }
