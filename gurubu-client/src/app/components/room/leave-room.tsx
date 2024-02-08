@@ -1,4 +1,3 @@
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
@@ -11,13 +10,10 @@ type Props = {
 
 export const LeaveRoom = ({ roomId, closeModal }: Props) => {
   const socket = useSocket();
-  const router = useRouter();
-  const { userInfo, setGroomingInfo } = useGroomingRoom();
+  const { userInfo } = useGroomingRoom();
 
-  const handleRemoveUser = () => {
-    socket.emit("removeUser", roomId, userInfo.lobby.credentials);
-    setGroomingInfo({});
-    router.push("/");
+  const handleRemoveUser = async () => {
+    socket.emit("removeUser", roomId, userInfo.lobby.userID, userInfo.lobby.credentials);
   };
   return (
     <div className="leave-room">

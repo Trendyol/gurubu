@@ -60,14 +60,16 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
       setEditVoteClicked(false);
     };
 
-    const removeUser = (data: GroomingInfo) => {
-      console.log('girdi :', data);
-      setGroomingInfo(data);
+    const removeUser = (data: GroomingInfo, userId: string) => {
+      if (userInfo.lobby.userID === userId) {
+        router.push("/");
+        setGroomingInfo({});
+      } else {
+        setGroomingInfo(data);
+      }
     };
 
-    const handleUserDisconnected = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    };
+    const handleUserDisconnected = (data: GroomingInfo) => setGroomingInfo(data);
 
     const handleEncounteredError = (data: EncounteredError) => {
       if (data.id === ENCOUTERED_ERROR_TYPE.CONNECTION_ERROR) {
@@ -84,7 +86,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
     }
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
-
     if (roomStatus === ROOM_STATUS.FOUND) {
       socket.emit("joinRoom", {
         nickname,
@@ -122,6 +123,8 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
     setEditVoteClicked,
     setEncounteredError,
     setShowErrorPopup,
+    router,
+    userInfo,
   ]);
 
   const handleShowResultsClick = () => {
@@ -138,14 +141,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
   const handleEditButtonClick = () => {
     setEditVoteClicked(!editVoteClicked);
   };
-
-  const handleRemoveUser = () => {
-    setGroomingInfo({});
-    socket.emit("removeUser", roomId, userInfo.lobby.credentials);
-    router.push("/");
-  };
-
-  console.log('groomingInfo :', groomingInfo);
 
   const renderLoading = () => {
     return <div className="grooming-board__loading">Loading..</div>;
@@ -224,7 +219,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
           {!isGroomingInfoLoaded && renderLoading()}
         </>
       </section>
-      <button onClick={handleRemoveUser}>Leave Room</button>
       <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />
     </div>
   );
