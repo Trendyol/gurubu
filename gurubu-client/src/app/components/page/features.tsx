@@ -12,7 +12,7 @@ const Features = () => {
 
 
   return (
-    <section className="features-section">
+    <section id="products" className="features-section">
       <div className="features-heading">
         <div className="features-heading__pillbox">Features</div>
         <p className="features-heading__title">No registration, share the link with your teammates and get started!</p>

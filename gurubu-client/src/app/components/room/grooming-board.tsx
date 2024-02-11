@@ -93,6 +93,10 @@ const GroomingBoard = ({
       });
     }
 
+    socket.on('disconnect', (reason) => {
+      setShowErrorPopup(true);
+    });
+
     socket.on("initialize", handleInitialize);
     socket.on("voteSent", handleVoteSent);
     socket.on("showResults", handleShowResults);
