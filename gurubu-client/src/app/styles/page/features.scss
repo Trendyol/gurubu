@@ -1,0 +1,134 @@
+.features-section {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 64px;
+    margin: $space-xxxxlarge $space-xlarge;
+
+    @include media(xl) {
+        margin: $space-xxxxlarge 224px;
+    }
+
+    .features-heading {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        
+
+        @include media(md) {
+            padding: 0 $space-xxxxlarge;
+
+        }
+
+        &__pillbox {
+            display: flex;
+            padding: 4px 12px;
+            align-items: center;
+            border-radius: $radius-xlarge;
+            border: 1px solid $purple-200;
+            background-color: $purple-50;
+            color: $purple-700;
+            font-size: $font-size-paragraph-4;
+            font-weight: $medium;
+        }
+
+        &__title {
+            margin-top: $space-large;
+            color: $gray-900;
+            font-size: $font-size-body-2;
+            font-weight: $semibold;
+            line-height: 44px;
+        }
+
+        &__subtext {
+            margin-top: $space-base;
+            color: $gray-600;
+            font-size: $font-size-paragraph-1;
+            font-weight: $regular;
+            line-height: $line-height-paragraph-2;
+        }
+    }
+
+    .features-spotlight {
+        border-radius: $radius-xlarge;
+        box-shadow: 0 0 $space-base 4px rgb(0 0 0 / 30%);
+        border: 4px solid $gray-900;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .features-tabs {
+        display: flex;
+        flex-direction: column;
+
+        @include media(md) {
+            flex-direction: row;
+        }
+
+        &__score {
+            width: 100%;
+            border-top: 4px solid $gray-100;
+            transition: all ease .13s;
+            padding: $space-large;
+            text-align: center;
+
+            .title {
+                font-size: $font-size-paragraph-2;
+                line-height: $line-height-paragraph-2;
+                font-weight: $semibold;
+                color: $gray-900;
+            }
+
+            .description {
+                font-size: $font-size-paragraph-3;
+                line-height: $line-height-paragraph-4;
+                font-weight: $regular;
+                color: $gray-600;
+            }
+
+            &:hover{
+                cursor: pointer;
+            }
+        }
+
+        &__planning {
+            width: 100%;
+            border-top: 4px solid $gray-100;
+            transition: all ease .13s;
+            padding: $space-large;
+            text-align: center;
+
+            .title {
+                font-size: $font-size-paragraph-2;
+                line-height: $line-height-paragraph-2;
+                font-weight: $semibold;
+                color: $gray-900;
+            }
+
+            .description {
+                font-size: $font-size-paragraph-3;
+                line-height: $line-height-paragraph-4;
+                font-weight: $regular;
+                color: $gray-600;
+            }
+
+            &:hover{
+                cursor: pointer;
+            }
+
+        }
+
+        .active {
+            border-top: 4px solid $purple-600;
+        }
+
+
+    }
+
+}
