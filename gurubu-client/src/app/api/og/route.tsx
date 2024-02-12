@@ -2,11 +2,6 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-export const sizes = {
-  width: 1200,
-  height: 630,
-};
-
 export async function GET(request: Request) {
   try {
     return new ImageResponse(
