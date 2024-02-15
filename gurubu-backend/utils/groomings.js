@@ -58,7 +58,7 @@ const rooms = [];
 const groomings = {};
 
 const handleErrors = (errorFunctionName, roomID, socket) => {
-  console.log("A user encountered with error from:", errorFunctionName);
+  console.log("A user encountered with error from:", errorFunctionName, roomID, rooms, groomings);
   if (!rooms.includes(roomID)) {
     return socket.emit("encounteredError", {
       id: 1,
