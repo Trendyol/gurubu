@@ -16,6 +16,7 @@ import { ROOM_STATUS } from "../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE } from "@/shared/enums";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
+import { MetricToggleTooltip } from "../metricToggle/metricToggleTooltip";
 
 interface IProps {
   roomId: string;
@@ -30,6 +31,10 @@ const GroomingBoard = ({
 }: IProps) => {
   const socket = useSocket();
   const [editVoteClicked, setEditVoteClicked] = useState(false);
+  const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
+  const toggleTooltipHover = (metricId?: number | null) => {
+    setHoveredMetric(metricId ?? null);
+  };
   const {
     userInfo,
     setGroomingInfo,
@@ -231,8 +236,19 @@ const GroomingBoard = ({
           {isGroomingInfoLoaded && (
             <>
               <ul className="grooming-board__metrics">
+                <div className="grooming-board__participants-text">
+                <span>Participants</span></div>
                 {groomingInfo.metrics?.map((metric) => (
-                  <li key={metric.id}>{metric.displayName}</li>
+                  <li
+                    key={metric.id}
+                    onMouseEnter={() => toggleTooltipHover(metric.id)}
+                    onMouseLeave={() => toggleTooltipHover(null)}
+                  >
+                    {metric.displayName}
+                    {hoveredMetric === metric.id && (
+                      <MetricToggleTooltip text={metric.text} />
+                    )}
+                  </li>
                 ))}
               </ul>
               <GroomingBoardParticipants />
