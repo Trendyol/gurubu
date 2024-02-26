@@ -180,6 +180,7 @@ const GroomingBoard = ({
                   id={metric.id}
                   points={metric.points}
                   name={metric.name}
+                  displayName={metric.displayName}
                 />
               ))}
             </div>
@@ -217,6 +218,9 @@ const GroomingBoard = ({
               onClick={handleShowResultsClick}
             >
               Show Results
+              {!groomingInfo.isResultShown && (
+                <Image priority src="/right-arrow.svg" alt="right-arrow" width={20} height={20} />
+              )}
             </button>
           </div>
         )}
@@ -228,7 +232,7 @@ const GroomingBoard = ({
             <>
               <ul className="grooming-board__metrics">
                 {groomingInfo.metrics?.map((metric) => (
-                  <li key={metric.id}>{metric.name}</li>
+                  <li key={metric.id}>{metric.displayName}</li>
                 ))}
               </ul>
               <GroomingBoardParticipants />
