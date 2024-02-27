@@ -75,9 +75,8 @@ const GroomingBoardParticipants = () => {
                 const hasParticipantVoted = !!participantVote;
 
                 return (
-                  <div>
+                  <div key={metric.id}>
                     <div
-                      key={metric.id}
                       className={classNames(
                         "grooming-board-participants__point-card",
                         {
