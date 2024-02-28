@@ -68,7 +68,7 @@ const GroomingBoardParticipants = () => {
             <div className="grooming-board-participants__point-cards-container">
               {groomingInfo.metrics.map((metric) => {
                 const participantVote =
-                  participant.votes && participant.votes[metric.name];
+                  votes && votes[metric.name];
                 const hasParticipantVoted = !!participantVote;
 
                 return (
