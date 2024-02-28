@@ -61,7 +61,7 @@ const GroomingBoardParticipants = () => {
                   "connection-lost": !hasSockets,
                 })}
               >
-                {participant.nickname}
+                {nickname}
               </label>
             </div>
 
