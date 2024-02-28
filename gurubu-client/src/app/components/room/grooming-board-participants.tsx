@@ -12,12 +12,9 @@ const GroomingBoardParticipants = () => {
   return (
     <ul className="grooming-board-participants">
       {groomingInfoParticipants.map((participantKey) => {
-        const participant = groomingInfo.participants[participantKey];
-        const isAdmin = participant.isAdmin;
-        const hasSockets = participant.sockets.length > 0;
-        const hasMaxVotes =
-          Object.keys(participant.votes || {}).length ===
-          PARTICIPANT_VOTES_COUNT.MAX_VOTE;
+        const { isAdmin, sockets, votes, nickname } = groomingInfo.participants[participantKey];
+        const hasSockets = sockets.length > 0;
+        const hasMaxVotes = Object.keys(votes || {}).length === PARTICIPANT_VOTES_COUNT.MAX_VOTE;
         const isResultShown = groomingInfo.isResultShown;
 
         return (
