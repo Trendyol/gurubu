@@ -22,6 +22,7 @@ const groomingMode = {
       displayName: "Development Ease",
       weight: 20,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Complexity and time taken by the developer when preparing a product at the time of development. 1 - very complex, 5 - not that complex",
     },
     {
       id: 2,
@@ -29,6 +30,7 @@ const groomingMode = {
       displayName: "Customer Effect",
       weight: 10,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Impact on the customer 1 - very bad, 5 - very good",
     },
     {
       id: 3,
@@ -36,6 +38,7 @@ const groomingMode = {
       displayName: "Performance",
       weight: 30,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Contribution to performance 1 - very bad, 5 - very good",
     },
     {
       id: 4,
@@ -43,6 +46,7 @@ const groomingMode = {
       displayName: "Security",
       weight: 10,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Impact on web security 1 - very bad, 5 - very good",
     },
     {
       id: 5,
@@ -50,6 +54,7 @@ const groomingMode = {
       displayName: "Maintenance",
       weight: 25,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "How developer-friendly the post-development process is (after the product is released) 1 - very bad, 5 - very good",
     },
     {
       id: 6,
@@ -57,6 +62,7 @@ const groomingMode = {
       displayName: "Story Point",
       weight: 0,
       points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      text: "Story point of task",
     },
   ],
 };

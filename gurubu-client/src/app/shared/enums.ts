@@ -12,3 +12,8 @@ export enum GroomingType {
   PlanningPoker = "PlanningPoker",
   ScoreGrooming = "ScoreGrooming",
 }
+
+export enum PARTICIPANT_VOTES_COUNT
+{
+  MAX_VOTE = 6
+} 

@@ -1,76 +1,102 @@
 import classNames from "classnames";
 import { Fragment } from "react";
-import { IconCheck, IconChessRookFilled, IconPlugX } from "@tabler/icons-react";
+import { IconCheck } from "@tabler/icons-react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import Image from "next/image";
+import { PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
 
 const GroomingBoardParticipants = () => {
   const { groomingInfo } = useGroomingRoom();
+  const groomingInfoParticipants = Object.keys(groomingInfo.participants || {});
+
   return (
     <ul className="grooming-board-participants">
-      {Object.keys(groomingInfo.participants || {}).map((participantKey) => (
-        <li key={participantKey}>
-          <div className="grooming-board-participants__nickname-container">
-            <label
-              className={classNames("grooming-board-participants__nickname", {
-                "connection-lost":
-                  !groomingInfo.participants[participantKey].sockets.length,
-              })}
-            >
-              {groomingInfo.participants[participantKey].nickname}
-            </label>
-            {!groomingInfo.participants[participantKey].sockets.length && (
-              <IconPlugX
-                className="grooming-board-participants__icon-plug"
-                width={16}
-              />
-            )}
-            {groomingInfo.participants[participantKey].isAdmin && (
-              <IconChessRookFilled
-                className="grooming-board-participants__icon-crown"
-                width={16}
-              />
-            )}
-          </div>
-          <div className="grooming-board-participants__point-cards-container">
-            {groomingInfo.metrics.map((metric) => (
-              <Fragment key={metric.id}>
-                {groomingInfo.participants[participantKey].votes && (
-                  <div
-                    key={metric.id}
-                    className="grooming-board-participants__point-card"
-                  >
-                    {groomingInfo.isResultShown && (
-                      <p>
+      {groomingInfoParticipants.map((participantKey) => {
+        const { isAdmin, sockets, votes, nickname } = groomingInfo.participants[participantKey];
+        const hasSockets = sockets.length > 0;
+        const hasMaxVotes = Object.keys(votes || {}).length === PARTICIPANT_VOTES_COUNT.MAX_VOTE;
+        const isResultShown = groomingInfo.isResultShown;
+
+        return (
+          <li key={participantKey}>
+            <div className="grooming-board-participants__nickname-container">
+              {isAdmin && (
+                <Image
+                  src="/admin.svg"
+                  width={16}
+                  height={16}
+                  alt="Admin Logo"
+                  priority
+                />
+              )}
+              {!hasSockets && (
+                <Image
+                  src="/wifi-off.svg"
+                  width={14.26}
+                  height={12}
+                  alt="Wifi Off Logo"
+                  priority
+                />
+              )}
+              {hasSockets && !isAdmin && (
+                <div
+                  className={classNames(
+                    "grooming-board-participants__point-card",
+                    {
+                      "grooming-board-participants__all-metrics-voted":
+                        hasMaxVotes,
+                    }
+                  )}
+                >
+                  {hasMaxVotes && (
+                    <div className="grooming-board-participants__check-icon-container">
+                      <IconCheck width={13} color="white" />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <label
+                className={classNames("grooming-board-participants__nickname", {
+                  "connection-lost": !hasSockets,
+                })}
+              >
+                {nickname}
+              </label>
+            </div>
+
+            <div className="grooming-board-participants__point-cards-container">
+              {groomingInfo.metrics.map((metric) => {
+                const participantVote =
+                  votes && votes[metric.name];
+                const hasParticipantVoted = !!participantVote;
+
+                return (
+                  <div key={metric.id}>
+                    <div
+                      className={classNames(
+                        "grooming-board-participants__point-card",
                         {
-                          groomingInfo.participants[participantKey].votes[
-                            metric.name
-                          ]
+                          "grooming-board-participants__metric-voted":
+                            hasParticipantVoted,
+                          show: isResultShown,
                         }
-                      </p>
-                    )}
-                    {!groomingInfo.isResultShown &&
-                      groomingInfo.participants[participantKey].votes[
-                        metric.name
-                      ] && (
+                      )}
+                    >
+                      {!isResultShown && (
                         <div className="grooming-board-participants__check-icon-container">
-                          <IconCheck width={16} />
+                          <IconCheck width={16} color="white" />
                         </div>
                       )}
+                    </div>
+                    {isResultShown && <p>{participantVote}</p>}
                   </div>
-                )}
-                {!groomingInfo.participants[participantKey].votes && (
-                  <div
-                    key={metric.id}
-                    className="grooming-board-participants__point-card"
-                  >
-                    <p></p>
-                  </div>
-                )}
-              </Fragment>
-            ))}
-          </div>
-        </li>
-      ))}
+                );
+              })}
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 };

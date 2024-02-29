@@ -4,26 +4,28 @@
   flex-direction: column;
   gap: $space-small 0;
   max-height: 80%;
-  overflow-y: scroll;
   li {
     width: 100%;
-    border: 1px solid $gray-100;
-    padding: $space-xsmall $space-large;
+    border-top: 1px solid $gray-100;
     border-radius: $radius-small;
+    gap: 16px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     label {
       font-size: $font-size-paragraph-4;
       line-height: $line-height-paragraph-4;
       font-weight: $regular;
       max-width: 100px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
   &__nickname-container {
     display: flex;
+    min-width: 140px;
+   padding: 12px 14px;
     align-items: center;
-    justify-content: center;
     gap: 0 $space-medium;
   }
   &__nickname {
@@ -40,7 +42,8 @@
   &__point-cards-container {
     display: flex;
     gap: 0 $space-large;
-    justify-content: flex-end;
+    width: 100%;
+    justify-content: space-around;
   }
   &__point-card {
     border-radius: 50%;
@@ -48,22 +51,25 @@
     line-height: $line-height-paragraph-4;
     font-weight: $regular;
     text-align: right;
-    width: 24px;
-    height: 24px;
-    padding: $space-small 0;
-    border: 1px solid $gray-100;
+    width: 20px;
+    height: 20px;
     display: flex;
-    background: $voting-card-color;
+    background: $white;
+    border: 1px solid $gray-100;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
-      0 4px 6px -4px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-      var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-    color: $gray-500;
+  }
+  &__metric-voted {
+     background-color: #85E13A;
+     border: 1px solid #4CA30D;
+  }
+  &__all-metrics-voted {
+     background-color: $primary-600;
+     border: 1px solid $primary-600;
+     width: 20px;
+     height: 20px;
+
   }
   &__check-icon-container {
     display: flex;
@@ -71,4 +77,8 @@
     justify-content: center;
     color: green;
   }
+}
+
+.grooming-board-participants__point-card.show {
+  display: none;
 }

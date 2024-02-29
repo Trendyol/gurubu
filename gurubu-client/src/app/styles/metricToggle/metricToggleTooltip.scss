@@ -1,0 +1,31 @@
+.toggle-tooltip {
+  display: none;
+  height: auto;
+  width: 184px;
+  background-color: #101828;
+  position: absolute;
+  bottom: 44px;
+  left: -52px;
+  border-radius: 8px;
+
+  div {
+    color: #FFFF;
+    font-size: 12px ;
+    line-height: 18px ;
+    font-weight: 600 ;
+    padding: 8px 12px;
+  }
+  &::after {
+    position: absolute;
+    border: 1px solid #101828;
+    bottom: -3px;
+    left: calc(50% - 10px);
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    padding: 6px;
+    content: '';
+    transform: rotate(-135deg);
+    background-color: #101828;
+}
+
+}
