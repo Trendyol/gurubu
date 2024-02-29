@@ -13,6 +13,7 @@ const groomingMode = {
       name: "storyPoint",
       displayName: "Story Point",
       points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      text: "Story point of task",
     },
   ],
   1: [

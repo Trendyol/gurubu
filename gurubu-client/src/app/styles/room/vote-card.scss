@@ -85,6 +85,15 @@
     }
   }
 
+  &.story-point-card {
+    &:hover{
+      background-color: #F2F4F7;
+    }
+    &.selected {
+      background: #D0D5DD;
+    }
+  }
+
   .vote-point-text {
     font-size: $font-size-paragraph-4;
     font-weight: $semibold;

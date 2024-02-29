@@ -2,7 +2,6 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: $space-small 0;
   max-height: 80%;
   li {
     width: 100%;
@@ -24,13 +23,16 @@
   &__nickname-container {
     display: flex;
     min-width: 140px;
-   padding: 12px 14px;
+    padding: 10px 14px;
     align-items: center;
     gap: 0 $space-medium;
   }
   &__nickname {
     &.connection-lost {
       color: red;
+    }
+    &.additional-space {
+      margin-left: 26px;
     }
   }
   &__icon-plug {
