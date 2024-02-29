@@ -9,10 +9,10 @@
   border-radius: 8px;
 
   div {
-    color: #FFFF;
-    font-size: 12px ;
-    line-height: 18px ;
-    font-weight: 600 ;
+    color: #ffff;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
     padding: 8px 12px;
   }
   &::after {
@@ -23,9 +23,8 @@
     border-width: 0 1px 1px 0;
     display: inline-block;
     padding: 6px;
-    content: '';
+    content: "";
     transform: rotate(-135deg);
     background-color: #101828;
-}
-
+  }
 }

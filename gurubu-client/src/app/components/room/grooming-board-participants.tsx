@@ -1,9 +1,8 @@
 import classNames from "classnames";
-import { Fragment } from "react";
 import { IconCheck } from "@tabler/icons-react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import Image from "next/image";
-import { PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
+import { GroomingMode, PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
 
 const GroomingBoardParticipants = () => {
   const { groomingInfo } = useGroomingRoom();
@@ -16,6 +15,7 @@ const GroomingBoardParticipants = () => {
         const hasSockets = sockets.length > 0;
         const hasMaxVotes = Object.keys(votes || {}).length === PARTICIPANT_VOTES_COUNT.MAX_VOTE;
         const isResultShown = groomingInfo.isResultShown;
+        const isPlanningPokerMode = groomingInfo.mode === GroomingMode.PlanningPoker;
 
         return (
           <li key={participantKey}>
@@ -38,7 +38,7 @@ const GroomingBoardParticipants = () => {
                   priority
                 />
               )}
-              {hasSockets && !isAdmin && (
+              {hasSockets && !isAdmin && !isPlanningPokerMode && (
                 <div
                   className={classNames(
                     "grooming-board-participants__point-card",
@@ -59,6 +59,7 @@ const GroomingBoardParticipants = () => {
               <label
                 className={classNames("grooming-board-participants__nickname", {
                   "connection-lost": !hasSockets,
+                  "additional-space": hasSockets && isPlanningPokerMode && !isAdmin
                 })}
               >
                 {nickname}
