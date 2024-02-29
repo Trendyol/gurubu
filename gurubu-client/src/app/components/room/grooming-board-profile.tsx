@@ -1,46 +1,42 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
-import { useSocket } from "@/contexts/SocketContext";
+import { Modal } from "@/components/common/modal";
+import { ChangeNameForm } from "@/components/room/change-name";
+import { LeaveRoom } from "./leave-room";
 
-const GroomingBoardProfile = () => {
-  const socket = useSocket();
-  const { userInfo, setUserinfo } = useGroomingRoom();
-  const [newNickname, setNewNickname] = useState(userInfo.nickname);
+type Props = {
+  roomId: string;
+};
+
+type ModalType = "changeName" | "leaveRoom" | null;
+
+const GroomingBoardProfile = ({ roomId }: Props) => {
+  const { userInfo } = useGroomingRoom();
   const [showProfileBar, setShowProfileBar] = useState(false);
+  const [selectedModal, setSelectedModal] = useState<ModalType>(null);
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const openModal = (modalType: ModalType) => {
+    setModalOpen(true);
+    setSelectedModal(modalType);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setShowProfileBar(false);
+  };
 
   const handleClick = () => {
     setShowProfileBar(!showProfileBar);
   };
 
-  const handleNicknameInputChange = (e: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    if (e.target.value.length < 17) {
-      setNewNickname((e.target.value as string).trim());
-    }
-  };
-
-  const handleUpdateNicknameButtonClick = () => {
-    if (newNickname.trim()) {
-      socket.emit("updateNickName", userInfo.lobby.roomID, newNickname, userInfo.lobby.credentials);
-      setUserinfo({ ...userInfo, nickname: newNickname.trim() });
-      localStorage.setItem("nickname", newNickname.trim());
-    }
-  };
-
   useEffect(() => {
     const handleDocumentClick = (event: any) => {
-      const groomingBoardProfileBarElement = document.getElementById(
-        "grooming-board-profile__bar"
-      );
-      const groomingBoardProfileElement = document.getElementById(
-        "grooming-board-profile"
-      );
-      if (
-        groomingBoardProfileElement &&
-        groomingBoardProfileElement.contains(event.target)
-      ) {
+      const groomingBoardProfileElement = document.getElementById("grooming-board-profile");
+      const groomingBoardProfileBarElement = document.getElementById("grooming-board-profile__bar");
+      if (groomingBoardProfileElement && groomingBoardProfileElement.contains(event.target)) {
         return;
       }
       if (
@@ -60,41 +56,34 @@ const GroomingBoardProfile = () => {
 
   return (
     <>
-      <button
-        className="grooming-board-profile"
-        id="grooming-board-profile"
-        onClick={handleClick}
-      >
+      <div className="grooming-board-profile" id="grooming-board-profile" onClick={handleClick}>
         <div className="grooming-board-profile__icon">
           <Image src="/icon-user.svg" width={10} height={10} alt="User information" />
         </div>
         <p className="grooming-board-profile__text">{userInfo.nickname}</p>
-      </button>
-      {showProfileBar && (
-        <div
-          className="grooming-board-profile__bar"
-          id="grooming-board-profile__bar"
-        >
-          <label
-            htmlFor="profile-nickname-input"
-            className="grooming-board-profile__nickname-label"
-          >
-            Nickname
-          </label>
-          <input
-            id="profile-nickname-input"
-            className="grooming-board-profile__nickname-input"
-            onChange={handleNicknameInputChange}
-            value={newNickname}
-          ></input>
-          <button
-            className="grooming-board-profile__update-nickname-button"
-            onClick={handleUpdateNicknameButtonClick}
-          >
-            Update Your Nickname
-          </button>
-        </div>
-      )}
+
+        {showProfileBar && (
+          <div className="grooming-board-profile__bar" id="grooming-board-profile__bar">
+            <button
+              className="grooming-board-profile__update-nickname-button"
+              onClick={() => openModal("changeName")}>
+              Change name
+            </button>
+            <button
+              className="grooming-board-profile__leave-room-button"
+              onClick={() => openModal("leaveRoom")}>
+              Leave Room
+            </button>
+          </div>
+        )}
+      </div>
+      <Modal isOpen={modalOpen} onClose={closeModal}>
+        {selectedModal === "changeName" ? (
+          <ChangeNameForm closeModal={closeModal} />
+        ) : (
+          <LeaveRoom roomId={roomId} closeModal={closeModal} />
+        )}
+      </Modal>
     </>
   );
 };

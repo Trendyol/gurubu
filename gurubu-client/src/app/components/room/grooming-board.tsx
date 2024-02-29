@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import classNames from "classnames";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
-import {
-  checkUserJoinedLobbyBefore,
-  getCurrentLobby,
-} from "@/shared/helpers/lobbyStorage";
+import { checkUserJoinedLobbyBefore, getCurrentLobby } from "@/shared/helpers/lobbyStorage";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import VotingStick from "./voting-stick";
 import MetricAverages from "./metric-averages";
@@ -24,12 +22,9 @@ interface IProps {
   setShowNickNameForm: (value: boolean) => void;
 }
 
-const GroomingBoard = ({
-  roomId,
-  showNickNameForm,
-  setShowNickNameForm,
-}: IProps) => {
+const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps) => {
   const socket = useSocket();
+  const router = useRouter();
   const [editVoteClicked, setEditVoteClicked] = useState(false);
   const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
   const toggleTooltipHover = (metricId?: number | null) => {
@@ -70,16 +65,23 @@ const GroomingBoard = ({
       setEditVoteClicked(false);
     };
 
-    const handleUserDisconnected = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    }
+    const removeUser = (data: GroomingInfo, userId: string) => {
+      if (userInfo.lobby.userID === userId) {
+        router.push("/");
+        setGroomingInfo({});
+      } else {
+        setGroomingInfo(data);
+      }
+    };
+
+    const handleUserDisconnected = (data: GroomingInfo) => setGroomingInfo(data);
 
     const handleEncounteredError = (data: EncounteredError) => {
-      if(data.id === ENCOUTERED_ERROR_TYPE.CONNECTION_ERROR){
+      if (data.id === ENCOUTERED_ERROR_TYPE.CONNECTION_ERROR) {
         setShowErrorPopup(true);
       }
       setEncounteredError(data);
-    }
+    };
 
     if (!checkUserJoinedLobbyBefore(roomId)) {
       if (roomStatus === ROOM_STATUS.FOUND) {
@@ -89,7 +91,6 @@ const GroomingBoard = ({
     }
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
-
     if (roomStatus === ROOM_STATUS.FOUND) {
       socket.emit("joinRoom", {
         nickname,
@@ -108,7 +109,8 @@ const GroomingBoard = ({
     socket.on("updateNickName", handleUpdateNickName);
     socket.on("resetVotes", handleResetVotes);
     socket.on("userDisconnected", handleUserDisconnected);
-    socket.on("encounteredError", handleEncounteredError)
+    socket.on("encounteredError", handleEncounteredError);
+    socket.on("removeUser", removeUser);
 
     return () => {
       socket.off("initialize", handleInitialize);
@@ -117,7 +119,8 @@ const GroomingBoard = ({
       socket.off("updateNickName", handleUpdateNickName);
       socket.off("resetVotes", handleResetVotes);
       socket.off("userDisconnected", handleUserDisconnected);
-      socket.off("encounteredError", handleEncounteredError)
+      socket.off("encounteredError", handleEncounteredError);
+      socket.off("removeUser", removeUser);
     };
   }, [
     roomStatus,
@@ -128,9 +131,10 @@ const GroomingBoard = ({
     setGroomingInfo,
     setEditVoteClicked,
     setEncounteredError,
-    setShowErrorPopup
+    setShowErrorPopup,
+    router,
+    userInfo,
   ]);
-
 
   const handleShowResultsClick = () => {
     if (groomingInfo.isResultShown) {
@@ -155,7 +159,7 @@ const GroomingBoard = ({
     return null;
   }
 
-  if(encounteredError.id === ENCOUTERED_ERROR_TYPE.ROOM_EXPIRED){
+  if (encounteredError.id === ENCOUTERED_ERROR_TYPE.ROOM_EXPIRED) {
     notFound();
   }
 
@@ -197,31 +201,22 @@ const GroomingBoard = ({
               className={classNames("grooming-board__edit-vote-toggle-button", {
                 clicked: editVoteClicked,
               })}
-              onClick={handleEditButtonClick}
-            >
+              onClick={handleEditButtonClick}>
               {editVoteClicked ? "Back to Results" : "Edit Vote"}
-              {editVoteClicked ? (
-                <IconReportAnalytics width={16} />
-              ) : (
-                <IconEdit width={16} />
-              )}
+              {editVoteClicked ? <IconReportAnalytics width={16} /> : <IconEdit width={16} />}
             </button>
           </div>
         )}
         {userInfo.lobby?.isAdmin && isGroomingInfoLoaded && (
           <div className="grooming-board__actions-wrapper">
-            <button
-              className="grooming-board__reset-votes-button"
-              onClick={handleResetVotesClick}
-            >
+            <button className="grooming-board__reset-votes-button" onClick={handleResetVotesClick}>
               Reset Votes
             </button>
             <button
               className={classNames("grooming-board__show-result-button", {
                 disabled: groomingInfo.isResultShown,
               })}
-              onClick={handleShowResultsClick}
-            >
+              onClick={handleShowResultsClick}>
               Show Results
               {!groomingInfo.isResultShown && (
                 <Image priority src="/right-arrow.svg" alt="right-arrow" width={20} height={20} />
@@ -257,7 +252,7 @@ const GroomingBoard = ({
           {!isGroomingInfoLoaded && renderLoading()}
         </>
       </section>
-      <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId}/>
+      <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />
     </div>
   );
 };

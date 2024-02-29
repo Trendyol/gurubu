@@ -48,7 +48,11 @@ $blue-100: #e7ecff;
 
 $v2-blue-700: #344054;
 $v2-blue-300: #d0d5dd;
+
 $gray-900-v2: #101828;
+$gray-500-v2: #667085;
+$gray-50-v2: #f9fafb;
+
 $gray-900: #101828;
 $gray-800: #393e41;
 $gray-700: #344054;
@@ -59,7 +63,7 @@ $gray-300: #d0d5dd;
 $gray-200: #cdd1d4;
 $gray-100: #e9ebec;
 $gray-50: #fbfbfd;
-$gray-20: #EAECF0;
+$gray-20: #eaecf0;
 
 $v2-gray-600: #475467;
 $v2-gray-100: #f2f4f7;
@@ -72,7 +76,7 @@ $yellow-100: #fff6e0;
 
 $primary-50: #f9f5ff;
 $primary-200: #e9d7fe;
-$primary-600: #7F56D9;
+$primary-600: #7f56d9;
 $primary-700: #6941c6;
 
 $purple-50: #f4f3ff;
@@ -84,6 +88,12 @@ $purple-700: #6941c6;
 $success-500: #17b26a;
 
 $red-700: #dc2626;
+$red-600: #D92D20;
+$red-100: #FEE4E2;
+$red-50: #FEF3F2;
+
+$orange-dark: #ff4405;
+$orange-light:  #FFF4ED;
 
 // font size
 $font-size-header-1: 60px;
@@ -110,6 +120,7 @@ $line-height-header-1: 72px;
 $line-height-header-2: 66px;
 $line-height-header-3: 60px;
 $line-height-header-4: 38px;
+$line-height-header-5: 20px;
 
 $v2-line-height-header-1: 72px;
 
@@ -121,7 +132,6 @@ $line-height-paragraph-2: 30px;
 $line-height-paragraph-3: 26px;
 $line-height-paragraph-4: 24px;
 $line-height-paragraph-5: 18px;
-
 
 // font weight
 $thin: 100;
@@ -167,8 +177,8 @@ $radius-xxxlarge: 24px;
 
 // box shadow
 
-$shadow-lg:  0px 12px 16px -4px #10182814;
-
+$shadow-lg: 0px 12px 16px -4px #10182814;
+$shadow-sm: 0px 1px 3px 0px #1018281a;
 
 // display
 $none: none;
