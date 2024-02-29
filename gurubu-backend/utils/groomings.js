@@ -168,15 +168,6 @@ const leaveUserFromGrooming = (socketID) => {
   return user.roomID;
 };
 
-const removeUserFromOngoingGrooming = (roomID, userID) => {
-  if (!groomings[roomID]) {
-    return;
-  }
-
-  delete groomings[roomID].participants[userID];
-  groomings[roomID].totalParticipants--;
-};
-
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials);
   if (!user) {
@@ -407,5 +398,4 @@ module.exports = {
   resetVotes,
   cleanRoomsAndUsers,
   updateNickName,
-  removeUserFromOngoingGrooming,
 };

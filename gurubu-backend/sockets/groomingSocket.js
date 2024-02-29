@@ -6,7 +6,7 @@ const {
   getResults,
   resetVotes,
   updateNickName,
-  removeUserFromOngoingGrooming,
+  removeUserFromGrooming,
 } = require("../utils/groomings");
 
 module.exports = (io) => {
@@ -58,15 +58,9 @@ module.exports = (io) => {
       }
     });
 
-    socket.on("removeUser", (roomID, userID, credentials) => {
-      // joinRoomMiddleware(socket, roomID, credentials);
-
-      const isUserPermanentlyLeave = userLeave(socket.id);
-
-      removeUserFromOngoingGrooming(roomID, userID);
-      if (isUserPermanentlyLeave) {
-        io.to(roomID).emit("removeUser", getGrooming(roomID), userID);
-      }
+    socket.on("removeUser", (roomID, userID) => {
+      console.log(`${nickname} exit room ${roomID}`);
+      io.to(roomID).emit("removeUser", getGrooming(roomID), userID);
     });
   });
 };
