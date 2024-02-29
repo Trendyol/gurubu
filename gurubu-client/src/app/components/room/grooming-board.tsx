@@ -65,10 +65,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
       setEditVoteClicked(false);
     };
 
-    const removeUser = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    };
-
     const removeUser = (data: GroomingInfo, userId: string) => {
       if (userInfo.lobby.userID === userId) {
         router.push("/");
@@ -153,12 +149,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
 
   const handleEditButtonClick = () => {
     setEditVoteClicked(!editVoteClicked);
-  };
-
-  const handleRemoveUser = () => {
-    setGroomingInfo({});
-    socket.emit("removeUser", roomId, userInfo.lobby.credentials);
-    router.push("/");
   };
 
   const renderLoading = () => {
