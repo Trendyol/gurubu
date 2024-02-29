@@ -66,7 +66,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
     };
 
     const removeUser = (data: GroomingInfo) => {
-      console.log('girdi :', data);
       setGroomingInfo(data);
     };
 
@@ -161,8 +160,6 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
     socket.emit("removeUser", roomId, userInfo.lobby.credentials);
     router.push("/");
   };
-
-  console.log('groomingInfo :', groomingInfo);
 
   const renderLoading = () => {
     return <div className="grooming-board__loading">Loading..</div>;
