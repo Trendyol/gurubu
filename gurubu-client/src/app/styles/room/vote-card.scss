@@ -1,23 +1,103 @@
 .vote-card {
-  margin: 10px;
-  width: 30px;
-  height: 45px;
-  border: 1px solid $gray-100;
+  width: 40px;
+  height: 40px;
   display: flex;
-  background: $voting-card-color;
+  border-color: $gray-300;
+  border-width: 1px;
+  border-style: solid hidden solid solid;
   align-items: center;
+  background-color: $white;
   justify-content: center;
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
-    0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  color: $gray-500;
-  border-radius: $radius-medium;
   cursor: pointer;
-  &.selected {
-    background: $yellow-500;
-    color: $blue-900;
+
+  &:first-child{
+    border-radius: $radius-large 0px 0px $radius-large;
+    &:hover {
+      background-color: $dark-orange-300;
+    }
+    &.selected {
+      background: $dark-orange-400;
+    }
+  }    
+
+  &:nth-child(2){
+    &:hover {
+      background: $dark-orange-200;
+    }
+    &.selected {
+      background: $dark-orange-300;
+    }
+  }
+
+  &:nth-child(3){
+    &:hover {
+      background: $yellow-100-v2;
+    }
+    &.selected {
+      background: $yellow-200-v2;
+    }
+  }
+
+  &:nth-child(4){
+    &:hover {
+      background: $green-light-50;
+    }
+    &.selected {
+      background: $green-light-100;
+    }
+  }
+  &:nth-child(5){
+    &:hover {
+      background:  $green-light-100;
+    }
+    &.selected {
+      background: $green-light-200;
+    }
+  }
+
+  
+  &:nth-child(6){
+    &:hover {
+      background: $dark-orange-400;
+    }
+    &.selected {
+      background: $dark-orange-500;
+    }
+  }
+
+  &:nth-child(7){
+    &:hover {
+      background: $dark-orange-500;
+    }
+    &.selected {
+      background: $dark-orange-600;
+    }
+  }
+
+  &:last-child{
+    &:hover {
+      background: $light-blue-100;
+    }
+    border-right-style: solid;
+    border-radius: 0px $radius-large $radius-large 0px;
+    &.selected {
+      background: $light-blue-200;
+    }
+  }
+
+  &.story-point-card {
+    &:hover{
+      background-color: #F2F4F7;
+    }
+    &.selected {
+      background: #D0D5DD;
+    }
+  }
+
+  .vote-point-text {
+    font-size: $font-size-paragraph-4;
+    font-weight: $semibold;
+    color: $gray-700;
+    line-height: 20px;
   }
 }

@@ -6,45 +6,59 @@ const groomingMode = {
     {
       id: 1,
       name: "storyPoint",
+      displayName: "Story Point",
       points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      text: "Story point of task",
     },
   ],
   1: [
     {
       id: 1,
       name: "developmentEase",
+      displayName: "Development Ease",
       weight: 20,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Complexity and time taken by the developer when preparing a product at the time of development. 1 - very complex, 5 - not that complex",
     },
     {
       id: 2,
       name: "customerEffect",
+      displayName: "Customer Effect",
       weight: 10,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Impact on the customer 1 - very bad, 5 - very good",
     },
     {
       id: 3,
       name: "performance",
+      displayName: "Performance",
       weight: 30,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Contribution to performance 1 - very bad, 5 - very good",
     },
     {
       id: 4,
       name: "security",
+      displayName: "Security",
       weight: 10,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Impact on web security 1 - very bad, 5 - very good",
     },
     {
       id: 5,
       name: "maintenance",
+      displayName: "Maintenance",
       weight: 25,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "How developer-friendly the post-development process is (after the product is released) 1 - very bad, 5 - very good",
     },
     {
       id: 6,
       name: "storyPoint",
+      displayName: "Story Point",
       weight: 0,
       points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      text: "Story point of task",
     },
   ],
 };
@@ -53,7 +67,7 @@ const rooms = [];
 const groomings = {};
 
 const handleErrors = (errorFunctionName, roomID, socket) => {
-  console.log("A user encountered with error from:", errorFunctionName);
+  console.log("A user encountered with error from:", errorFunctionName, roomID, rooms, groomings);
   if (!rooms.includes(roomID)) {
     return socket.emit("encounteredError", {
       id: 1,

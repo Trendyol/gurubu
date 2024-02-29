@@ -1,19 +1,20 @@
 .voting-stick {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0 $space-xlarge;
+  margin-bottom: $space-xlarge;
+
   &__vote-cards {
-    width: 500px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    border-radius: $radius-large;
+    box-shadow: 0px 1px 2px 0px #1018280D;
   }
   &__label {
-    color: $blue-700;
-    font-size: $font-size-paragraph-4;
+    color: $gray-900-v2;
+    font-size: $font-size-paragraph-2;
     line-height: $line-height-paragraph-4;
-    font-weight: $medium;
-    width: 120px;
+    font-weight: $semibold;
+    width: 187px;
   }
 }

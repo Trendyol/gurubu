@@ -14,6 +14,7 @@ import { ROOM_STATUS } from "../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE } from "@/shared/enums";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
+import { MetricToggleTooltip } from "../metricToggle/metricToggleTooltip";
 
 interface IProps {
   roomId: string;
@@ -25,6 +26,10 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
   const socket = useSocket();
   const router = useRouter();
   const [editVoteClicked, setEditVoteClicked] = useState(false);
+  const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
+  const toggleTooltipHover = (metricId?: number | null) => {
+    setHoveredMetric(metricId ?? null);
+  };
   const {
     userInfo,
     setGroomingInfo,
@@ -94,6 +99,10 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
       });
     }
 
+    socket.on('disconnect', (reason) => {
+      setShowErrorPopup(true);
+    });
+
     socket.on("initialize", handleInitialize);
     socket.on("voteSent", handleVoteSent);
     socket.on("showResults", handleShowResults);
@@ -157,24 +166,34 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
   return (
     <div className="grooming-board">
       <section className="grooming-board__playground">
-        {!editVoteClicked && groomingInfo.isResultShown && isGroomingInfoLoaded && (
-          <div className="grooming-board__results">
-            <Image priority src="/trophy.svg" alt="trophy" width={200} height={200} />
-            <p>{groomingInfo.score}</p>
-          </div>
-        )}
-        {(editVoteClicked || !groomingInfo.isResultShown) && isGroomingInfoLoaded && (
-          <div className="grooming-board__voting-sticks">
-            {groomingInfo.metrics?.map((metric) => (
-              <VotingStick
-                key={metric.id}
-                id={metric.id}
-                points={metric.points}
-                name={metric.name}
+        {!editVoteClicked &&
+          groomingInfo.isResultShown &&
+          isGroomingInfoLoaded && (
+            <div className="grooming-board__results">
+              <Image
+                priority
+                src="/trophy.svg"
+                alt="trophy"
+                width={200}
+                height={200}
               />
-            ))}
-          </div>
-        )}
+              <p>{groomingInfo.score}</p>
+            </div>
+          )}
+        {(editVoteClicked || !groomingInfo.isResultShown) &&
+          isGroomingInfoLoaded && (
+            <div className="grooming-board__voting-sticks">
+              {groomingInfo.metrics?.map((metric) => (
+                <VotingStick
+                  key={metric.id}
+                  id={metric.id}
+                  points={metric.points}
+                  name={metric.name}
+                  displayName={metric.displayName}
+                />
+              ))}
+            </div>
+          )}
         {!editVoteClicked && <MetricAverages />}
         {groomingInfo.isResultShown && (
           <div className="grooming-board__toggle-button-wrapper">
@@ -199,6 +218,9 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
               })}
               onClick={handleShowResultsClick}>
               Show Results
+              {!groomingInfo.isResultShown && (
+                <Image priority src="/right-arrow.svg" alt="right-arrow" width={20} height={20} />
+              )}
             </button>
           </div>
         )}
@@ -209,8 +231,19 @@ const GroomingBoard = ({ roomId, showNickNameForm, setShowNickNameForm }: IProps
           {isGroomingInfoLoaded && (
             <>
               <ul className="grooming-board__metrics">
+                <div className="grooming-board__participants-text">
+                <span>Participants</span></div>
                 {groomingInfo.metrics?.map((metric) => (
-                  <li key={metric.id}>{metric.name}</li>
+                  <li
+                    key={metric.id}
+                    onMouseEnter={() => toggleTooltipHover(metric.id)}
+                    onMouseLeave={() => toggleTooltipHover(null)}
+                  >
+                    {metric.displayName}
+                    {hoveredMetric === metric.id && (
+                      <MetricToggleTooltip text={metric.text} />
+                    )}
+                  </li>
                 ))}
               </ul>
               <GroomingBoardParticipants />

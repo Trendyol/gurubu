@@ -1,17 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import { footerLinks } from "./constants";
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer__container">
         <div className="footer__container__links">
-          <Link href="/">Overview</Link>
-          <Link href="/features">Features</Link>
-          <Link href="/pricing">Pricing</Link>
-          <Link href="/careers">Careers</Link>
-          <Link href="/help">Help</Link>
-          <Link href="/privacy">Privacy</Link>
+          {footerLinks.map((link) => {
+            return (
+              <Link href={link.href} key={link.href}>
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
         <p className="footer__container__copyright">© 2024 GuruBu</p>
       </div>
