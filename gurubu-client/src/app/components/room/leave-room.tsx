@@ -15,6 +15,7 @@ export const LeaveRoom = ({ roomId, closeModal }: Props) => {
   const handleRemoveUser = () => {
     localStorage.removeItem("lobby");
     socket.emit("removeUser", roomId, userInfo.lobby.userID, userInfo.lobby.credentials);
+    window.location.href = '/';
   };
   return (
     <div className="leave-room">
