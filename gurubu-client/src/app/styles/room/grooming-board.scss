@@ -1,6 +1,8 @@
 .grooming-board {
   height: 100vh;
   display: flex;
+  width: 80%;
+  margin: auto;
   padding: 0 $space-xxxlarge;
   align-items: center;
   justify-content: space-between;
@@ -105,9 +107,8 @@
     }
   }
   &__logs-section {
-    height: 80%;
+    height: 100%;
     border-radius: $radius-medium;
-    padding: $space-xxxlarge $space-xlarge;
   }
   &__metrics {
     display: flex;
