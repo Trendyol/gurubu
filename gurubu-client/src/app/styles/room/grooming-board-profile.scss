@@ -41,7 +41,6 @@
     color: $purple-600;
   }
 
-  //  legacy part
   &__bar {
     top: 36px;
     position: absolute;
@@ -57,26 +56,6 @@
     z-index: 90;
     box-shadow: $shadow-sm;
   }
-
-  // &__nickname-label {
-  //   font-size: $font-size-paragraph-5;
-  //   line-height: $line-height-paragraph-5;
-  //   color: $gray-100;
-  // }
-
-  // &__nickname-input {
-  //   padding: $space-xsmall $space-medium;
-  //   font-size: $font-size-paragraph-5;
-  //   line-height: $line-height-paragraph-5;
-  //   color: $gray-800;
-  //   margin: $space-xsmall 0;
-  //   border: 1px solid $gray-400;
-  //   border-radius: $radius-small;
-  // }
-
-  // &__nickname-input:focus {
-  //   outline: none;
-  // }
 
   &__update-nickname-button {
     border: none;
