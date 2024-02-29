@@ -13,6 +13,7 @@ export const LeaveRoom = ({ roomId, closeModal }: Props) => {
   const { userInfo } = useGroomingRoom();
 
   const handleRemoveUser = async () => {
+    localStorage.removeItem("lobby");
     socket.emit("removeUser", roomId, userInfo.lobby.userID, userInfo.lobby.credentials);
   };
   return (
