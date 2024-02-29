@@ -58,7 +58,7 @@ module.exports = (io) => {
       }
     });
 
-    socket.on("removeUser", (roomID, userID) => {
+    socket.on("removeUser", (nickname, roomID, userID) => {
       console.log(`${nickname} exit room ${roomID}`);
       io.to(roomID).emit("removeUser", getGrooming(roomID), userID);
     });
