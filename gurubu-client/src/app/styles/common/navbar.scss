@@ -97,9 +97,7 @@
 
 @media (max-width: 768px) {
   .nav {
-    @include container;
-    padding-top: $space-large;
-    padding-bottom: $space-large;
+    padding: $space-large $space-xxlarge;
     &__content {
       justify-content: space-between;
       &--links {
