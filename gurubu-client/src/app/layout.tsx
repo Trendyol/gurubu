@@ -12,6 +12,16 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Gurubu | Simple, fast and practical grooming",
   description: "Simple, fast and practical grooming.",
+  openGraph: {
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+        alt: "Simple, fast and practical grooming.",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
