@@ -145,6 +145,11 @@
     width: 100%;
     cursor: pointer;
     font-family: var(--font-inter);
+
+    &:disabled{
+      background-color: #E9D7FE;
+      cursor: auto;
+    }
   }
 
   &__info-message {

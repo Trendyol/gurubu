@@ -194,6 +194,7 @@ const NicknameForm = ({ roomId }: IProps) => {
         )}
 
         <button
+          disabled={nickname.trim() === ""}
           className="nickname-form__button"
           onClick={
             roomId ? handleJoinRoomButtonClick : handleCreateRoomButtonClick
