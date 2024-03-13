@@ -18,15 +18,17 @@ const defaultNickname = () => {
   );
 };
 
+
+
+
 // If roomId is provided, then the user is joining a room.
 const NicknameForm = ({ roomId }: IProps) => {
   const [nickname, setNickname] = useState(defaultNickname);
-  const [groomingType, setGroomingType] = useState<GroomingType>(
-    GroomingType.PlanningPoker
-  );
+  const [groomingType, setGroomingType] = useState<GroomingType>(GroomingType.PlanningPoker);
 
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
 
   const roomService = new RoomService(process.env.NEXT_PUBLIC_API_URL || "");
 
@@ -50,7 +52,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     const payload = {
       nickName: trimmedNickName,
       // TODO?: Actually, backend api should be accept string value for groomingType
-      groomingType: groomingType === "PlanningPoker" ? "0" : "1",
+      groomingType: groomingType === 'PlanningPoker' ? "0" : "1"
     };
     const response = await roomService.createRoom(payload);
 
@@ -112,6 +114,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     window.location.assign(`/room/${response.roomID}`);
   };
 
+
   const connectionButtonText = () => {
     if (loading && roomId) {
       return "Joining Room...";
@@ -138,16 +141,18 @@ const NicknameForm = ({ roomId }: IProps) => {
   return (
     <div className="nickname-form">
       <h1 className="nickname-form__header">
-        <Image priority src="/logo.svg" alt="logo" width={30} height={30} />
-        GuruBu
-      </h1>
+        <Image
+          priority
+          src="/logo.svg"
+          alt="logo"
+          width={30}
+          height={30}
+        />
+        GuruBu</h1>
       <h1 className="nickname-form__title">Welcome to Gurubu</h1>
       <div className="nickname-form__action-wrapper">
         <div className="nickname-form__input-wrapper">
-          <label
-            htmlFor="nickname-input"
-            className="nickname-form__label-enter-room"
-          >
+          <label htmlFor="nickname-input" className="nickname-form__label-enter-room">
             To enter the room, choose a nickname.
           </label>
           <input
@@ -182,6 +187,7 @@ const NicknameForm = ({ roomId }: IProps) => {
               })}
               onClick={() => setGroomingType(GroomingType.ScoreGrooming)}
             >
+
               <p>Score Grooming</p>
             </button>
           </div>
@@ -196,6 +202,7 @@ const NicknameForm = ({ roomId }: IProps) => {
         >
           {connectionButtonText()}
         </button>
+
       </div>
     </div>
   );
