@@ -36,10 +36,10 @@ const VoteCard = ({ id, point, name }: IProps) => {
 
   return (
     <button
-      className={classNames("vote-card", { selected: isCardSelected })}
+      className={classNames("vote-card", { selected: isCardSelected }, {"story-point-card": name === "storyPoint"})}
       onClick={handleClick}
     >
-      {point}
+      <p className="vote-point-text">{point}</p>
     </button>
   );
 };

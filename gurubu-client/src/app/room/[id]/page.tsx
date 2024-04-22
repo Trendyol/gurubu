@@ -23,7 +23,7 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
             "nickname-form-active": showNickNameForm,
           })}>
           <ConnectingInfo roomId={params.id} />
-          <GroomingNavbar showNickNameForm={showNickNameForm} />
+          <GroomingNavbar showNickNameForm={showNickNameForm} roomId={params.id} />
           <GroomingBoard
             roomId={params.id}
             showNickNameForm={showNickNameForm}

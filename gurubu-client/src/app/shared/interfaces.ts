@@ -12,8 +12,10 @@ export interface User {
 }
 
 export interface Metric {
+  text: string;
   id: number;
   name: string;
+  displayName: string;
   points: string[];
 }
 

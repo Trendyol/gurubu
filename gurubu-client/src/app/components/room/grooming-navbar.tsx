@@ -1,17 +1,16 @@
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
-import {
-  IconClipboardCheck,
-} from "@tabler/icons-react";
+import { IconClipboardCheck } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { useState } from "react";
 import GroomingBoardProfile from "./grooming-board-profile";
 import Image from "next/image";
 
-interface IProps {
+interface Props {
   showNickNameForm: boolean;
+  roomId: string;
 }
 
-const GroomingNavbar = ({ showNickNameForm }: IProps) => {
+const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   const { groomingInfo, roomStatus } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
@@ -48,25 +47,24 @@ const GroomingNavbar = ({ showNickNameForm }: IProps) => {
         <div className="grooming-navbar__participants">
           <div className="grooming-navbar__participant-number-section">
             <Image src="/icon-user-group.svg" width={12} height={12} alt="Participants" />
-            <p className="grooming-navbar__participant-number">{groomingInfo.totalParticipants || "0"}</p>
+            <p className="grooming-navbar__participant-number">
+              {groomingInfo.totalParticipants || "0"}
+            </p>
           </div>
           <p className="grooming-navbar__participant-text">Participants is here</p>
         </div>
         <div>
-          <button
-            className="grooming-navbar__copy-link"
-            onClick={handleCopyGroomingLinkClick}
-          >
+          <button className="grooming-navbar__copy-link" onClick={handleCopyGroomingLinkClick}>
             {isGroomingLinkCopied ? (
               <IconClipboardCheck stroke={3} width={14} height={14} />
             ) : (
               <Image src="/icon-copy.svg" width={14} height={14} alt="Copy link" />
-              )}
+            )}
             Copy Link
           </button>
         </div>
       </div>
-      <GroomingBoardProfile />
+      <GroomingBoardProfile roomId={roomId} />
     </nav>
   );
 };
