@@ -1,55 +1,64 @@
 const uuid = require("uuid");
-const {
-  userJoin,
-  getCurrentUser,
-  clearUser,
-  getCurrentUserWithSocket,
-} = require("../utils/users");
+const { userJoin, getCurrentUser, clearUser, getCurrentUserWithSocket } = require("../utils/users");
 
 const groomingMode = {
   0: [
     {
       id: 1,
       name: "storyPoint",
+      displayName: "Story Point",
       points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      text: "Story point of task",
     },
   ],
   1: [
     {
       id: 1,
       name: "developmentEase",
+      displayName: "Development Ease",
       weight: 20,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Complexity and time taken by the developer when preparing a product at the time of development. 1 - very complex, 5 - not that complex",
     },
     {
       id: 2,
       name: "customerEffect",
+      displayName: "Customer Effect",
       weight: 10,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Impact on the customer 1 - very bad, 5 - very good",
     },
     {
       id: 3,
       name: "performance",
+      displayName: "Performance",
       weight: 30,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Contribution to performance 1 - very bad, 5 - very good",
     },
     {
       id: 4,
       name: "security",
+      displayName: "Security",
       weight: 10,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "Impact on web security 1 - very bad, 5 - very good",
     },
     {
       id: 5,
       name: "maintenance",
+      displayName: "Maintenance",
       weight: 25,
       points: ["1", "2", "3", "4", "5", "?"],
+      text: "How developer-friendly the post-development process is (after the product is released) 1 - very bad, 5 - very good",
     },
     {
       id: 6,
       name: "storyPoint",
+      displayName: "Story Point",
       weight: 0,
       points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      text: "Story point of task",
     },
   ],
 };
@@ -58,7 +67,7 @@ const rooms = [];
 const groomings = {};
 
 const handleErrors = (errorFunctionName, roomID, socket) => {
-  console.log("A user encountered with error from:", errorFunctionName);
+  console.log("A user encountered with error from:", errorFunctionName, roomID, rooms, groomings);
   if (!rooms.includes(roomID)) {
     return socket.emit("encounteredError", {
       id: 1,
@@ -159,6 +168,15 @@ const leaveUserFromGrooming = (socketID) => {
   return user.roomID;
 };
 
+const removeUserFromOngoingGrooming = (roomID, userID) => {
+  if (!groomings[roomID]) {
+    return;
+  }
+
+  delete groomings[roomID].participants[userID];
+  groomings[roomID].totalParticipants--;
+};
+
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials);
   if (!user) {
@@ -194,9 +212,7 @@ const calculateScore = (mode, participants, roomID) => {
         participants[participantKey].votes &&
         Object.keys(participants[participantKey].votes).length
       ) {
-        const storyPoint = Number(
-          participants[participantKey].votes.storyPoint
-        );
+        const storyPoint = Number(participants[participantKey].votes.storyPoint);
         if (storyPoint) {
           totalVoter++;
           totalStoryPoint += storyPoint;
@@ -224,16 +240,15 @@ const calculateScore = (mode, participants, roomID) => {
           metricAverages[metricName].missingVotes++;
         }
         if (
-          (participants[participantKey].votes &&
-            !participants[participantKey].votes[metricName]) ||
+          (participants[participantKey].votes && !participants[participantKey].votes[metricName]) ||
           !participants[participantKey].connected
         ) {
           metricAverages[metricName].missingVotes++;
         }
 
         if (
-          (participants[participantKey].votes &&
-            participants[participantKey].votes[metricName]) === "?"
+          (participants[participantKey].votes && participants[participantKey].votes[metricName]) ===
+          "?"
         ) {
           metricAverages[metricName].missingVotes++;
         }
@@ -371,9 +386,7 @@ const updateNickName = (credentials, newNickName, roomID, socket) => {
   }
 
   user.nickname = newNickName;
-  for (const [key, value] of Object.entries(
-    groomings[user.roomID].participants
-  )) {
+  for (const [key, value] of Object.entries(groomings[user.roomID].participants)) {
     if (Number(key) === user.userID) {
       groomings[user.roomID].participants[key].nickname = newNickName;
     }
@@ -394,4 +407,5 @@ module.exports = {
   resetVotes,
   cleanRoomsAndUsers,
   updateNickName,
+  removeUserFromOngoingGrooming,
 };

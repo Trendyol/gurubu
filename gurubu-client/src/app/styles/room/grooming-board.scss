@@ -1,15 +1,14 @@
 .grooming-board {
   height: 100vh;
   display: flex;
+  width: 80%;
+  margin: auto;
   padding: 0 $space-xxxlarge;
   align-items: center;
   justify-content: space-between;
   &__playground {
     width: 60%;
     height: 80%;
-    border: 1px solid $gray-200;
-    border-radius: $radius-medium;
-    padding: $space-xxxlarge;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -66,64 +65,81 @@
   &__reset-votes-button {
     border: none;
     background-color: transparent;
-    height: 36px;
+    height: 48px;
     cursor: pointer;
-    padding: 0 $space-xlarge;
+    color: $gray-700;
+    padding: 0 $space-base;
     border: 1px solid $gray-200;
-    border-radius: $radius-medium;
+    border-radius: $radius-large;
     font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-3;
-    font-weight: $medium;
-    width: 180px;
+    line-height: $line-height-paragraph-4;
+    font-weight: $semibold;
+    min-width: 133px;
+    transition: 0.3s;
   }
   &__reset-votes-button:hover {
-    background-color: $gray-100;
+    background-color: $off-white;
   }
   &__show-result-button {
+    display: flex;
+    align-items: center;
+    gap: $space-small;
     border: none;
-    height: 36px;
+    height: 48px;
     cursor: pointer;
-    padding: 0 $space-xlarge;
-    background-color: $yellow-500;
-    color: $blue-900;
-    border-radius: $radius-medium;
+    padding: 0 $space-base;
+    background-color: $purple-700;
+    color: $white;
+    border-radius: $radius-large;
     font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-3;
-    font-weight: $medium;
-    width: 180px;
+    line-height: $line-height-paragraph-4;
+    font-weight: $semibold;
+    min-width: 133px;
+    transition: 0.3s;
     &.disabled {
       opacity: 0.5;
       cursor: default;
     }
   }
   &__show-result-button:hover {
-    &.disabled {
-      background-color: $yellow-500;
+    &:not(.disabled) {
+      background-color: $purple-500;
     }
-    background-color: $yellow-400;
   }
   &__logs-section {
-    width: 35%;
-    height: 80%;
-    border: 1px solid $gray-200;
+    height: 90%;
     border-radius: $radius-medium;
-    padding: $space-xxxlarge $space-xlarge;
   }
   &__metrics {
     display: flex;
     gap: 0 $space-large;
     justify-content: flex-end;
-    margin-bottom: $space-medium;
     margin-right: 2px;
-    padding: 0 $space-large;
-    li {
-      color: $blue-700;
-      writing-mode: vertical-rl;
-      transform: scale(-1, -1);
-      font-size: $font-size-paragraph-4;
-      line-height: $line-height-paragraph-4;
-      font-weight: $semibold;
+    align-items: center;
+    li,span{
+      color: $gray-600;
+      font-size: $font-size-paragraph-5;
+      line-height: $line-height-paragraph-5;
+      font-weight: $medium;
     }
+    li{
+      position: relative;
+      cursor: pointer;
+      max-width: 80px;
+      text-align: center;
+      &:hover {
+        .toggle-tooltip
+        {
+          display: block;
+        }
+      }
+      
+    }
+   
+  }
+  &__participants-text {
+    width: 140px;
+    padding: 12px 24px;
   }
   &__participants-container {
     display: flex;
