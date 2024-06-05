@@ -7,6 +7,7 @@ const {
   resetVotes,
   updateNickName,
   removeUserFromOngoingGrooming,
+  setIssues
 } = require("../utils/groomings");
 
 module.exports = (io) => {
@@ -46,6 +47,11 @@ module.exports = (io) => {
         "updateNickName",
         updateNickName(credentials, newNickName, roomID, socket)
       );
+    });
+
+    socket.on("setIssues", (roomID, data, credentials) => {
+      joinRoomMiddleware(socket, roomID, credentials);
+      io.to(roomID).emit("setIssues", setIssues(data, credentials, roomID, socket));
     });
 
     socket.on("disconnect", (reason) => {

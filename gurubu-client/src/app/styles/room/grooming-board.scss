@@ -133,9 +133,7 @@
           display: block;
         }
       }
-      
     }
-   
   }
   &__participants-text {
     width: 140px;
@@ -209,5 +207,81 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  &__issues-section {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  &__issues-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f1f1f1;
+      color: #333;
+      font-weight: bold;
+    }
+  }
+  &__issue-link {
+    color: #007bff;
+    text-decoration: none;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  &__navigation-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  &__navigation-button {
+    border: none;
+    background-color: transparent;
+    height: 48px;
+    cursor: pointer;
+    color: $gray-700;
+    padding: 0 $space-base;
+    border: 1px solid $gray-200;
+    border-radius: $radius-large;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-4;
+    font-weight: $semibold;
+    min-width: 133px;
+    transition: 0.3s;
+  }
+  &__set-votes-button {
+    gap: $space-small;
+    border: none;
+    height: 48px;
+    cursor: pointer;
+    padding: 0 $space-base;
+    background-color: $purple-700;
+    color: $white;
+    border-radius: $radius-large;
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-4;
+    font-weight: $semibold;
+    min-width: 133px;
+    transition: 0.3s;
   }
 }
