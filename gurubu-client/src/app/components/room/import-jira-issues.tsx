@@ -81,7 +81,8 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   };
 
   const handleImportIssues = async () => {
-    var response = await jiraService.getSprintIssues(selectedSprint);
+    const customFieldName = localStorage.getItem("story_points_custom_field_name");
+    var response = await jiraService.getSprintIssues(selectedSprint, customFieldName!);
     if (response.isSuccess && response.data) {
       response.data[0].selected = true;
       socket.emit("setIssues", roomId, response.data, userInfo.lobby.credentials);
