@@ -27,6 +27,7 @@ Gurubu is a tool designed to streamline task estimation grooming sessions and pr
 - **Story Point Estimation:** Streamline the process of estimating story points to better plan and manage your project.
 
 - **Score Card Grooming:** Prioritize tasks effectively by allowing users to vote on multiple metrics.
+![Ekran Resmi 2023-11-07 17 08 39](https://github.com/Trendyol/gurubu/assets/77741597/d15fdd31-26c4-4914-a517-d2de5177dc09)
 
 - **Jira Issue Importer**: Import your Jira issues
 
