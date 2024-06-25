@@ -101,7 +101,7 @@ exports.fetchPut = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    if (!response.ok) {
+    if (response.status != 201) {
       return res.status(response.status).json({ message: "Failed to put data from JIRA API" });
     }
     res.status(response.status);
