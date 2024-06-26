@@ -2,10 +2,8 @@ import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconClipboardCheck } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { useState } from "react";
-import { Modal } from "@/components/common/modal";
 import GroomingBoardProfile from "./grooming-board-profile";
 import Image from "next/image";
-import { ImportJiraIssuesForm } from "@/components/room/import-jira-issues";
 
 interface Props {
   showNickNameForm: boolean;
@@ -13,21 +11,7 @@ interface Props {
 }
 
 const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
-  type ModalType = "importJiraIssues" | null;
-  const [selectedModal, setSelectedModal] = useState<ModalType>(null);
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const openModal = (modalType: ModalType) => {
-    setModalOpen(true);
-    setSelectedModal(modalType);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-
-  const { groomingInfo, roomStatus, userInfo, setIssues } = useGroomingRoom();
+  const { groomingInfo, roomStatus } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
   if (roomStatus !== ROOM_STATUS.FOUND || showNickNameForm) {
@@ -79,22 +63,10 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
             Copy Link
           </button>
         </div>
-        {userInfo.lobby?.isAdmin && (
-          <div>
-            <button className="grooming-navbar__import-jira-issues" onClick={() => openModal("importJiraIssues")}>
-              <Image src="/planning.svg" width={14} height={14} alt="Copy link" />
-              Import Jira Issues
-            </button>
-          </div>)}
       </div>
       <GroomingBoardProfile roomId={roomId} />
-      <Modal isOpen={modalOpen} onClose={closeModal}>
-        <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
-      </Modal>
     </nav>
   );
 };
 
 export default GroomingNavbar;
-
-

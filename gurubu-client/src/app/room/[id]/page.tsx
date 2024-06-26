@@ -11,9 +11,8 @@ import { SocketProvider } from "@/contexts/SocketContext";
 import { GroomingRoomProvider } from "@/contexts/GroomingRoomContext";
 
 import "@/styles/room/style.scss";
-import { Issue } from "@/shared/interfaces";
 
-const GroomingRoom = ({ params }: { params: { id: string }}) => {
+const GroomingRoom = ({ params }: { params: { id: string } }) => {
   const [showNickNameForm, setShowNickNameForm] = useState(false);
 
   return (
