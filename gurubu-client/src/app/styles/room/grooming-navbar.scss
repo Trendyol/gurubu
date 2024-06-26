@@ -63,4 +63,21 @@
     height: fit-content;
     cursor: pointer;
   }
+  
+  &__import-jira-issues {
+    display: flex;
+    align-items: center;
+    padding: $space-small $space-medium;
+    gap: 0 $space-small;
+    background-color: $primary-50;
+    color: $primary-700;
+    font-size: $font-size-paragraph-5;
+    font-weight: $semibold;
+    border: none;
+    outline: none;
+    border-radius: $radius-large;
+    height: fit-content;
+    cursor: pointer;
+  }
 }
+

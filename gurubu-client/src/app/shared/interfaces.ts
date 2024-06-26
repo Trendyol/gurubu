@@ -41,6 +41,7 @@ export interface GroomingInfo {
   status: string;
   isAdmin: boolean;
   isResultShown: boolean;
+  issues: Issue[];
 }
 
 export interface UserInfo {
@@ -62,4 +63,24 @@ export interface EncounteredError {
 
 export interface UserVote {
   [key: string]: string;
+}
+
+export interface Board {
+  id: string;
+  name: string;
+}
+
+export interface Issue {
+  id: string;
+  key: string;
+  url: string;
+  fields: any;
+  summary: string;
+  point: string;
+  selected: boolean;
+}
+
+export interface ServiceResponse<T> {
+  isSuccess: boolean;
+  data?: T;
 }
