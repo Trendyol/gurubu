@@ -108,7 +108,6 @@ const generateNewRoom = (nickName, groomingType) => {
     score: 0,
     status: "ongoing",
     isResultShown: false,
-    issues: []
   };
 
   rooms.push(newRoom);
@@ -316,18 +315,6 @@ const getResults = (credentials, roomID, socket) => {
   return groomings[user.roomID];
 };
 
-
-const setIssues = (data, credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
-  if (!user) {
-    return handleErrors("setIssues", roomID, socket);
-  }
-
-  groomings[user.roomID].issues = data;
-
-  return groomings[user.roomID];
-};
-
 const resetVotes = (credentials, roomID, socket) => {
   const user = getCurrentUser(credentials);
   if (!user) {
@@ -421,5 +408,4 @@ module.exports = {
   cleanRoomsAndUsers,
   updateNickName,
   removeUserFromOngoingGrooming,
-  setIssues
 };
