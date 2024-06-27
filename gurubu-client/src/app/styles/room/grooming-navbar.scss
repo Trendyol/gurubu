@@ -78,6 +78,17 @@
     border-radius: $radius-large;
     height: fit-content;
     cursor: pointer;
+    position: relative;
+  }
+  &__import-jira-issues-version{
+    padding: 3px;
+    background-color: $red-700;
+    border-radius: $radius-large;
+    position: absolute;
+    color: $white;
+    font-size: 10px;
+    top: -8.5px;
+    right: 0;
   }
 }
 

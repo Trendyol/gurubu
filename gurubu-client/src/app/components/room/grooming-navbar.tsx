@@ -82,6 +82,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
         {userInfo.lobby?.isAdmin && (
           <div>
             <button className="grooming-navbar__import-jira-issues" onClick={() => openModal("importJiraIssues")}>
+              <span className="grooming-navbar__import-jira-issues-version">Beta</span>
               <Image src="/planning.svg" width={14} height={14} alt="Copy link" />
               Import Jira Issues
             </button>
