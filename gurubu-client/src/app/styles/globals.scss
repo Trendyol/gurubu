@@ -15,6 +15,7 @@ body {
   min-height: 100vh;
   background-color: $body-color;
   scroll-behavior: smooth;
+  scroll-padding: $scroll-padding;
 }
 
 a {

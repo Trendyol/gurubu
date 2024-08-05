@@ -22,19 +22,19 @@ $voting-card-color: linear-gradient(
 );
 $off-white: #f9fafb;
 $title-color: #101828;
-$dark-orange-600: #FF6E20;
-$dark-orange-500: #FF8747;
+$dark-orange-600: #ff6e20;
+$dark-orange-500: #ff8747;
 
-$dark-orange-400: #FF692E;
-$dark-orange-300: #FF9C66;
-$dark-orange-200: #FFD6AE;
-$yellow-200-v2: #FEEE95;
-$yellow-100-v2: #FEF7C3;
-$green-light-200: #D0F8AB;
-$green-light-100: #E3FBCC;
-$green-light-50: #F3FEE7;
+$dark-orange-400: #ff692e;
+$dark-orange-300: #ff9c66;
+$dark-orange-200: #ffd6ae;
+$yellow-200-v2: #feee95;
+$yellow-100-v2: #fef7c3;
+$green-light-200: #d0f8ab;
+$green-light-100: #e3fbcc;
+$green-light-50: #f3fee7;
 $light-blue-100: #9ebeff;
-$light-blue-200: #84ADFF;
+$light-blue-200: #84adff;
 
 $blue-900: #091133;
 $blue-800: #111b47;
@@ -81,19 +81,19 @@ $primary-700: #6941c6;
 
 $purple-50: #f4f3ff;
 $purple-200: #d9d6fe;
-$purple-500: #7E57C2;
+$purple-500: #7e57c2;
 $purple-600: #6938ef;
 $purple-700: #6941c6;
 
 $success-500: #17b26a;
 
 $red-700: #dc2626;
-$red-600: #D92D20;
-$red-100: #FEE4E2;
-$red-50: #FEF3F2;
+$red-600: #d92d20;
+$red-100: #fee4e2;
+$red-50: #fef3f2;
 
 $orange-dark: #ff4405;
-$orange-light:  #FFF4ED;
+$orange-light: #fff4ed;
 
 // font size
 $font-size-header-1: 60px;
@@ -188,3 +188,6 @@ $flex: flex;
 $inline-flex: inline-flex;
 $grid: grid;
 $inline-grid: inline-grid;
+
+// scroll's padding size
+$scroll-padding: 110px;
