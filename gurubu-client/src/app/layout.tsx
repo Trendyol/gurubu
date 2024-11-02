@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import classNames from "classnames";
 import "@/styles/globals.scss";
-import Script from 'next/script'
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({
@@ -24,7 +24,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.svg" type="image/x-icon" sizes="7x10" />
-        <Script src="https://scripts.simpleanalyticscdn.com/latest.js"  />
+        <Script src="https://scripts.simpleanalyticscdn.com/latest.js" strategy="afterInteractive" />
+        <Script id="clarity-script" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "os722rd0v0");
+          `}
+        </Script>
       </head>
       <body
         className={classNames([
