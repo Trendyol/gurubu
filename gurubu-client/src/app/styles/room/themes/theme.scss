@@ -1,0 +1,68 @@
+@import "./snow-theme.scss";
+
+.theme-selector-container {
+  position: relative;
+  margin-right: 8px;
+}
+
+.theme-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 $space-semi-medium;
+  height: 30px;
+  border: none;
+  border-radius: $radius-large;
+  background-color: #E8F5FF;
+  color: #0085FF;
+  cursor: pointer;
+  font-size: $font-size-paragraph-4;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #CCE8FF;
+  }
+}
+
+.theme-selector-dropdown {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  background: $white;
+  width: 150px;
+  border: 1px solid #E6E6E6;
+  border-radius: $radius-large;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 90;
+  box-shadow: $shadow-sm;
+}
+
+.theme-selector-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: $radius-medium;
+  background: transparent;
+  color: $gray-600;
+  font-weight: $medium;
+  font-size: $font-size-paragraph-4;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+
+  &:hover {
+    background-color: #E8F5FF;
+    color: #0085FF;
+  }
+
+  &.active {
+    background-color: #0085FF;
+    color: white;
+  }
+}

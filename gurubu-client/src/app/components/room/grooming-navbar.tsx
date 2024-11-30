@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconClipboardCheck } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
-import { useState } from "react";
 import { Modal } from "@/components/common/modal";
+import { ImportJiraIssuesForm } from "@/components/room/import-jira-issues";
 import GroomingBoardProfile from "./grooming-board-profile";
 import Image from "next/image";
-import { ImportJiraIssuesForm } from "@/components/room/import-jira-issues";
+import ThemeSelector from "./theme-selector";
 
 interface Props {
   showNickNameForm: boolean;
@@ -62,33 +63,59 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
       <div className="grooming-navbar__actions">
         <div className="grooming-navbar__participants">
           <div className="grooming-navbar__participant-number-section">
-            <Image src="/icon-user-group.svg" width={12} height={12} alt="Participants" />
+            <Image
+              src="/icon-user-group.svg"
+              width={12}
+              height={12}
+              alt="Participants"
+            />
             <p className="grooming-navbar__participant-number">
               {groomingInfo.totalParticipants || "0"}
             </p>
           </div>
-          <p className="grooming-navbar__participant-text">Participants is here</p>
         </div>
         <div>
-          <button className="grooming-navbar__copy-link" onClick={handleCopyGroomingLinkClick}>
+          <button
+            className="grooming-navbar__copy-link"
+            onClick={handleCopyGroomingLinkClick}
+          >
             {isGroomingLinkCopied ? (
               <IconClipboardCheck stroke={3} width={14} height={14} />
             ) : (
-              <Image src="/icon-copy.svg" width={14} height={14} alt="Copy link" />
+              <Image
+                src="/icon-copy.svg"
+                width={14}
+                height={14}
+                alt="Copy link"
+              />
             )}
-            Copy Link
+            Link
           </button>
         </div>
         {userInfo.lobby?.isAdmin && (
           <div>
-            <button className="grooming-navbar__import-jira-issues" onClick={() => openModal("importJiraIssues")}>
-              <span className="grooming-navbar__import-jira-issues-version">Beta</span>
-              <Image src="/planning.svg" width={14} height={14} alt="Copy link" />
+            <button
+              className="grooming-navbar__import-jira-issues"
+              onClick={() => openModal("importJiraIssues")}
+            >
+              <span className="grooming-navbar__import-jira-issues-version">
+                Beta
+              </span>
+              <Image
+                src="/planning.svg"
+                width={14}
+                height={14}
+                alt="Copy link"
+              />
               Import Jira Issues
             </button>
-          </div>)}
+          </div>
+        )}
       </div>
-      <GroomingBoardProfile roomId={roomId} />
+      <div className="grooming-navbar__user-section">
+        <ThemeSelector />
+        <GroomingBoardProfile roomId={roomId} />
+      </div>
       <Modal isOpen={modalOpen} onClose={closeModal}>
         <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
       </Modal>
@@ -97,5 +124,3 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
 };
 
 export default GroomingNavbar;
-
-
