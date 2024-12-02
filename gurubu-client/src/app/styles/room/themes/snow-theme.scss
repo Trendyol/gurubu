@@ -1,0 +1,110 @@
+.grooming-room {
+  &.snow-active {
+    background-color: #1a1a2e;
+    --text-color: #ffffff;
+    --secondary-text-color: #e5e5e5;
+    transition: background-color 0.5s ease;
+
+    .voting-stick__label,
+    .grooming-board__metrics li,
+    .grooming-board__metrics span,
+    .grooming-board__participant-nickname,
+    .grooming-navbar__participant-number {
+      color: var(--secondary-text-color);
+    }
+
+    .grooming-board__reset-votes-button {
+      color: $gray-50-v2;
+      &:hover {
+        color: $gray-700;
+      }
+    }
+
+    .grooming-board__results p {
+      color: var(--text-color);
+    }
+  }
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100%) translateX(0);
+  }
+  100% {
+    transform: translateY(100vh) translateX(20px);
+  }
+}
+
+.santa-container {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.santa {
+  position: absolute;
+  width: 100px;
+  height: 60px;
+  background-image: url("/santa-sleigh.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: santaFly 15s linear infinite;
+  will-change: transform;
+  transform: scaleX(-1);
+
+  &.reverse {
+    transform: scaleX(1);
+    animation: santaFlyReverse 15s linear infinite;
+  }
+}
+
+@keyframes santaFly {
+  0% {
+    left: -100px;
+    top: 60%;
+  }
+  25% {
+    left: 25%;
+    top: 55%;
+  }
+  50% {
+    left: 50%;
+    top: 65%;
+  }
+  75% {
+    left: 75%;
+    top: 55%;
+  }
+  100% {
+    left: calc(100% + 100px);
+    top: 60%;
+  }
+}
+
+@keyframes santaFlyReverse {
+  0% {
+    left: calc(100% + 100px);
+    top: 70%;
+  }
+  25% {
+    left: 75%;
+    top: 65%;
+  }
+  50% {
+    left: 50%;
+    top: 75%;
+  }
+  75% {
+    left: 25%;
+    top: 65%;
+  }
+  100% {
+    left: -100px;
+    top: 70%;
+  }
+}

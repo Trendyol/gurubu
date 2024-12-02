@@ -8,20 +8,21 @@
   //replace with this after new score body comes with padding:  padding: $space-xlarge $space-body;
   padding: $space-xlarge $space-xxxlarge;
 
+  &__user-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
   &__actions {
     display: flex;
-    gap: 0 $space-xxxlarge;
+    gap: 0 $space-xlarge;
   }
 
   &__participants {
     display: flex;
     gap: 0 $space-small;
     align-items: center;
-    padding: $space-xsmall $space-semi-medium $space-xsmall $space-xsmall;
-    background-color: $primary-50;
-    border: 1px solid $primary-200;
-    border-radius: $radius-large;
     font-size: $font-size-paragraph-5;
     font-weight: $medium;
     user-select: none;

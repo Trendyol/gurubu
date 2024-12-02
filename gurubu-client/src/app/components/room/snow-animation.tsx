@@ -1,4 +1,4 @@
-import { useEffect, useRef, memo } from 'react';
+import { useEffect, useRef, memo, useState } from 'react';
 
 interface SnowAnimationProps {
   isActive: boolean;
@@ -7,7 +7,20 @@ interface SnowAnimationProps {
 const SnowAnimation = memo(({ isActive }: SnowAnimationProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>();
-  
+  const [isReverse, setIsReverse] = useState(false);
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    const directionInterval = setInterval(() => {
+      setIsReverse(prev => !prev);
+    }, 15000);
+
+    return () => {
+      clearInterval(directionInterval);
+    };
+  }, [isActive]);
+
   useEffect(() => {
     if (!isActive || !canvasRef.current) return;
 
@@ -27,7 +40,7 @@ const SnowAnimation = memo(({ isActive }: SnowAnimationProps) => {
       y: Math.random() * canvas.height,
       radius: Math.random() * 3 + 1,
       speed: Math.random() * 1 + 0.5,
-      wind: Math.random() * 0.5 - 0.25
+      wind: Math.random() * 0.5 - 0.25,
     }));
 
     const animate = () => {
@@ -71,16 +84,21 @@ const SnowAnimation = memo(({ isActive }: SnowAnimationProps) => {
   if (!isActive) return null;
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        pointerEvents: 'none',
-        zIndex: 1
-      }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+      <div className="santa-container">
+        <div className={`santa ${isReverse ? 'reverse' : ''}`} />
+      </div>
+    </>
   );
 });
 

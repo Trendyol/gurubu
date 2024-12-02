@@ -16,7 +16,7 @@
 @import "./leave-room.scss";
 @import "./import-jira-issues.scss";
 @import "./story-point-custom-field.scss";
-@import "./snow-animation.scss";
+@import "./themes/theme.scss";
 
 .create-room {
   position: absolute;
@@ -55,23 +55,5 @@
     flex-direction: column;
     text-align: center;
     background: $body-color;
-  }
-  &.snow-active {
-    background-color: #1a1a2e;
-    --text-color: #ffffff;
-    --secondary-text-color: #e5e5e5;
-    transition: background-color 0.5s ease;
-
-    .voting-stick__label,
-    .grooming-board__metrics li,
-    .grooming-board__metrics span,
-    .grooming-board__participant-nickname,
-    .grooming-navbar__participant-number {
-      color: var(--secondary-text-color);
-    }
-
-    .grooming-board__results p {
-      color: var(--text-color);
-    }
   }
 }
