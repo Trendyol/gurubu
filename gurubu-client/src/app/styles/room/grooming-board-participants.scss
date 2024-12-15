@@ -2,7 +2,9 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  max-height: 80%;
+  max-height: 75%;
+  overflow-y: scroll;
+  position: relative;
   li {
     width: 100%;
     border-top: 1px solid $gray-100;

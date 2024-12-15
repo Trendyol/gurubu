@@ -117,6 +117,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       <div className="import-jira-issues__row">
         <input
           type="text"
+          defaultValue={process.env.NEXT_PUBLIC_JIRA_URL ?? ""}
           placeholder="Jira Url"
           name="jiraUrl"
           value={jiraUrl}

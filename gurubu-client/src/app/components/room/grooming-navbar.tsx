@@ -7,6 +7,8 @@ import { ImportJiraIssuesForm } from "@/components/room/import-jira-issues";
 import GroomingBoardProfile from "./grooming-board-profile";
 import Image from "next/image";
 import ThemeSelector from "./theme-selector";
+import { GroomingMode } from "@/shared/enums";
+import Logo from "../common/logo";
 
 interface Props {
   showNickNameForm: boolean;
@@ -61,6 +63,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   return (
     <nav className="grooming-navbar">
       <div className="grooming-navbar__actions">
+        <Logo />
         <div className="grooming-navbar__participants">
           <div className="grooming-navbar__participant-number-section">
             <Image
@@ -92,7 +95,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
             Link
           </button>
         </div>
-        {userInfo.lobby?.isAdmin && (
+        {userInfo.lobby?.isAdmin && groomingInfo?.mode === GroomingMode.PlanningPoker && (
           <div>
             <button
               className="grooming-navbar__import-jira-issues"
