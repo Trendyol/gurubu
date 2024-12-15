@@ -76,6 +76,7 @@ export interface Issue {
   url: string;
   fields: any;
   summary: string;
+  description: string;
   point: string;
   selected: boolean;
 }
