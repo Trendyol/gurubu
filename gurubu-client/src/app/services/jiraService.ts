@@ -71,14 +71,13 @@ export class JiraService {
     try {
       const url = `${this.baseUrl}/jira/fetch?endpoint=${this.getJiraUrl()}/rest/agile/1.0/sprint/${encodeURIComponent(sprintId)}/issue`;
       const response = await axios.get(url, this.getRequestConfig());
-      customFieldName = customFieldName ?? process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD;
+      customFieldName = customFieldName ?? "customfield_10016"
       const sprintIssues = response.data.issues.map((issue: Issue) => ({
         id: issue.id,
         key: issue.key,
         url: `${this.getJiraUrl()}/browse/${issue.key}`,
         summary: issue.fields.summary,
-        point: issue.fields[customFieldName],
-        description: issue.fields.description
+        point: issue.fields[customFieldName]
       }));
       return { isSuccess: true, data: sprintIssues };
     } catch (error) {

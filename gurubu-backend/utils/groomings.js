@@ -393,7 +393,7 @@ const cleanRoomsAndUsers = () => {
         clearUser(room.roomID);
       }
     });
-  }, 60000 * 60 * 3); // work every 3 hours
+  }, 60000 * 10); // work every 10 minutes
 };
 
 const updateNickName = (credentials, newNickName, roomID, socket) => {
