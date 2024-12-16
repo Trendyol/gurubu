@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { JiraService } from "@/services/jiraService";
-import { Issue } from "@/shared/interfaces";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 
@@ -13,7 +12,7 @@ type Props = {
 
 export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const socket = useSocket();
-  const [jiraUrl, setJiraUrl] = useState<string>(process.env.NEXT_PUBLIC_JIRA_URL ?? "");
+  const [jiraUrl, setJiraUrl] = useState<string>("");
   const [token, setToken] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [boardSearch, setBoardSearch] = useState<string>("");
@@ -36,6 +35,12 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     retrieveFromLocalStorage("jiraUrl", setJiraUrl);
     retrieveFromLocalStorage("token", setToken);
     retrieveFromLocalStorage("username", setUsername);
+  }, []);
+
+  useEffect(() => {
+    if(process.env.NEXT_PUBLIC_JIRA_URL){
+      setJiraUrl(process.env.NEXT_PUBLIC_JIRA_URL)
+    }
   }, []);
 
   const handleInputChange = (setState: (value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {

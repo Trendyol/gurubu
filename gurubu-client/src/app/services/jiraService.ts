@@ -27,7 +27,7 @@ export class JiraService {
   }
 
   private getJiraUrl(): string {
-    const jiraUrl = localStorage.getItem("jiraUrl");
+    const jiraUrl = localStorage.getItem("jiraUrl") || JSON.stringify(process.env.NEXT_PUBLIC_JIRA_URL);
 
     if (!jiraUrl) {
       throw new Error("Jira URL not found in local storage.");
