@@ -13,7 +13,7 @@ type Props = {
 
 export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const socket = useSocket();
-  const [jiraUrl, setJiraUrl] = useState<string>("");
+  const [jiraUrl, setJiraUrl] = useState<string>(process.env.NEXT_PUBLIC_JIRA_URL ?? "");
   const [token, setToken] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [boardSearch, setBoardSearch] = useState<string>("");
@@ -117,7 +117,6 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       <div className="import-jira-issues__row">
         <input
           type="text"
-          defaultValue={process.env.NEXT_PUBLIC_JIRA_URL ?? ""}
           placeholder="Jira Url"
           name="jiraUrl"
           value={jiraUrl}
