@@ -20,9 +20,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  console.log(process.env.NEXT_PUBLIC_API_URL, "api url");
-  console.log(process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD, "custom field");
-  console.log(process.env.NEXT_PUBLIC_JIRA_URL, "jira url");
   return (
     <html lang="en">
       <head>
