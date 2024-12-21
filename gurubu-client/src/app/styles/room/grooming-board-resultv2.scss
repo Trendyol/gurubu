@@ -1,0 +1,37 @@
+.grooming-board__resultsv2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: $font-size-paragraph-1;
+  line-height: $line-height-paragraph-1;
+  font-weight: $semibold;
+  color: $blue-600;
+  position: relative;
+  width: 100%;
+  p {
+    border: 1px solid $yellow-200-v2;
+    background-color: #fefbe8;
+    color: #a15c07;
+    padding: $space-large 28px;
+    border-radius: 40px;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-paragraph-4;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    width: 40%;
+    height: 1px;
+    background-color: $gray-20;
+    left: 0;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    width: 40%;
+    height: 1px;
+    background-color: $gray-20;
+    right: 0;
+  }
+}

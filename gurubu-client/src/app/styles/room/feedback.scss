@@ -1,0 +1,50 @@
+.feedback-container {
+  font-size: 12px;
+  line-height: 16px;
+  padding: 16px 0;
+  border-top: 1px solid #e9ebec;
+  color: #896a67;
+  font-weight: 600;
+  text-align: center;
+  .feedback-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    &__link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      line-height: 20px;
+      color: white;
+      background: linear-gradient(90deg, #5e3c3c, #896a67);
+      border-radius: 20px;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      border: 1px solid $white;
+      svg {
+        display: inline-block;
+        transition: transform 0.4s ease;
+    }
+      p {
+        display: inline-block;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+      }
+      &:hover {
+        color: #896a67;
+        background: transparent;
+        border: 1px solid #896a67;
+        svg {
+          transform: translateX(-108px);
+        }
+        p {
+          transform: translateX(28px);
+        }
+      }
+    }
+  }
+}

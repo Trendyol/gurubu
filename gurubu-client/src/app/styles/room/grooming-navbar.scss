@@ -1,97 +1,97 @@
 .grooming-navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 80%;
-  margin: auto;
-
-  //replace with this after new score body comes with padding:  padding: $space-xlarge $space-body;
-  padding: $space-xlarge $space-xxxlarge;
-
+  width: 100%;
   border-bottom: 1px solid $gray-20;
 
-  &__user-section {
+  &__content {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
-  }
+    width: 80%;
+    margin: 0 auto;
+    padding: $space-xlarge $space-xxxlarge;
 
-  &__actions {
-    display: flex;
-    gap: 0 $space-xlarge;
-  }
+    &-user-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  &__participants {
-    display: flex;
-    gap: 0 $space-small;
-    align-items: center;
-    font-size: $font-size-paragraph-5;
-    font-weight: $medium;
-    user-select: none;
-  }
+    &-actions {
+      display: flex;
+      gap: 0 $space-xlarge;
+    }
 
-  &__participant-number-section {
-    display: flex;
-    align-items: center;
-    color: $white;
-    background-color: $primary-700;
-    border: 1px solid $primary-200;
-    border-radius: $radius-xxlarge;
-    gap: $space-xsmall;
-    height: 20px;
-    padding: 0 $space-small 0 $space-semi-small;
-  }
+    &-participants {
+      display: flex;
+      gap: 0 $space-small;
+      align-items: center;
+      font-size: $font-size-paragraph-5;
+      font-weight: $medium;
+      user-select: none;
+    }
 
-  &__participant-number {
-    line-height: $line-height-paragraph-5;
-  }
+    &-participant-number-section {
+      display: flex;
+      align-items: center;
+      color: $white;
+      background-color: $primary-700;
+      border: 1px solid $primary-200;
+      border-radius: $radius-xxlarge;
+      gap: $space-xsmall;
+      height: 20px;
+      padding: 0 $space-small 0 $space-semi-small;
+    }
 
-  &__participant-text {
-    color: $primary-700;
-    line-height: $line-height-paragraph-5;
-  }
+    &-participant-number {
+      line-height: $line-height-paragraph-5;
+    }
 
-  &__copy-link {
-    display: flex;
-    align-items: center;
-    padding: $space-small $space-medium;
-    gap: 0 $space-small;
-    background-color: $primary-50;
-    color: $primary-700;
-    font-size: $font-size-paragraph-5;
-    font-weight: $semibold;
-    border: none;
-    outline: none;
-    border-radius: $radius-large;
-    height: fit-content;
-    cursor: pointer;
-  }
-  
-  &__import-jira-issues {
-    display: flex;
-    align-items: center;
-    padding: $space-small $space-medium;
-    gap: 0 $space-small;
-    background-color: $primary-50;
-    color: $primary-700;
-    font-size: $font-size-paragraph-5;
-    font-weight: $semibold;
-    border: none;
-    outline: none;
-    border-radius: $radius-large;
-    height: fit-content;
-    cursor: pointer;
-    position: relative;
-  }
-  &__import-jira-issues-version{
-    padding: 3px;
-    background-color: $red-700;
-    border-radius: $radius-large;
-    position: absolute;
-    color: $white;
-    font-size: 10px;
-    top: -8.5px;
-    right: 0;
+    &-participant-text {
+      color: $primary-700;
+      line-height: $line-height-paragraph-5;
+    }
+
+    &-copy-link {
+      display: flex;
+      align-items: center;
+      padding: $space-small $space-medium;
+      gap: 0 $space-small;
+      background-color: $primary-50;
+      color: $primary-700;
+      font-size: $font-size-paragraph-5;
+      font-weight: $semibold;
+      border: none;
+      outline: none;
+      border-radius: $radius-large;
+      height: fit-content;
+      cursor: pointer;
+    }
+
+    &-import-jira-issues {
+      display: flex;
+      align-items: center;
+      padding: $space-small $space-medium;
+      gap: 0 $space-small;
+      background-color: $primary-50;
+      color: $primary-700;
+      font-size: $font-size-paragraph-5;
+      font-weight: $semibold;
+      border: none;
+      outline: none;
+      border-radius: $radius-large;
+      height: fit-content;
+      cursor: pointer;
+      position: relative;
+    }
+    &-import-jira-issues-version {
+      padding: 3px;
+      background-color: $red-700;
+      border-radius: $radius-large;
+      position: absolute;
+      color: $white;
+      font-size: 10px;
+      top: -8.5px;
+      right: 0;
+    }
   }
 }
-

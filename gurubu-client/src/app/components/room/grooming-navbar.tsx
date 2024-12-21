@@ -62,66 +62,69 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
 
   return (
     <nav className="grooming-navbar">
-      <div className="grooming-navbar__actions">
-        <Logo />
-        <div className="grooming-navbar__participants">
-          <div className="grooming-navbar__participant-number-section">
-            <Image
-              src="/icon-user-group.svg"
-              width={12}
-              height={12}
-              alt="Participants"
-            />
-            <p className="grooming-navbar__participant-number">
-              {groomingInfo.totalParticipants || "0"}
-            </p>
-          </div>
-        </div>
-        <div>
-          <button
-            className="grooming-navbar__copy-link"
-            onClick={handleCopyGroomingLinkClick}
-          >
-            {isGroomingLinkCopied ? (
-              <IconClipboardCheck stroke={3} width={14} height={14} />
-            ) : (
+      <div className="grooming-navbar__content">
+        <div className="grooming-navbar__content-actions">
+          <Logo />
+          <div className="grooming-navbar__content-participants">
+            <div className="grooming-navbar__content-participant-number-section">
               <Image
-                src="/icon-copy.svg"
-                width={14}
-                height={14}
-                alt="Copy link"
+                src="/icon-user-group.svg"
+                width={12}
+                height={12}
+                alt="Participants"
               />
-            )}
-            Link
-          </button>
-        </div>
-        {userInfo.lobby?.isAdmin && groomingInfo?.mode === GroomingMode.PlanningPoker && (
+              <p className="grooming-navbar__content-participant-number">
+                {groomingInfo.totalParticipants || "0"}
+              </p>
+            </div>
+          </div>
           <div>
             <button
-              className="grooming-navbar__import-jira-issues"
-              onClick={() => openModal("importJiraIssues")}
+              className="grooming-navbar__content-copy-link"
+              onClick={handleCopyGroomingLinkClick}
             >
-              <span className="grooming-navbar__import-jira-issues-version">
-                Beta
-              </span>
-              <Image
-                src="/planning.svg"
-                width={14}
-                height={14}
-                alt="Copy link"
-              />
-              Import Jira Issues
+              {isGroomingLinkCopied ? (
+                <IconClipboardCheck stroke={3} width={14} height={14} />
+              ) : (
+                <Image
+                  src="/icon-copy.svg"
+                  width={14}
+                  height={14}
+                  alt="Copy link"
+                />
+              )}
+              Link
             </button>
           </div>
-        )}
+          {userInfo.lobby?.isAdmin &&
+            groomingInfo?.mode === GroomingMode.PlanningPoker && (
+              <div>
+                <button
+                  className="grooming-navbar__content-import-jira-issues"
+                  onClick={() => openModal("importJiraIssues")}
+                >
+                  <span className="grooming-navbar__content-import-jira-issues-version">
+                    Beta
+                  </span>
+                  <Image
+                    src="/planning.svg"
+                    width={14}
+                    height={14}
+                    alt="Copy link"
+                  />
+                  Import Jira Issues
+                </button>
+              </div>
+            )}
+        </div>
+        <div className="grooming-navbar__content-user-section">
+          <ThemeSelector />
+          <GroomingBoardProfile roomId={roomId} />
+        </div>
+        <Modal isOpen={modalOpen} onClose={closeModal}>
+          <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
+        </Modal>
       </div>
-      <div className="grooming-navbar__user-section">
-        <ThemeSelector />
-        <GroomingBoardProfile roomId={roomId} />
-      </div>
-      <Modal isOpen={modalOpen} onClose={closeModal}>
-        <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
-      </Modal>
     </nav>
   );
 };

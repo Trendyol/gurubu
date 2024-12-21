@@ -1,0 +1,10 @@
+.grooming-board__results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: $font-size-paragraph-1;
+  line-height: $line-height-paragraph-1;
+  font-weight: $semibold;
+  color: $blue-600;
+}
