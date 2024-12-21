@@ -1,7 +1,7 @@
 "use client";
 
 import classnames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ConnectingInfo from "@/components/room/connecting-info";
 import GroomingBoard from "@/components/room/grooming-board";
@@ -12,6 +12,7 @@ import { GroomingRoomProvider } from "@/contexts/GroomingRoomContext";
 import "@/styles/room/style.scss";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import ThemeLayout from "theme-layout";
+import GroomingFooter from "@/components/room/grooming-footer";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
   return (
@@ -28,6 +29,13 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
 const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
   const [showNickNameForm, setShowNickNameForm] = useState(false);
   const { currentTheme, isThemeActive } = useTheme();
+
+  useEffect(() => {
+    document.body.classList.add(`${currentTheme}-active`);
+    return () => {
+      document.body.classList.remove(`${currentTheme}-active`);
+    };
+  }, [currentTheme]);
 
   return (
     <>
@@ -49,6 +57,7 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
           setShowNickNameForm={setShowNickNameForm}
         />
         {showNickNameForm && <NicknameForm roomId={params.id} />}
+        <GroomingFooter />
       </main>
     </>
   );

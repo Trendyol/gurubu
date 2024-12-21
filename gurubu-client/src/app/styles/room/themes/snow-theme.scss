@@ -1,3 +1,6 @@
+.snow-active {
+  background-color: #1a1a2e;
+}
 .grooming-room {
   &.snow-active {
     background-color: #1a1a2e;
@@ -22,6 +25,10 @@
 
     .grooming-board__results p {
       color: var(--text-color);
+    }
+    .import-jira-issues,
+    .import-jira-issues__logo {
+      color: #333333;
     }
   }
 }

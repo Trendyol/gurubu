@@ -18,6 +18,10 @@
 @import "./story-point-custom-field.scss";
 @import "./themes/theme.scss";
 @import "./grooming-board-jira-table.scss";
+@import "./grooming-board-result.scss";
+@import "./grooming-board-resultv2.scss";
+@import "./grooming-footer.scss";
+@import "./feedback.scss";
 
 .create-room {
   position: absolute;
@@ -35,7 +39,6 @@
 }
 
 .grooming-room {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
@@ -43,6 +46,7 @@
   --secondary-text-color: var(--gray-600);
   color: var(--text-color);
   transition: background-color 0.5s ease, color 0.5s ease;
+  min-height: 100vh;
   &.nickname-form-active {
     position: absolute;
     top: 0px;

@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
-import classNames from "classnames";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import classNames from "classnames";
+import VotingStick from "./voting-stick";
+import MetricAverages from "./metric-averages";
+import GroomingBoardParticipants from "./grooming-board-participants";
+import GroomingBoardErrorPopup from "./grooming-board-error-popup";
+import GroomingBoardJiraTable from "./grooming-board-jira-table";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
 import {
@@ -9,18 +14,16 @@ import {
   getCurrentLobby,
 } from "@/shared/helpers/lobbyStorage";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
-import VotingStick from "./voting-stick";
-import MetricAverages from "./metric-averages";
-import GroomingBoardParticipants from "./grooming-board-participants";
 import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
-import GroomingBoardErrorPopup from "./grooming-board-error-popup";
 import { MetricToggleTooltip } from "../metricToggle/metricToggleTooltip";
 import { StoryPointCustomFieldForm } from "@/components/room/story-point-custom-field";
 import { Modal } from "../common/modal";
-import GroomingBoardJiraTable from "./grooming-board-jira-table";
+import GroomingBoardResult from "./grooming-board-result";
+import GroomingBoardResultV2 from "./grooming-board-result-v2";
+import Feedback from "./feedback";
 
 interface IProps {
   roomId: string;
@@ -40,15 +43,8 @@ const GroomingBoard = ({
     process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD || ""
   );
   const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
-
   const [modalOpen, setModalOpen] = useState(false);
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-  const toggleTooltipHover = (metricId?: number | null) => {
-    setHoveredMetric(metricId ?? null);
-  };
   const {
     userInfo,
     setGroomingInfo,
@@ -59,6 +55,13 @@ const GroomingBoard = ({
     encounteredError,
     setShowErrorPopup,
   } = useGroomingRoom();
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+  const toggleTooltipHover = (metricId?: number | null) => {
+    setHoveredMetric(metricId ?? null);
+  };
 
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
@@ -202,19 +205,8 @@ const GroomingBoard = ({
         })}
       >
         {!editVoteClicked &&
-          groomingInfo.isResultShown &&
-          isGroomingInfoLoaded &&
           groomingInfo.mode === GroomingMode.ScoreGrooming && (
-            <div className="grooming-board__results">
-              <Image
-                priority
-                src="/trophy.svg"
-                alt="trophy"
-                width={200}
-                height={200}
-              />
-              <p>{groomingInfo.score}</p>
-            </div>
+            <GroomingBoardResult />
           )}
         {showVotingStick && (
           <div className="grooming-board__voting-sticks">
@@ -252,19 +244,8 @@ const GroomingBoard = ({
             </div>
           )}
         {!editVoteClicked &&
-          groomingInfo.isResultShown &&
-          isGroomingInfoLoaded &&
           groomingInfo.mode === GroomingMode.PlanningPoker && (
-            <div className="grooming-board__results">
-              <Image
-                priority
-                src="/trophy.svg"
-                alt="trophy"
-                width={200}
-                height={200}
-              />
-              <p>{groomingInfo.score}</p>
-            </div>
+            <GroomingBoardResultV2 />
           )}
         <GroomingBoardJiraTable
           roomId={roomId}
@@ -323,6 +304,7 @@ const GroomingBoard = ({
                 ))}
               </ul>
               <GroomingBoardParticipants />
+              <Feedback />
               {userInfo.lobby?.isAdmin &&
                 isGroomingInfoLoaded &&
                 groomingInfo.mode === GroomingMode.PlanningPoker && (
