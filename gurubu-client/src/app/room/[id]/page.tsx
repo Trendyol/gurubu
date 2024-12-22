@@ -13,6 +13,9 @@ import "@/styles/room/style.scss";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import ThemeLayout from "theme-layout";
 import GroomingFooter from "@/components/room/grooming-footer";
+import toast, { Toaster } from "react-hot-toast";
+import { useSearchParams } from "next/navigation";
+import { IconX } from "@tabler/icons-react";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
   return (
@@ -29,6 +32,7 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
 const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
   const [showNickNameForm, setShowNickNameForm] = useState(false);
   const { currentTheme, isThemeActive } = useTheme();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     document.body.classList.add(`${currentTheme}-active`);
@@ -37,8 +41,31 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
     };
   }, [currentTheme]);
 
+  useEffect(() => {
+    const isFastJoin = searchParams.get("isFastJoin");
+    if (isFastJoin === "true") {
+      toast.success(
+        <div className="fast-join-toaster">
+          <span className="Toastify__toast-icon" />
+          <div>
+            <h4 className="fast-join-toaster-title">Fast Join Success</h4>
+            <p className="fast-join-toaster-description">
+              You can change your nickname from your profile if you want
+            </p>
+          </div>
+          <button className="fast-join-toaster-close" onClick={() => toast.dismiss()}><IconX/></button>
+        </div>,
+        {
+          position: "top-center",
+          duration: 5000,
+        }
+      );
+    }
+  }, [searchParams]);
+
   return (
     <>
+      <Toaster />
       <ThemeLayout />
       <main
         className={classnames("grooming-room", {
