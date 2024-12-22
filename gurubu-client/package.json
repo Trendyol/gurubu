@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tabler/icons-react": "^2.40.0",
-    "axios": "^1.6.0",
+    "axios": "^1.7.9",
     "marked": "^15.0.4",
     "next": "14.0.0",
     "react": "^18",
