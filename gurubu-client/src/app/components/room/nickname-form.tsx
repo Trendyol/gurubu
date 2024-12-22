@@ -114,6 +114,44 @@ const NicknameForm = ({ roomId }: IProps) => {
     window.location.assign(`/room/${response.roomID}`);
   };
 
+  const handleFastJoin = async () => {
+    if(!roomId){
+      return;
+    }
+    if(!defaultNickname()){
+      return;
+    }
+    setLoading(true);
+    const trimmedNickName = nickname.trim();
+    if (trimmedNickName === "" || !roomId) {
+      return;
+    }
+    const payload = { nickName: trimmedNickName };
+    const response = await roomService.join(roomId, payload);
+
+    if (!response) {
+      return;
+    }
+
+    let lobby = JSON.parse(localStorage.getItem("lobby") || "{}");
+
+    if (!Object.keys(lobby).length) {
+      const lobbyContent = {
+        state: {
+          rooms: {
+            [response.roomID]: response,
+          },
+        },
+      };
+      lobby = lobbyContent;
+      localStorage.setItem("lobby", JSON.stringify(lobbyContent));
+    }
+
+    lobby.state.rooms[response.roomID] = response;
+    localStorage.setItem("lobby", JSON.stringify(lobby));
+
+    window.location.assign(`/room/${response.roomID}?isFastJoin=true`);
+  }
 
   const connectionButtonText = () => {
     if (loading && roomId) {
@@ -137,6 +175,17 @@ const NicknameForm = ({ roomId }: IProps) => {
       inputRef.current.value.length
     );
   }, []);
+
+  useEffect(() => {
+    const executeFastJoin = async () => {
+      await handleFastJoin();
+    }; 
+    executeFastJoin();
+ }, []);
+
+ if(defaultNickname() && roomId){
+  return null;
+ }
 
   return (
     <div className="nickname-form">

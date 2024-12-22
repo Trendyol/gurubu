@@ -62,3 +62,24 @@
     background: $body-color;
   }
 }
+
+.fast-join-toaster{
+  display: flex;
+  align-items: center;
+  .fast-join-toaster-title{
+    color: $primary-700;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+  .fast-join-toaster-description{
+    color: $gray-500;
+    font-size: 14px;
+    line-height: 18px;
+  }
+  .fast-join-toaster-close{
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}
