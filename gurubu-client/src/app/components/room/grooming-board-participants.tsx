@@ -26,10 +26,7 @@ const GroomingBoardParticipants = () => {
       setSortedParticipants([...groomingInfoParticipants]);
     }
   }, [
-    groomingInfo.isResultShown,
-    groomingInfoParticipants,
-    groomingInfo.metrics,
-    groomingInfo.participants,
+    groomingInfo,
   ]);
 
   return (
