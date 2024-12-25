@@ -243,10 +243,6 @@ const GroomingBoard = ({
               </button>
             </div>
           )}
-        {!editVoteClicked &&
-          groomingInfo.mode === GroomingMode.PlanningPoker && (
-            <GroomingBoardResultV2 />
-          )}
         <GroomingBoardJiraTable
           roomId={roomId}
           customFieldName={customFieldName}
@@ -304,7 +300,9 @@ const GroomingBoard = ({
                 ))}
               </ul>
               <GroomingBoardParticipants />
-              <Feedback />
+              {groomingInfo.mode === GroomingMode.PlanningPoker && (
+                <GroomingBoardResultV2 />
+              )}
               {userInfo.lobby?.isAdmin &&
                 isGroomingInfoLoaded &&
                 groomingInfo.mode === GroomingMode.PlanningPoker && (
@@ -314,26 +312,28 @@ const GroomingBoard = ({
                         groomingInfo.mode === GroomingMode.PlanningPoker,
                     })}
                   >
-                    <button
-                      className={classNames(
-                        "grooming-board__show-result-button",
-                        {
-                          disabled: groomingInfo.isResultShown,
-                        }
-                      )}
-                      onClick={handleShowResultsClick}
-                    >
-                      Show Results
-                      {!groomingInfo.isResultShown && (
-                        <Image
-                          priority
-                          src="/right-arrow.svg"
-                          alt="right-arrow"
-                          width={20}
-                          height={20}
-                        />
-                      )}
-                    </button>
+                    {!groomingInfo.isResultShown && (
+                      <button
+                        className={classNames(
+                          "grooming-board__show-result-button",
+                          {
+                            disabled: groomingInfo.isResultShown,
+                          }
+                        )}
+                        onClick={handleShowResultsClick}
+                      >
+                        Show Results
+                        {!groomingInfo.isResultShown && (
+                          <Image
+                            priority
+                            src="/right-arrow.svg"
+                            alt="right-arrow"
+                            width={20}
+                            height={20}
+                          />
+                        )}
+                      </button>
+                    )}
                     <button
                       className="grooming-board__reset-votes-button"
                       onClick={handleResetVotesClick}

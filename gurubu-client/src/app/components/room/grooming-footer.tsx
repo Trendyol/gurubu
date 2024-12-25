@@ -1,5 +1,6 @@
 import React from "react";
 import { IconBrandGithub } from "@tabler/icons-react";
+import Feedback from "./feedback";
 
 const GroomingFooter = () => {
   const currentDate = new Date().getFullYear();
@@ -16,6 +17,7 @@ const GroomingFooter = () => {
         >
           <p>Contribute!</p> <IconBrandGithub />
         </a>
+        <Feedback />
       </div>
     </footer>
   );

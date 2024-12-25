@@ -12,6 +12,45 @@
     gap: 16px;
     display: flex;
     align-items: center;
+    &:last-child {
+      &.vote-above-average,
+      &.vote-below-average,
+      &.on-average,
+      &.no-vote {
+        border-bottom: 1px solid transparent;
+        margin-bottom: 16px;
+      }
+    }
+    &.vote-above-average,
+    &.vote-below-average,
+    &.on-average,
+    &.no-vote {
+      margin-bottom: 8px;
+    }
+    &.vote-above-average{
+      border-top: 1px solid transparent;
+      background-color: $primary-50;
+      color: $primary-700;
+      border-top: 1px solid transparent;
+      font-weight: 600;
+    }
+    &.vote-below-average{
+      font-weight: 600;
+      border-top: 1px solid transparent;
+      background-color: #E8F5FF;
+      color: #0085FF;
+    }
+    &.on-average{
+      background-color: #fefbe8;
+      color: #a15c07;
+      font-weight: 600;
+      border: none;
+      border-top: 1px solid transparent;
+    }
+    &.no-vote{
+      background-color: $gray-100;
+      color: $gray-500;
+    }
     label {
       font-size: $font-size-paragraph-4;
       line-height: $line-height-paragraph-4;
