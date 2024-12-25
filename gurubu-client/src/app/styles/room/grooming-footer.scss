@@ -5,8 +5,9 @@
   align-items: center;
   justify-content: center;
   border-top: 1px solid #eaecf0;
+  position: relative;
   &__content {
-    padding: 24px 0 12px 0;
+    padding: 12px 48px 12px 48px;
     display: flex;
     align-items: center;
     gap: 12px;

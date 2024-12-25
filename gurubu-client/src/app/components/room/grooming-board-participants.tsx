@@ -16,24 +16,21 @@ const GroomingBoardParticipants = () => {
       const sorted = groomingInfoParticipants.sort((a, b) => {
         const votesA = groomingInfo.participants[a].votes || {};
         const votesB = groomingInfo.participants[b].votes || {};
-        return (
-          (Number(votesB["storyPoint"] || 0)) -
-          Number(votesA["storyPoint"] || 0)
-        );
+        const storyPointA = isNaN(Number(votesA["storyPoint"])) ? 0 : Number(votesA["storyPoint"]);
+        const storyPointB = isNaN(Number(votesB["storyPoint"])) ? 0 : Number(votesB["storyPoint"]);
+        return storyPointB - storyPointA
       });
       setSortedParticipants([...sorted]);
     } else {
       setSortedParticipants([...groomingInfoParticipants]);
     }
-  }, [
-    groomingInfo,
-  ]);
+  }, [groomingInfo]);
 
   return (
     <ul className="grooming-board-participants">
       <AnimatePresence>
         {sortedParticipants.map(participantKey => {
-          const { isAdmin, sockets, votes, nickname } =
+          const { isAdmin, sockets, votes = {}, nickname } =
             groomingInfo.participants[participantKey];
           const hasSockets = sockets.length > 0;
           const hasMaxVotes =
@@ -43,6 +40,12 @@ const GroomingBoardParticipants = () => {
           const isPlanningPokerMode =
             groomingInfo.mode === GroomingMode.PlanningPoker;
 
+          const vote = !isNaN(Number(votes["storyPoint"])) ? Number(votes["storyPoint"]) : 0
+          const isVoteBelowAverage = vote < Number(groomingInfo.score) && isResultShown;
+          const isVoteAboveAverage = vote > Number(groomingInfo.score) && isResultShown;
+          const onAverage = !isVoteAboveAverage && !isVoteBelowAverage && vote === Number(groomingInfo.score) && isResultShown;
+          const noVote = isResultShown && vote === 0; 
+
           return (
             <motion.li
               layout
@@ -51,6 +54,12 @@ const GroomingBoardParticipants = () => {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               key={participantKey}
+              className={classNames({
+                "vote-above-average": isVoteAboveAverage,
+                "vote-below-average": isVoteBelowAverage,
+                "no-vote": noVote,
+                "on-average": onAverage
+              })}
             >
               <div className="grooming-board-participants__nickname-container">
                 {isAdmin && (

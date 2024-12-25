@@ -1,11 +1,10 @@
 .feedback-container {
   font-size: 12px;
   line-height: 16px;
-  padding: 16px 0;
-  border-top: 1px solid #e9ebec;
   color: #896a67;
   font-weight: 600;
   text-align: center;
+  margin-left: auto;
   .feedback-content {
     display: flex;
     flex-direction: column;
@@ -16,8 +15,6 @@
       align-items: center;
       gap: 8px;
       padding: 10px 20px;
-      font-size: 14px;
-      line-height: 20px;
       color: white;
       background: linear-gradient(90deg, #5e3c3c, #896a67);
       border-radius: 20px;
@@ -39,10 +36,10 @@
         background: transparent;
         border: 1px solid #896a67;
         svg {
-          transform: translateX(-108px);
+          transform: translateX(-100px);
         }
         p {
-          transform: translateX(28px);
+          transform: translateX(20px);
         }
       }
     }
