@@ -5,14 +5,15 @@ import MetricAverages from "./metric-averages";
 import GroomingBoardParticipants from "./grooming-board-participants";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
 import GroomingBoardJiraTable from "./grooming-board-jira-table";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { notFound } from "next/navigation";
-import { useSocket } from "@/contexts/SocketContext";
+import GroomingBoardResult from "./grooming-board-result";
+import GroomingBoardResultV2 from "./grooming-board-result-v2";
 import {
   checkUserJoinedLobbyBefore,
   getCurrentLobby,
 } from "@/shared/helpers/lobbyStorage";
+import { useEffect, useState } from "react";
+import { useRouter, notFound } from "next/navigation";
+import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../room/[id]/enums";
@@ -21,9 +22,6 @@ import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
 import { MetricToggleTooltip } from "../metricToggle/metricToggleTooltip";
 import { StoryPointCustomFieldForm } from "@/components/room/story-point-custom-field";
 import { Modal } from "../common/modal";
-import GroomingBoardResult from "./grooming-board-result";
-import GroomingBoardResultV2 from "./grooming-board-result-v2";
-import Feedback from "./feedback";
 
 interface IProps {
   roomId: string;
@@ -40,7 +38,7 @@ const GroomingBoard = ({
   const router = useRouter();
   const [editVoteClicked, setEditVoteClicked] = useState(false);
   const [customFieldName, setCustomFieldName] = useState(
-    process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD || ""
+    process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? ""
   );
   const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -85,8 +83,6 @@ const GroomingBoard = ({
 
     const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
 
-    const handleUpdateNickName = (data: GroomingInfo) => setGroomingInfo(data);
-
     const setIssues = (data: GroomingInfo) => {
       setGroomingInfo(data);
     };
@@ -96,16 +92,7 @@ const GroomingBoard = ({
       setGroomingInfo(data);
       setEditVoteClicked(false);
     };
-
-    const removeUser = (data: GroomingInfo, userId: string) => {
-      if (userInfo.lobby.userID === userId) {
-        router.push("/");
-        setGroomingInfo({});
-      } else {
-        setGroomingInfo(data);
-      }
-    };
-
+  
     const handleUserDisconnected = (data: GroomingInfo) =>
       setGroomingInfo(data);
 
@@ -139,22 +126,18 @@ const GroomingBoard = ({
     socket.on("initialize", handleInitialize);
     socket.on("voteSent", handleVoteSent);
     socket.on("showResults", handleShowResults);
-    socket.on("updateNickName", handleUpdateNickName);
     socket.on("resetVotes", handleResetVotes);
     socket.on("userDisconnected", handleUserDisconnected);
     socket.on("encounteredError", handleEncounteredError);
-    socket.on("removeUser", removeUser);
     socket.on("setIssues", setIssues);
 
     return () => {
       socket.off("initialize", handleInitialize);
       socket.off("voteSent", handleVoteSent);
       socket.off("showResults", handleShowResults);
-      socket.off("updateNickName", handleUpdateNickName);
       socket.off("resetVotes", handleResetVotes);
       socket.off("userDisconnected", handleUserDisconnected);
       socket.off("encounteredError", handleEncounteredError);
-      socket.off("removeUser", removeUser);
     };
   }, [
     roomStatus,

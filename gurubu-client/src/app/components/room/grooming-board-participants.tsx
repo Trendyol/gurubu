@@ -13,7 +13,7 @@ const GroomingBoardParticipants = () => {
 
   useEffect(() => {
     if (groomingInfo.isResultShown) {
-      const sorted = groomingInfoParticipants.sort((a, b) => {
+      const sorted = [...groomingInfoParticipants].sort((a, b) => {
         const votesA = groomingInfo.participants[a].votes || {};
         const votesB = groomingInfo.participants[b].votes || {};
         const storyPointA = isNaN(Number(votesA["storyPoint"])) ? 0 : Number(votesA["storyPoint"]);
@@ -30,8 +30,11 @@ const GroomingBoardParticipants = () => {
     <ul className="grooming-board-participants">
       <AnimatePresence>
         {sortedParticipants.map(participantKey => {
-          const { isAdmin, sockets, votes = {}, nickname } =
-            groomingInfo.participants[participantKey];
+          const participant = groomingInfo.participants[participantKey];
+          if(!participant){
+            return null;
+          }
+          const { isAdmin, sockets, votes = {}, nickname } = participant;
           const hasSockets = sockets.length > 0;
           const hasMaxVotes =
             Object.keys(votes || {}).length ===
