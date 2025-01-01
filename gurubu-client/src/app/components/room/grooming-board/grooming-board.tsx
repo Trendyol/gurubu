@@ -11,7 +11,7 @@ import {
   checkUserJoinedLobbyBefore,
   getCurrentLobby,
 } from "@/shared/helpers/lobbyStorage";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
@@ -33,7 +33,6 @@ const GroomingBoard = ({
 }: IProps) => {
   const socket = useSocket();
   const router = useRouter();
-  const [editVoteClicked, setEditVoteClicked] = useState(false);
 
   const {
     userInfo,
@@ -44,6 +43,8 @@ const GroomingBoard = ({
     setEncounteredError,
     encounteredError,
     setShowErrorPopup,
+    editVoteClicked,
+    setEditVoteClicked
   } = useGroomingRoom();
 
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
@@ -177,21 +178,13 @@ const GroomingBoard = ({
               </button>
             </div>
           )}
-        <GroomingBoardJiraTable
-          roomId={roomId}
-        />
+        <GroomingBoardJiraTable roomId={roomId} />
         {groomingInfo.mode === GroomingMode.ScoreGrooming && (
-          <GroomingBoardActions
-            roomId={roomId}
-            setEditVoteClicked={setEditVoteClicked}
-          />
+          <GroomingBoardActions roomId={roomId} />
         )}
         {!isGroomingInfoLoaded && <Loading />}
       </section>
-      <GroomingBoardLogs
-        roomId={roomId}
-        setEditVoteClicked={setEditVoteClicked}
-      />
+      <GroomingBoardLogs roomId={roomId} />
       <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />
     </div>
   );

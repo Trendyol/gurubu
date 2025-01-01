@@ -9,10 +9,9 @@ import { GroomingMode } from "@/shared/enums";
 
 interface Props {
   roomId: string;
-  setEditVoteClicked: (value: boolean) => void;
 }
 
-const GroomingBoardLogs = ({ roomId, setEditVoteClicked }: Props) => {
+const GroomingBoardLogs = ({ roomId }: Props) => {
   const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
   const { groomingInfo } = useGroomingRoom();
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
@@ -50,7 +49,6 @@ const GroomingBoardLogs = ({ roomId, setEditVoteClicked }: Props) => {
             groomingInfo.mode === GroomingMode.PlanningPoker && (
               <GroomingBoardActions
                 roomId={roomId}
-                setEditVoteClicked={setEditVoteClicked}
               />
             )}
         </>

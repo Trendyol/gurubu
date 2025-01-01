@@ -1,18 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import classNames from "classnames";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
 import { GroomingMode } from "@/shared/enums";
-import { GroomingInfo } from "@/shared/interfaces";
 
 interface Props {
   roomId: string;
-  setEditVoteClicked: (value: boolean) => void;
 }
 
-const GroomingBoardActions = ({ roomId, setEditVoteClicked }: Props) => {
-  const { groomingInfo, setGroomingInfo, userInfo, setUserVote } =
-    useGroomingRoom();
+const GroomingBoardActions = ({ roomId }: Props) => {
+  const { groomingInfo, userInfo } = useGroomingRoom();
   const socket = useSocket();
 
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
@@ -27,24 +24,6 @@ const GroomingBoardActions = ({ roomId, setEditVoteClicked }: Props) => {
   const handleResetVotesClick = () => {
     socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
   };
-
-  useEffect(() => {
-    const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
-
-    const handleResetVotes = (data: GroomingInfo) => {
-      setUserVote({});
-      setGroomingInfo(data);
-      setEditVoteClicked(false);
-    };
-
-    socket.on("showResults", handleShowResults);
-    socket.on("resetVotes", handleResetVotes);
-
-    return () => {
-      socket.off("showResults", handleShowResults);
-      socket.off("resetVotes", handleResetVotes);
-    };
-  }, [setGroomingInfo, setUserVote, socket, setEditVoteClicked]);
 
   if (!userInfo.lobby?.isAdmin || !isGroomingInfoLoaded) {
     return null;
