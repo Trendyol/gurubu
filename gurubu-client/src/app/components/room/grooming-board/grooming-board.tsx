@@ -1,17 +1,17 @@
-import Image from "next/image";
 import classNames from "classnames";
 import VotingStick from "./voting-stick";
 import MetricAverages from "./metric-averages";
-import GroomingBoardParticipants from "./grooming-board-participants";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
 import GroomingBoardJiraTable from "./grooming-board-jira-table";
 import GroomingBoardResult from "./grooming-board-result";
-import GroomingBoardResultV2 from "./grooming-board-result-v2";
+import GroomingBoardLogs from "./grooming-board-logs";
+import GroomingBoardActions from "./grooming-board-actions";
+import Loading from "../loading";
 import {
   checkUserJoinedLobbyBefore,
   getCurrentLobby,
 } from "@/shared/helpers/lobbyStorage";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
@@ -19,7 +19,6 @@ import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
-import { MetricToggleTooltip } from "./metricToggleTooltip";
 
 interface IProps {
   roomId: string;
@@ -34,12 +33,6 @@ const GroomingBoard = ({
 }: IProps) => {
   const socket = useSocket();
   const router = useRouter();
-  const [editVoteClicked, setEditVoteClicked] = useState(false);
-  const [customFieldName, setCustomFieldName] = useState(
-    process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? ""
-  );
-  const [hoveredMetric, setHoveredMetric] = useState<number | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const {
     userInfo,
@@ -50,14 +43,9 @@ const GroomingBoard = ({
     setEncounteredError,
     encounteredError,
     setShowErrorPopup,
+    editVoteClicked,
+    setEditVoteClicked
   } = useGroomingRoom();
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-  const toggleTooltipHover = (metricId?: number | null) => {
-    setHoveredMetric(metricId ?? null);
-  };
 
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
@@ -75,22 +63,6 @@ const GroomingBoard = ({
       }
     };
 
-    const handleVoteSent = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    };
-
-    const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
-
-    const setIssues = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    };
-
-    const handleResetVotes = (data: GroomingInfo) => {
-      setUserVote({});
-      setGroomingInfo(data);
-      setEditVoteClicked(false);
-    };
-  
     const handleUserDisconnected = (data: GroomingInfo) =>
       setGroomingInfo(data);
 
@@ -107,6 +79,7 @@ const GroomingBoard = ({
       }
       return;
     }
+    
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
     if (roomStatus === ROOM_STATUS.FOUND) {
@@ -117,23 +90,16 @@ const GroomingBoard = ({
       });
     }
 
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", () => {
       setShowErrorPopup(true);
     });
 
     socket.on("initialize", handleInitialize);
-    socket.on("voteSent", handleVoteSent);
-    socket.on("showResults", handleShowResults);
-    socket.on("resetVotes", handleResetVotes);
     socket.on("userDisconnected", handleUserDisconnected);
     socket.on("encounteredError", handleEncounteredError);
-    socket.on("setIssues", setIssues);
 
     return () => {
       socket.off("initialize", handleInitialize);
-      socket.off("voteSent", handleVoteSent);
-      socket.off("showResults", handleShowResults);
-      socket.off("resetVotes", handleResetVotes);
       socket.off("userDisconnected", handleUserDisconnected);
       socket.off("encounteredError", handleEncounteredError);
     };
@@ -151,23 +117,8 @@ const GroomingBoard = ({
     userInfo,
   ]);
 
-  const handleShowResultsClick = () => {
-    if (groomingInfo.isResultShown) {
-      return;
-    }
-    socket.emit("showResults", roomId, userInfo.lobby.credentials);
-  };
-
-  const handleResetVotesClick = () => {
-    socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
-  };
-
   const handleEditButtonClick = () => {
     setEditVoteClicked(!editVoteClicked);
-  };
-
-  const renderLoading = () => {
-    return <div className="grooming-board__loading">Loading..</div>;
   };
 
   if (showNickNameForm) {
@@ -194,7 +145,6 @@ const GroomingBoard = ({
             {groomingInfo.metrics?.map((metric) => (
               <VotingStick
                 key={metric.id}
-                id={metric.id}
                 points={metric.points}
                 name={metric.name}
                 displayName={metric.displayName}
@@ -224,110 +174,13 @@ const GroomingBoard = ({
               </button>
             </div>
           )}
-        <GroomingBoardJiraTable
-          roomId={roomId}
-          customFieldName={customFieldName}
-        />
-        {userInfo.lobby?.isAdmin &&
-          isGroomingInfoLoaded &&
-          groomingInfo.mode === GroomingMode.ScoreGrooming && (
-            <div className="grooming-board__actions-wrapper">
-              <button
-                className="grooming-board__reset-votes-button"
-                onClick={handleResetVotesClick}
-              >
-                Reset Votes
-              </button>
-              <button
-                className={classNames("grooming-board__show-result-button", {
-                  disabled: groomingInfo.isResultShown,
-                })}
-                onClick={handleShowResultsClick}
-              >
-                Show Results
-                {!groomingInfo.isResultShown && (
-                  <Image
-                    priority
-                    src="/right-arrow.svg"
-                    alt="right-arrow"
-                    width={20}
-                    height={20}
-                  />
-                )}
-              </button>
-            </div>
-          )}
-        {!isGroomingInfoLoaded && renderLoading()}
+        <GroomingBoardJiraTable roomId={roomId} />
+        {groomingInfo.mode === GroomingMode.ScoreGrooming && (
+          <GroomingBoardActions roomId={roomId} />
+        )}
+        {!isGroomingInfoLoaded && <Loading />}
       </section>
-      <section className="grooming-board__logs-section">
-        <>
-          {isGroomingInfoLoaded && (
-            <>
-              <ul className="grooming-board__metrics">
-                <div className="grooming-board__participants-text">
-                  <span>Participants</span>
-                </div>
-                {groomingInfo.metrics?.map((metric) => (
-                  <li
-                    key={metric.id}
-                    onMouseEnter={() => toggleTooltipHover(metric.id)}
-                    onMouseLeave={() => toggleTooltipHover(null)}
-                  >
-                    {metric.displayName}
-                    {hoveredMetric === metric.id && (
-                      <MetricToggleTooltip text={metric.text} />
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <GroomingBoardParticipants />
-              {groomingInfo.mode === GroomingMode.PlanningPoker && (
-                <GroomingBoardResultV2 />
-              )}
-              {userInfo.lobby?.isAdmin &&
-                isGroomingInfoLoaded &&
-                groomingInfo.mode === GroomingMode.PlanningPoker && (
-                  <div
-                    className={classNames("grooming-board__actions-wrapper", {
-                      "story-point-mode":
-                        groomingInfo.mode === GroomingMode.PlanningPoker,
-                    })}
-                  >
-                    {!groomingInfo.isResultShown && (
-                      <button
-                        className={classNames(
-                          "grooming-board__show-result-button",
-                          {
-                            disabled: groomingInfo.isResultShown,
-                          }
-                        )}
-                        onClick={handleShowResultsClick}
-                      >
-                        Show Results
-                        {!groomingInfo.isResultShown && (
-                          <Image
-                            priority
-                            src="/right-arrow.svg"
-                            alt="right-arrow"
-                            width={20}
-                            height={20}
-                          />
-                        )}
-                      </button>
-                    )}
-                    <button
-                      className="grooming-board__reset-votes-button"
-                      onClick={handleResetVotesClick}
-                    >
-                      Reset Votes
-                    </button>
-                  </div>
-                )}
-            </>
-          )}
-          {!isGroomingInfoLoaded && renderLoading()}
-        </>
-      </section>
+      <GroomingBoardLogs roomId={roomId} />
       <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />
     </div>
   );

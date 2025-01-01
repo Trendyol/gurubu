@@ -2,6 +2,7 @@ import React, { ReactNode, createContext, useContext, useEffect } from "react";
 import io from "socket.io-client";
 import { useGroomingRoom } from "./GroomingRoomContext";
 import { ROOM_STATUS } from "@/room/[id]/enums";
+import { GroomingInfo } from "@/shared/interfaces";
 
 const socket = io(process.env.NEXT_PUBLIC_API_URL || "", {
   autoConnect: false,
@@ -13,7 +14,8 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }: SocketProviderProps) {
-  const { roomStatus } = useGroomingRoom();
+  const { roomStatus, setGroomingInfo, setUserVote, setEditVoteClicked } = useGroomingRoom();
+
   useEffect(() => {
     if (roomStatus === ROOM_STATUS.FOUND) {
       socket.connect();
@@ -23,6 +25,36 @@ export function SocketProvider({ children }: SocketProviderProps) {
       socket.disconnect();
     };
   }, [roomStatus]);
+
+  useEffect(() => {
+    const handleVoteSent = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
+    const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
+
+    const handleResetVotes = (data: GroomingInfo) => {
+      setUserVote({});
+      setGroomingInfo(data);
+      setEditVoteClicked(false);
+    };
+
+    const setIssues = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
+    socket.on("voteSent", handleVoteSent);
+    socket.on("showResults", handleShowResults);
+    socket.on("resetVotes", handleResetVotes);
+    socket.on("setIssues", setIssues);
+
+    return () => {
+      socket.off("voteSent", handleVoteSent);
+      socket.off("showResults", handleShowResults);
+      socket.off("resetVotes", handleResetVotes);
+      socket.off("setIssues", setIssues);
+    };
+  }, [setGroomingInfo, setEditVoteClicked, setUserVote])
 
   return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 }
