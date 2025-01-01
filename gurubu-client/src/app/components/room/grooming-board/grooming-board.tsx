@@ -19,7 +19,7 @@ import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
-import { MetricToggleTooltip } from "./metricToggle/metricToggleTooltip";
+import { MetricToggleTooltip } from "./metricToggleTooltip";
 
 interface IProps {
   roomId: string;
