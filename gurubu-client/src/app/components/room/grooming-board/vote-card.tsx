@@ -1,17 +1,20 @@
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
+import { GroomingInfo } from "@/shared/interfaces";
 import classNames from "classnames";
+import { useEffect } from "react";
 
 interface IProps {
-  id: string;
   point: string;
   name: string;
 }
 
-const VoteCard = ({ id, point, name }: IProps) => {
+const VoteCard = ({ point, name }: IProps) => {
   const socket = useSocket();
-  const { setUserVote, userVote, userInfo } = useGroomingRoom();
+  const { setUserVote, userVote, userInfo, setGroomingInfo } = useGroomingRoom();
+
   const isCardSelected = userVote ? userVote[name] === point : false;
+
   const handleClick = () => {
     if (userVote && userVote[name] === point) {
       const temp = { ...userVote };
@@ -33,6 +36,18 @@ const VoteCard = ({ id, point, name }: IProps) => {
       userInfo.lobby.credentials
     );
   };
+
+  useEffect(() => {
+    const handleVoteSent = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
+    socket.on("voteSent", handleVoteSent);
+
+    return () => {
+      socket.off("voteSent", handleVoteSent);
+    };
+  }, [setGroomingInfo, socket]);
 
   return (
     <button

@@ -1,23 +1,23 @@
+import React, { useState } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
 import { JiraService } from "@/services/jiraService";
 import { convertJiraToMarkdown } from "@/shared/helpers/convertJiraMarkdown";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { marked } from "marked";
-import React, { useState } from "react";
 
 interface IProps {
   roomId: string;
-  customFieldName: string;
 }
 
-const GroomingBoardJiraTable = ({ roomId, customFieldName }: IProps) => {
+const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   const { userInfo, groomingInfo } = useGroomingRoom();
   const socket = useSocket();
 
   const [currentIssueIndex, setCurrentIssueIndex] = useState(0);
 
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
+  const customFieldName = process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? "";
 
   const selectedIssueIndex = groomingInfo.issues?.findIndex(
     (issue) => issue.selected
