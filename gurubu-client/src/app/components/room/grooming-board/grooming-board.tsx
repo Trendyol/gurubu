@@ -63,10 +63,6 @@ const GroomingBoard = ({
       }
     };
 
-    const setIssues = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    };
-
     const handleUserDisconnected = (data: GroomingInfo) =>
       setGroomingInfo(data);
 
@@ -83,6 +79,7 @@ const GroomingBoard = ({
       }
       return;
     }
+    
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
     if (roomStatus === ROOM_STATUS.FOUND) {
@@ -100,7 +97,6 @@ const GroomingBoard = ({
     socket.on("initialize", handleInitialize);
     socket.on("userDisconnected", handleUserDisconnected);
     socket.on("encounteredError", handleEncounteredError);
-    socket.on("setIssues", setIssues);
 
     return () => {
       socket.off("initialize", handleInitialize);

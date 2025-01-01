@@ -39,14 +39,20 @@ export function SocketProvider({ children }: SocketProviderProps) {
       setEditVoteClicked(false);
     };
 
+    const setIssues = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
     socket.on("voteSent", handleVoteSent);
     socket.on("showResults", handleShowResults);
     socket.on("resetVotes", handleResetVotes);
+    socket.on("setIssues", setIssues);
 
     return () => {
       socket.off("voteSent", handleVoteSent);
       socket.off("showResults", handleShowResults);
       socket.off("resetVotes", handleResetVotes);
+      socket.off("setIssues", setIssues);
     };
   }, [setGroomingInfo, setEditVoteClicked, setUserVote])
 
