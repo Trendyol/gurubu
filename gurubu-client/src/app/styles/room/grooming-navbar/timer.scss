@@ -1,0 +1,105 @@
+.timer-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 8px;
+}
+
+.timer-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 $space-semi-medium;
+  height: 30px;
+  border: none;
+  border-radius: $radius-large;
+  background-color: #FFF4E5;
+  color: #FF9800;
+  cursor: pointer;
+  font-size: $font-size-paragraph-4;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #FFE4BC;
+  }
+}
+
+.timer-dropdown {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  background: $white;
+  width: 120px;
+  border: 1px solid #E6E6E6;
+  border-radius: $radius-large;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 90;
+  box-shadow: $shadow-sm;
+}
+
+.timer-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+}
+
+.timer-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(50% - 2px);
+  padding: 8px 12px;
+  border: none;
+  border-radius: $radius-medium;
+  background: transparent;
+  color: $gray-600;
+  font-weight: $medium;
+  font-size: $font-size-paragraph-4;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #FFF4E5;
+    color: #FF9800;
+  }
+}
+
+.timer-controls {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-top: 1px solid #E6E6E6;
+  margin-top: 4px;
+}
+
+.timer-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(50% - 2px);
+  height: 30px;
+  border: none;
+  border-radius: $radius-medium;
+  background-color: #FFF4E5;
+  color: #FF9800;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(.disabled) {
+    background-color: #FFE4BC;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #F5F5F5;
+    color: #999;
+  }
+}

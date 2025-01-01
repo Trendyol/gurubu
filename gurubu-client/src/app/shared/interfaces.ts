@@ -42,6 +42,12 @@ export interface GroomingInfo {
   isAdmin: boolean;
   isResultShown: boolean;
   issues: Issue[];
+  timer: Timer;
+}
+
+export interface Timer {
+  timeLeft: number;
+  isRunning: boolean;
 }
 
 export interface UserInfo {
