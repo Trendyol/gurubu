@@ -16,12 +16,10 @@ import { useRouter, notFound } from "next/navigation";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
-import { ROOM_STATUS } from "../../room/[id]/enums";
+import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
-import { MetricToggleTooltip } from "../metricToggle/metricToggleTooltip";
-import { StoryPointCustomFieldForm } from "@/components/room/story-point-custom-field";
-import { Modal } from "../common/modal";
+import { MetricToggleTooltip } from "./metricToggle/metricToggleTooltip";
 
 interface IProps {
   roomId: string;
@@ -331,13 +329,6 @@ const GroomingBoard = ({
         </>
       </section>
       <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />
-      <Modal isOpen={modalOpen} onClose={closeModal}>
-        <StoryPointCustomFieldForm
-          customFieldName={customFieldName}
-          setCustomFieldName={setCustomFieldName}
-          closeModal={closeModal}
-        />
-      </Modal>
     </div>
   );
 };

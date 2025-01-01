@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { Modal } from "@/components/common/modal";
-import { ChangeNameForm } from "@/components/room/change-name";
+import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
 
 type Props = {

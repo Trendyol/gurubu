@@ -1,5 +1,5 @@
 import { useTheme } from "@/contexts/ThemeContext";
-import SnowAnimation from "@/components/room/snow-animation";
+import SnowAnimation from "@/components/room/grooming-navbar/snow-animation";
 import { memo } from "react";
 
 const ThemeLayout = memo(() => {

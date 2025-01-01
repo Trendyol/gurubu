@@ -3,12 +3,12 @@ import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconClipboardCheck } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { Modal } from "@/components/common/modal";
-import { ImportJiraIssuesForm } from "@/components/room/import-jira-issues";
+import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
 import GroomingBoardProfile from "./grooming-board-profile";
 import Image from "next/image";
 import ThemeSelector from "./theme-selector";
 import { GroomingMode } from "@/shared/enums";
-import Logo from "../common/logo";
+import Logo from "../../common/logo";
 
 interface Props {
   showNickNameForm: boolean;
