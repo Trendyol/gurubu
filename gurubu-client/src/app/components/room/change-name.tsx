@@ -1,14 +1,15 @@
-import { SetStateAction, useState } from "react";
 import Image from "next/image";
+import { SetStateAction, useEffect, useState } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { GroomingInfo } from "@/shared/interfaces";
 
 type Props = {
   closeModal: () => void;
 };
 
 export const ChangeNameForm = ({ closeModal }: Props) => {
-  const { userInfo, setUserinfo } = useGroomingRoom();
+  const { userInfo, setUserinfo, setGroomingInfo } = useGroomingRoom();
 
   const socket = useSocket();
   const [newNickname, setNewNickname] = useState(userInfo.nickname);
@@ -30,6 +31,20 @@ export const ChangeNameForm = ({ closeModal }: Props) => {
       closeModal();
     }
   };
+
+  useEffect(() => {
+    const handleUpdateNickName = (data: GroomingInfo) => setGroomingInfo(data);
+
+    socket.on("updateNickName", handleUpdateNickName);
+
+    return () => {
+      socket.off("updateNickName", handleUpdateNickName);
+    };
+  }, [
+    socket,
+    setGroomingInfo,
+  ]);
+
   return (
     <form onSubmit={handleSubmit} className="change-name-container">
       <div className="change-name-container__logo">
