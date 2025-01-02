@@ -1,4 +1,4 @@
-@import 'intro.js/introjs.css';
+@import "intro.js/introjs.css";
 @import "../variables.scss";
 @import "../mixins.scss";
 
@@ -25,8 +25,40 @@
 @import "./themes/theme.scss";
 @import "./not-found.scss";
 
-.introjs-tooltip, .introjs-tooltipReferenceLayer * {
-  font-family: 'Inter', sans-serif;
+.introjs-tooltip,
+.introjs-tooltipReferenceLayer * {
+  font-family: "Inter", sans-serif;
+}
+
+.introjs-tooltip-title {
+  color: $primary-700;
+}
+
+.introjs-tooltiptext {
+  color: #333333;
+}
+
+.introjs-tooltipbuttons {
+  a {
+    background-color: #f9f5ff;
+    color: #6941c6;
+    border: 1px solid #6941c6;
+    &:hover {
+      background-color: #f9f5ff;
+      border: 1px solid #6941c6;
+      color: #6941c6;
+    }
+    &:focus {
+      background-color: #f9f5ff;
+      border: 1px solid #6941c6;
+      color: #6941c6;
+      box-shadow: none;
+    }
+
+    &.introjs-disabled {
+      display: none;
+    }
+  }
 }
 
 .create-room {
@@ -69,21 +101,21 @@
   }
 }
 
-.fast-join-toaster{
+.fast-join-toaster {
   display: flex;
   align-items: center;
-  .fast-join-toaster-title{
+  .fast-join-toaster-title {
     color: $primary-700;
     font-size: 16px;
     line-height: 20px;
     font-weight: 600;
   }
-  .fast-join-toaster-description{
+  .fast-join-toaster-description {
     color: $gray-500;
     font-size: 14px;
     line-height: 18px;
   }
-  .fast-join-toaster-close{
+  .fast-join-toaster-close {
     background: none;
     border: none;
     cursor: pointer;

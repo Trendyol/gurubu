@@ -81,8 +81,10 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     if (showTour && userInfo.nickname && roomStatus === ROOM_STATUS.FOUND) {
-      startTour();
-    }
+      const timeoutId = setTimeout(() => {
+        startTour();
+      }, 500);
+      return () => clearTimeout(timeoutId);    }
   }, [
     showTour,
     startTour,
