@@ -141,7 +141,7 @@ const GroomingBoard = ({
             <GroomingBoardResult />
           )}
         {showVotingStick && (
-          <div className="grooming-board__voting-sticks">
+          <div className="grooming-board__voting-sticks" id="voting-sticks">
             {groomingInfo.metrics?.map((metric) => (
               <VotingStick
                 key={metric.id}

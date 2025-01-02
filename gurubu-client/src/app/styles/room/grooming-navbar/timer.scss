@@ -19,6 +19,9 @@
   cursor: pointer;
   font-size: $font-size-paragraph-4;
   transition: all 0.2s;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 600;
 
   &:hover {
     background-color: #FFE4BC;

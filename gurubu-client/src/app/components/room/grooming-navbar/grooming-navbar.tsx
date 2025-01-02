@@ -1,11 +1,10 @@
 import Logo from "../../common/logo";
 import Timer from "./timer";
 import GroomingBoardProfile from "./grooming-board-profile";
-import Image from "next/image";
 import ThemeSelector from "./theme-selector";
 import { useState } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
-import { IconClipboardCheck } from "@tabler/icons-react";
+import { IconClipboardCheck, IconCopy, IconFileImport } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
@@ -64,64 +63,38 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   return (
     <nav className="grooming-navbar">
       <div className="grooming-navbar__content">
-        <div className="grooming-navbar__content-actions">
-          <Logo />
-          <div className="grooming-navbar__content-participants">
-            <div className="grooming-navbar__content-participant-number-section">
-              <Image
-                src="/icon-user-group.svg"
-                width={12}
-                height={12}
-                alt="Participants"
-              />
-              <p className="grooming-navbar__content-participant-number">
-                {groomingInfo.totalParticipants || "0"}
-              </p>
-            </div>
-          </div>
-          <div>
+        <Logo />
+        <div className="grooming-navbar__content-right">
+          <div className="grooming-navbar__content-actions">
+            {userInfo.lobby?.isAdmin &&
+              groomingInfo?.mode === GroomingMode.PlanningPoker && (
+                <div>
+                  <button
+                    className="grooming-navbar__content-import-jira-issues"
+                    onClick={() => openModal("importJiraIssues")}
+                  >
+                    <IconFileImport size={20} />
+                    Import Jira Issues
+                  </button>
+                </div>
+              )}
             <button
               className="grooming-navbar__content-copy-link"
               onClick={handleCopyGroomingLinkClick}
             >
               {isGroomingLinkCopied ? (
-                <IconClipboardCheck stroke={3} width={14} height={14} />
+                <IconClipboardCheck size={20} />
               ) : (
-                <Image
-                  src="/icon-copy.svg"
-                  width={14}
-                  height={14}
-                  alt="Copy link"
-                />
+                <IconCopy size={20} />
               )}
               Link
             </button>
           </div>
-          {userInfo.lobby?.isAdmin &&
-            groomingInfo?.mode === GroomingMode.PlanningPoker && (
-              <div>
-                <button
-                  className="grooming-navbar__content-import-jira-issues"
-                  onClick={() => openModal("importJiraIssues")}
-                >
-                  <span className="grooming-navbar__content-import-jira-issues-version">
-                    Beta
-                  </span>
-                  <Image
-                    src="/planning.svg"
-                    width={14}
-                    height={14}
-                    alt="Copy link"
-                  />
-                  Import Jira Issues
-                </button>
-              </div>
-            )}
-        </div>
-        <div className="grooming-navbar__content-user-section">
-          <Timer roomId={roomId} />
-          <ThemeSelector />
-          <GroomingBoardProfile roomId={roomId} />
+          <div className="grooming-navbar__content-user-section">
+            <Timer roomId={roomId} />
+            <ThemeSelector />
+            <GroomingBoardProfile roomId={roomId} />
+          </div>
         </div>
         <Modal isOpen={modalOpen} onClose={closeModal}>
           <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />

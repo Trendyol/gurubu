@@ -48,11 +48,11 @@ const ThemeSelector = () => {
   return (
     <div className="theme-selector-container" ref={selectorRef}>
       <button
+        title="theme"
         className={`theme-selector-trigger ${isThemeActive ? "active" : ""}`}
         onClick={() => setShowThemeOptions(!showThemeOptions)}
       >
-        {CurrentThemeIcon && <CurrentThemeIcon size={16} />}
-        <span>Theme</span>
+        {CurrentThemeIcon && <CurrentThemeIcon size={24} />}
       </button>
 
       {showThemeOptions && (

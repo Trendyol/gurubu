@@ -48,6 +48,7 @@ export interface GroomingInfo {
 export interface Timer {
   timeLeft: number;
   isRunning: boolean;
+  startTime: number;
 }
 
 export interface UserInfo {

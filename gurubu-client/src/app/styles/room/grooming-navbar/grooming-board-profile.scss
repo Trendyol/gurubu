@@ -3,10 +3,7 @@
   height: 30px;
   justify-content: center;
   align-items: center;
-  padding: 0 $space-semi-medium 0 $space-semi-small;
-  border: 1px solid $purple-200;
-  border-radius: $radius-large;
-  background-color: $purple-50;
+  padding: 0 0 0 $space-semi-small;
   gap: 0 $space-semi-small;
   cursor: pointer;
   position: relative;
@@ -52,8 +49,8 @@
   }
 
   &__icon {
-    width: 16px;
-    height: 16px;
+    width: 30px;
+    height: 30px;
     border: 1px solid $primary-200;
     background-color: $primary-50;
     border-radius: 100%;
@@ -62,18 +59,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    &::after {
-      content: " ";
-      background-color: $success-500;
-      width: 6px;
-      height: 6px;
-      right: -3px;
-      bottom: -2px;
-      border: 1px solid $white;
-      border-radius: 100%;
-      position: absolute;
-    }
   }
 
   &__text {

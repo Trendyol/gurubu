@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  IconClock,
+  IconAlarm,
   IconPlayerPlay,
-  IconPlayerStop,
+  IconPlayerPause,
   IconRefresh,
 } from "@tabler/icons-react";
 import { useSocket } from "@/contexts/SocketContext";
@@ -28,6 +28,7 @@ const Timer = ({ roomId }: Props) => {
   const { groomingInfo, userInfo } = useGroomingRoom();
   const isRunning = groomingInfo?.timer?.isRunning;
   const timeLeft = groomingInfo?.timer?.timeLeft ?? 0;
+  const startTime = groomingInfo?.timer?.startTime ?? null;
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -35,53 +36,52 @@ const Timer = ({ roomId }: Props) => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
+  const calculateTimeLeft = () => {
+    if (startTime && isRunning) {
+      const elapsed = Math.floor(
+        (Date.now() - new Date(startTime).getTime()) / 1000
+      );
+      return Math.max(timeLeft - elapsed, 0);
+    }
+    return timeLeft;
+  };
+
   const addTime = (minutes: number) => {
     socket.emit(
       "updateTimer",
       roomId,
-      { 
-        isRunning, 
-        timeLeft: timeLeft + minutes * 60
+      {
+        isRunning,
+        timeLeft: timeLeft + minutes * 60,
+        startTime: isRunning ? startTime : null,
       },
       userInfo.lobby.credentials
     );
   };
 
   const toggleTimer = () => {
-    if (isRunning) {
-      // Stop timer
-      socket.emit(
-        "updateTimer",
-        roomId,
-        { 
-          isRunning: false, 
-          timeLeft: localTimeLeft
-        },
-        userInfo.lobby.credentials
-      );
-    } else {
-      // Start timer
-      if (timeLeft <= 0) return;
+    const currentStartTime = isRunning ? null : new Date().toISOString();
 
-      socket.emit(
-        "updateTimer",
-        roomId,
-        { 
-          isRunning: true, 
-          timeLeft
-        },
-        userInfo.lobby.credentials
-      );
-    }
+    socket.emit(
+      "updateTimer",
+      roomId,
+      {
+        isRunning: !isRunning,
+        timeLeft: isRunning ? localTimeLeft : calculateTimeLeft(),
+        startTime: currentStartTime,
+      },
+      userInfo.lobby.credentials
+    );
   };
 
   const resetTimer = () => {
     socket.emit(
       "updateTimer",
       roomId,
-      { 
-        isRunning: false, 
-        timeLeft: 0
+      {
+        isRunning: false,
+        timeLeft: 0,
+        startTime: null,
       },
       userInfo.lobby.credentials
     );
@@ -89,8 +89,13 @@ const Timer = ({ roomId }: Props) => {
 
   // Handle local countdown
   useEffect(() => {
-    if (isRunning && timeLeft > 0) {
-      setLocalTimeLeft(timeLeft);
+    if (isRunning) {
+      const calculatedTimeLeft = calculateTimeLeft();
+      setLocalTimeLeft(calculatedTimeLeft);
+
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
       const id = setInterval(() => {
         setLocalTimeLeft((prev) => {
           if (prev <= 0) {
@@ -98,9 +103,10 @@ const Timer = ({ roomId }: Props) => {
             socket.emit(
               "updateTimer",
               roomId,
-              { 
-                isRunning: false, 
-                timeLeft: 0
+              {
+                isRunning: false,
+                timeLeft: 0,
+                startTime: null,
               },
               userInfo.lobby.credentials
             );
@@ -123,11 +129,14 @@ const Timer = ({ roomId }: Props) => {
         clearInterval(intervalId);
       }
     };
-  }, [isRunning, timeLeft]);
+  }, [isRunning, timeLeft, startTime]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (timerRef.current && !timerRef.current.contains(event.target as Node)) {
+      if (
+        timerRef.current &&
+        !timerRef.current.contains(event.target as Node)
+      ) {
         setShowOptions(false);
       }
     };
@@ -142,7 +151,7 @@ const Timer = ({ roomId }: Props) => {
         className="timer-trigger"
         onClick={() => setShowOptions(!showOptions)}
       >
-        <IconClock size={16} />
+        <IconAlarm size={24} />
         <span>{formatTime(localTimeLeft)}</span>
       </button>
 
@@ -166,7 +175,7 @@ const Timer = ({ roomId }: Props) => {
               disabled={!localTimeLeft}
             >
               {isRunning ? (
-                <IconPlayerStop size={16} />
+                <IconPlayerPause size={16} />
               ) : (
                 <IconPlayerPlay size={16} />
               )}
