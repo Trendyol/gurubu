@@ -31,6 +31,14 @@ export function SocketProvider({ children }: SocketProviderProps) {
       setGroomingInfo(data);
     };
 
+    const setIssues = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
+    const updateTimer = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    }
+
     const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
 
     const handleResetVotes = (data: GroomingInfo) => {
@@ -39,20 +47,19 @@ export function SocketProvider({ children }: SocketProviderProps) {
       setEditVoteClicked(false);
     };
 
-    const setIssues = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    };
 
     socket.on("voteSent", handleVoteSent);
     socket.on("showResults", handleShowResults);
     socket.on("resetVotes", handleResetVotes);
     socket.on("setIssues", setIssues);
+    socket.on("updateTimer", updateTimer);
 
     return () => {
       socket.off("voteSent", handleVoteSent);
       socket.off("showResults", handleShowResults);
       socket.off("resetVotes", handleResetVotes);
       socket.off("setIssues", setIssues);
+      socket.off("updateTimer", updateTimer);
     };
   }, [setGroomingInfo, setEditVoteClicked, setUserVote])
 

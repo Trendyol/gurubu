@@ -1,14 +1,15 @@
+import Logo from "../../common/logo";
+import Timer from "./timer";
+import GroomingBoardProfile from "./grooming-board-profile";
+import Image from "next/image";
+import ThemeSelector from "./theme-selector";
 import { useState } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconClipboardCheck } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
-import GroomingBoardProfile from "./grooming-board-profile";
-import Image from "next/image";
-import ThemeSelector from "./theme-selector";
 import { GroomingMode } from "@/shared/enums";
-import Logo from "../../common/logo";
 
 interface Props {
   showNickNameForm: boolean;
@@ -30,7 +31,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
     setModalOpen(false);
   };
 
-  const { groomingInfo, roomStatus, userInfo, setIssues } = useGroomingRoom();
+  const { groomingInfo, roomStatus, userInfo } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
   if (roomStatus !== ROOM_STATUS.FOUND || showNickNameForm) {
@@ -118,6 +119,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
             )}
         </div>
         <div className="grooming-navbar__content-user-section">
+          <Timer roomId={roomId} />
           <ThemeSelector />
           <GroomingBoardProfile roomId={roomId} />
         </div>
