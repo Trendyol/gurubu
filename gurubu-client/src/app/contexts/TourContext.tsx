@@ -55,7 +55,7 @@ export const TourProvider = ({ children }: TourProviderProps) => {
           title: "Jira Table",
           element: ".grooming-navbar__content-import-jira-issues",
           intro:
-            "You can easily access the Jira board, click on the question mark for more details!",
+            "You can easily access the Jira board, detailed explanation will shared soon!",
           position: "bottom",
         },
         {
