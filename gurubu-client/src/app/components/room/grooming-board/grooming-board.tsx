@@ -19,6 +19,8 @@ import { IconEdit, IconReportAnalytics } from "@tabler/icons-react";
 import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
+import { useLoader } from "@/contexts/LoaderContext";
+import VotingStickV2 from "./voting-stick-v2";
 
 interface IProps {
   roomId: string;
@@ -44,16 +46,19 @@ const GroomingBoard = ({
     encounteredError,
     setShowErrorPopup,
     editVoteClicked,
-    setEditVoteClicked
+    setEditVoteClicked,
   } = useGroomingRoom();
 
-  const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
+  const { showLoader } = useLoader();
 
+  const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
   const showVotingStick =
     (editVoteClicked ||
       !groomingInfo.isResultShown ||
       groomingInfo.mode === GroomingMode.PlanningPoker) &&
     isGroomingInfoLoaded;
+  const isScoreGrooming = groomingInfo.mode === GroomingMode.ScoreGrooming;
+  const isPlanningPoker = groomingInfo.mode === GroomingMode.PlanningPoker;
 
   useEffect(() => {
     const handleInitialize = (data: GroomingInfo) => {
@@ -79,7 +84,7 @@ const GroomingBoard = ({
       }
       return;
     }
-    
+
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
     if (roomStatus === ROOM_STATUS.FOUND) {
@@ -129,19 +134,21 @@ const GroomingBoard = ({
     notFound();
   }
 
+  if (!isGroomingInfoLoaded && roomStatus !== ROOM_STATUS.CHECKING) {
+    return <Loading />;
+  }
+
   return (
     <div className="grooming-board">
+      {showLoader && <Loading />}
       <section
         className={classNames("grooming-board__playground", {
-          "story-point-mode": groomingInfo.mode === GroomingMode.PlanningPoker,
+          "story-point-mode": isPlanningPoker,
         })}
       >
-        {!editVoteClicked &&
-          groomingInfo.mode === GroomingMode.ScoreGrooming && (
-            <GroomingBoardResult />
-          )}
-        {showVotingStick && (
-          <div className="grooming-board__voting-sticks" id="voting-sticks">
+        {!editVoteClicked && isScoreGrooming && <GroomingBoardResult />}
+        {showVotingStick && isScoreGrooming && (
+          <div className="grooming-board__voting-sticks">
             {groomingInfo.metrics?.map((metric) => (
               <VotingStick
                 key={metric.id}
@@ -152,33 +159,37 @@ const GroomingBoard = ({
             ))}
           </div>
         )}
-        {!editVoteClicked && <MetricAverages />}
-        {groomingInfo.isResultShown &&
-          groomingInfo.mode === GroomingMode.ScoreGrooming && (
-            <div className="grooming-board__toggle-button-wrapper">
-              <button
-                className={classNames(
-                  "grooming-board__edit-vote-toggle-button",
-                  {
-                    clicked: editVoteClicked,
-                  }
-                )}
-                onClick={handleEditButtonClick}
-              >
-                {editVoteClicked ? "Back to Results" : "Edit Vote"}
-                {editVoteClicked ? (
-                  <IconReportAnalytics width={16} />
-                ) : (
-                  <IconEdit width={16} />
-                )}
-              </button>
-            </div>
-          )}
-        <GroomingBoardJiraTable roomId={roomId} />
-        {groomingInfo.mode === GroomingMode.ScoreGrooming && (
-          <GroomingBoardActions roomId={roomId} />
+        {showVotingStick && isPlanningPoker && (
+          <div className="grooming-board__voting-sticks">
+            {groomingInfo.metrics?.map((metric) => (
+              <VotingStickV2
+                key={metric.id}
+                points={metric.points}
+                name={metric.name}
+              />
+            ))}
+          </div>
         )}
-        {!isGroomingInfoLoaded && <Loading />}
+        {!editVoteClicked && <MetricAverages />}
+        {groomingInfo.isResultShown && isScoreGrooming && (
+          <div className="grooming-board__toggle-button-wrapper">
+            <button
+              className={classNames("grooming-board__edit-vote-toggle-button", {
+                clicked: editVoteClicked,
+              })}
+              onClick={handleEditButtonClick}
+            >
+              {editVoteClicked ? "Back to Results" : "Edit Vote"}
+              {editVoteClicked ? (
+                <IconReportAnalytics width={16} />
+              ) : (
+                <IconEdit width={16} />
+              )}
+            </button>
+          </div>
+        )}
+        <GroomingBoardJiraTable roomId={roomId} />
+        {isScoreGrooming && <GroomingBoardActions roomId={roomId} />}
       </section>
       <GroomingBoardLogs roomId={roomId} />
       <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
 import { JiraService } from "@/services/jiraService";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { debounce } from 'lodash';
+import { useLoader } from "@/contexts/LoaderContext";
 
 type Props = {
   roomId: string;
@@ -20,6 +21,8 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const [boards, setBoards] = useState<{ id: string; name: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
   const [sprints, setSprints] = useState<{ id: string; name: string }[]>([]);
+
+  const { setShowLoader } = useLoader();
 
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
 
@@ -49,6 +52,13 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     localStorage.setItem(e.target.name, JSON.stringify(value));
   };
 
+  const debouncedChangeHandler = useCallback(
+    debounce((board: string) => {
+      fetchBoards(board);
+    }, 1000),
+    []
+  );
+
   const handleBoardSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     var board = e.target.value.trim();
     setBoardSearch(board);
@@ -57,7 +67,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     setSelectedSprint("");
     setSprints([]);
     if (board) {
-      fetchBoards(board);
+      debouncedChangeHandler(board);
     }
   };
 
@@ -86,6 +96,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   };
 
   const handleImportIssues = async () => {
+    setShowLoader(true);
     const customFieldName = localStorage.getItem("story_points_custom_field_name");
     var response = await jiraService.getSprintIssues(selectedSprint, customFieldName!);
     if (response.isSuccess && response.data) {
@@ -93,6 +104,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       socket.emit("setIssues", roomId, response.data, userInfo.lobby.credentials);
       closeModal();
     }    
+    setShowLoader(false);
   };
 
   const handleClearForm = () => {
@@ -112,13 +124,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
 
   return (
     <form onSubmit={handleImportIssues} className="import-jira-issues">
-      <div className="import-jira-issues__logo">
-        <Image src="/logo.svg" width={24} height={24} alt="Gurubu Logo" priority />
-        <h4>GuruBu</h4>
-      </div>
-
       <h3>Jira Sprint Issue Importer</h3>
-
       <div className="import-jira-issues__row">
         <input
           type="text"
@@ -126,9 +132,9 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
           name="jiraUrl"
           value={jiraUrl}
           onChange={handleInputChange(setJiraUrl)}
+          disabled={!!process.env.NEXT_PUBLIC_JIRA_URL}
         />
       </div>
-
       <div className="import-jira-issues__row">
         <input
           type="text"

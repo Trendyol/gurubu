@@ -19,8 +19,9 @@ import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { useSearchParams } from "next/navigation";
 import { IconX } from "@tabler/icons-react";
 import { TourProvider, useTour } from "@/contexts/TourContext";
-import "@/styles/room/style.scss";
 import { ROOM_STATUS } from "./enums";
+import "@/styles/room/style.scss";
+import { LoaderProvider } from "@/contexts/LoaderContext";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
   return (
@@ -28,7 +29,9 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
       <SocketProvider>
         <ThemeProvider>
           <TourProvider>
-            <GroomingRoomContent params={params} />
+            <LoaderProvider>
+              <GroomingRoomContent params={params} />
+            </LoaderProvider>
           </TourProvider>
         </ThemeProvider>
       </SocketProvider>

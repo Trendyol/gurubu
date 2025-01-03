@@ -87,7 +87,6 @@ const Timer = ({ roomId }: Props) => {
     );
   };
 
-  // Handle local countdown
   useEffect(() => {
     if (isRunning) {
       const calculatedTimeLeft = calculateTimeLeft();
