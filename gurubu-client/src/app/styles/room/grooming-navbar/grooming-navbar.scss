@@ -10,10 +10,17 @@
     margin: 0 auto;
     padding: $space-xlarge $space-xxxlarge;
 
+    &-right{
+      display: flex;
+    }
+
     &-user-section {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
+      border-left: 1px solid $gray-100;
+      padding-left: 12px;
+      margin-left: 12px;
     }
 
     &-actions {
@@ -82,16 +89,6 @@
       height: fit-content;
       cursor: pointer;
       position: relative;
-    }
-    &-import-jira-issues-version {
-      padding: 3px;
-      background-color: $red-700;
-      border-radius: $radius-large;
-      position: absolute;
-      color: $white;
-      font-size: 10px;
-      top: -8.5px;
-      right: 0;
     }
   }
 }

@@ -2,26 +2,21 @@
 
 .theme-selector-container {
   position: relative;
-  margin-right: 8px;
+  margin: 0 8px;
 }
 
 .theme-selector-trigger {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 $space-semi-medium;
   height: 30px;
   border: none;
   border-radius: $radius-large;
-  background-color: #E8F5FF;
-  color: #0085FF;
+  color: #7f56d9;
   cursor: pointer;
   font-size: $font-size-paragraph-4;
   transition: all 0.2s;
-
-  &:hover {
-    background-color: #CCE8FF;
-  }
+  background: none;
 }
 
 .theme-selector-dropdown {

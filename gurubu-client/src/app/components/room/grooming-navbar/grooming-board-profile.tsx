@@ -58,10 +58,8 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     <>
       <div className="grooming-board-profile" id="grooming-board-profile" onClick={handleClick}>
         <div className="grooming-board-profile__icon">
-          <Image src="/icon-user.svg" width={10} height={10} alt="User information" />
+          <Image src="/icon-user.svg" width={16} height={16} alt="User information" />
         </div>
-        <p className="grooming-board-profile__text">{userInfo.nickname}</p>
-
         {showProfileBar && (
           <div className="grooming-board-profile__bar" id="grooming-board-profile__bar">
             <button

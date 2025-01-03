@@ -134,6 +134,7 @@
     justify-content: flex-end;
     margin-right: 2px;
     align-items: center;
+    padding: 12px 24px;
     li,
     span {
       color: $gray-600;
@@ -155,7 +156,8 @@
   }
   &__participants-text {
     width: 140px;
-    padding: 12px 24px;
+    display: flex;
+    align-items: center;
   }
   &__participants-container {
     display: flex;
