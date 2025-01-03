@@ -20,8 +20,8 @@ import { useSearchParams } from "next/navigation";
 import { IconX } from "@tabler/icons-react";
 import { TourProvider, useTour } from "@/contexts/TourContext";
 import { ROOM_STATUS } from "./enums";
-import "@/styles/room/style.scss";
 import { LoaderProvider } from "@/contexts/LoaderContext";
+import "@/styles/room/style.scss";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
   return (
@@ -94,7 +94,7 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
       }, 1000);
       return () => clearTimeout(timeoutId);
     }
-  }, [showTour, startTour, roomStatus, userInfo, isGroomingInfoLoaded]);
+  }, [showTour, roomStatus, isGroomingInfoLoaded]);
 
   return (
     <>

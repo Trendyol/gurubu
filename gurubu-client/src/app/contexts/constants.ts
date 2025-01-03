@@ -20,6 +20,13 @@ export const groomingBoardTour = [
     position: "left",
   },
   {
+    title: "Jira Table",
+    element: ".grooming-navbar__content-import-jira-issues",
+    intro:
+      "You can easily access the Jira board, detailed explanation will shared soon!",
+    position: "bottom",
+  },
+  {
     title: "Copy Link",
     element: ".grooming-navbar__content-copy-link",
     intro:

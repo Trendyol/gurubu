@@ -34,15 +34,6 @@ export const TourProvider = ({ children }: TourProviderProps) => {
 
   const startTour = () => {
     const intro = introJs();
-    if (userInfo.lobby?.isAdmin) {
-      groomingBoardTour.push({
-        title: "Jira Table",
-        element: ".grooming-navbar__content-import-jira-issues",
-        intro:
-          "You can easily access the Jira board, detailed explanation will shared soon!",
-        position: "bottom",
-      });
-    }
 
     intro.setOptions({
       steps: groomingBoardTour,
