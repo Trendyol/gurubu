@@ -80,19 +80,18 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (showTour && userInfo.nickname && roomStatus === ROOM_STATUS.FOUND) {
+    if (
+      showTour &&
+      userInfo.nickname &&
+      roomStatus === ROOM_STATUS.FOUND &&
+      isGroomingInfoLoaded
+    ) {
       const timeoutId = setTimeout(() => {
         startTour();
-      }, 500);
-      return () => clearTimeout(timeoutId);    }
-  }, [
-    showTour,
-    startTour,
-    showNickNameForm,
-    roomStatus,
-    userInfo,
-    isGroomingInfoLoaded,
-  ]);
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [showTour, startTour, roomStatus, userInfo, isGroomingInfoLoaded]);
 
   return (
     <>
