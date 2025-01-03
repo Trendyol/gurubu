@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import GroomingBoardParticipants from "./grooming-board-participants";
 import GroomingBoardResultV2 from "./grooming-board-result-v2";
 import GroomingBoardActions from "./grooming-board-actions";
-import Loading from "../loading";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { MetricToggleTooltip } from "./metricToggleTooltip";
 import { GroomingMode } from "@/shared/enums";
@@ -53,7 +52,6 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
             )}
         </>
       )}
-      {!isGroomingInfoLoaded && <Loading />}
     </section>
   );
 };

@@ -1,0 +1,23 @@
+.voting-stick-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: $space-xlarge;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  &__vote-cards {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: $radius-large;
+    width: 100%;
+  }
+  &__label {
+    color: $gray-900-v2;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-paragraph-4;
+    font-weight: $semibold;
+    width: 187px;
+  }
+}

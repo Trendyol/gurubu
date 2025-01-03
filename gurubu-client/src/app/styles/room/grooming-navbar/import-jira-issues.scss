@@ -41,6 +41,17 @@
       border: 1px solid $primary-600;
       border-radius: $radius-large;
       cursor: pointer;
+      &:hover{
+        background-color: $purple-500;
+      }
+      &:nth-child(2){
+        background-color: $white;
+        border: 1px solid #cdd1d4;
+        color: $gray-700;
+        &:hover {
+          background-color: $off-white;
+        }
+      }
     }
   }
 

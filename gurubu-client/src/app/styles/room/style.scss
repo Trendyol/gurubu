@@ -9,7 +9,9 @@
 @import "./grooming-navbar/timer.scss";
 @import "./grooming-navbar/import-jira-issues.scss";
 @import "./grooming-board/vote-card.scss";
+@import "./grooming-board/vote-card-v2.scss";
 @import "./grooming-board/voting-stick.scss";
+@import "./grooming-board/voting-stick-v2.scss";
 @import "./grooming-board/nickname-form.scss";
 @import "./grooming-board/grooming-board.scss";
 @import "./grooming-board/connecting-info.scss";
@@ -24,6 +26,8 @@
 @import "./grooming-footer/feedback.scss";
 @import "./themes/theme.scss";
 @import "./not-found.scss";
+@import "./loading.scss";
+
 
 .introjs-tooltip,
 .introjs-tooltipReferenceLayer * {
