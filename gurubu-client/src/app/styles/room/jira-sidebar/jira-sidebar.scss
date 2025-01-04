@@ -1,0 +1,32 @@
+.jira-sidebar-content {
+  padding: 30px 24px;
+  &.expanded {
+    .jira-sidebar-icon-container {
+      justify-content: flex-start;
+    }
+  }
+  .jira-sidebar-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    .jira-sidebar-icon {
+      cursor: pointer;
+      color: #0055d6;
+    }
+  }
+  .jira-sidebar-shortened-text-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 24px;
+    .jira-sidebar-shortened-text {
+      color: #0055d6;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 28px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+    }
+  }
+}

@@ -16,6 +16,18 @@ body {
   scroll-padding: $scroll-padding;
 }
 
+body {
+  &.jira-padding-right{
+    $animation-duration: 0.3s;
+    $easing: ease;
+    transition: padding-right $animation-duration $easing;
+    padding-right: 86px;
+    @media (max-width: 850px) {
+      padding-right: 0;
+    }
+  }
+}
+
 a {
   color: inherit;
   text-decoration: none;

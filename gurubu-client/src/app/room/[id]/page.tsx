@@ -15,6 +15,7 @@ import {
   GroomingRoomProvider,
   useGroomingRoom,
 } from "@/contexts/GroomingRoomContext";
+import JiraSidebar from "@/components/room/jira-sidebar";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { useSearchParams } from "next/navigation";
 import { IconX } from "@tabler/icons-react";
@@ -118,6 +119,7 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
         />
         {showNickNameForm && <NicknameForm roomId={params.id} />}
         <GroomingFooter />
+        <JiraSidebar roomId={params.id} />
       </main>
     </>
   );

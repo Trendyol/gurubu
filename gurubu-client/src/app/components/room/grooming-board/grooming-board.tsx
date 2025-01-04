@@ -2,7 +2,6 @@ import classNames from "classnames";
 import VotingStick from "./voting-stick";
 import MetricAverages from "./metric-averages";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
-import GroomingBoardJiraTable from "./grooming-board-jira-table";
 import GroomingBoardResult from "./grooming-board-result";
 import GroomingBoardLogs from "./grooming-board-logs";
 import GroomingBoardActions from "./grooming-board-actions";
@@ -188,7 +187,6 @@ const GroomingBoard = ({
             </button>
           </div>
         )}
-        <GroomingBoardJiraTable roomId={roomId} />
         {isScoreGrooming && <GroomingBoardActions roomId={roomId} />}
       </section>
       <GroomingBoardLogs roomId={roomId} />
