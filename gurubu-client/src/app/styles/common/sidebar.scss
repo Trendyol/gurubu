@@ -1,0 +1,42 @@
+$animation-duration: 0.3s;
+$easing: ease;
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: transform $animation-duration $easing;
+  transition: width $animation-duration $easing;
+  background-color: #ffffff;
+  z-index: 1000;
+  @media (max-width: 850px) {
+    display: none;
+  }
+
+  &.left {
+    left: 0;
+    transform: translateX(-100%);
+  }
+
+  &.right {
+    right: 0;
+    transform: translateX(100%);
+  }
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+  }
+}
