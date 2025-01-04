@@ -9,6 +9,10 @@
     width: 80%;
     margin: 0 auto;
     padding: $space-xlarge $space-xxxlarge;
+    @media (max-width: 850px) {
+      padding: $space-xlarge 12px;
+      margin: 0 12px;
+    }
 
     &-right{
       display: flex;
@@ -21,11 +25,18 @@
       border-left: 1px solid $gray-100;
       padding-left: 12px;
       margin-left: 12px;
+      @media (max-width: 850px) {
+        display: none;
+        border-left: none;
+      }
     }
 
     &-actions {
       display: flex;
       gap: 0 $space-xlarge;
+      @media (max-width: 850px) {
+        display: none;
+      }
     }
 
     &-participants {

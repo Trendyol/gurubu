@@ -28,6 +28,15 @@
 @import "./not-found.scss";
 @import "./loading.scss";
 
+@media (max-width: 850px) {
+  .introjsFloatingElement,
+  .introjs-overlay,
+  .introjs-helperLayer,
+  .introjs-tooltipReferenceLayer,
+  .introjs-disableInteraction {
+    display: none;
+  }
+}
 
 .introjs-tooltip,
 .introjs-tooltipReferenceLayer * {
