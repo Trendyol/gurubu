@@ -5,6 +5,10 @@
   padding: 0 $space-xxxlarge;
   justify-content: space-between;
   margin-top: 48px;
+  @media (max-width: 850px) {
+    padding: 12px;
+    flex-direction: column;
+  }
   &__playground {
     width: 60%;
     display: flex;
@@ -12,6 +16,9 @@
     flex-direction: column;
     &.story-point-mode {
       justify-content: flex-start;
+      @media (max-width: 850px) {
+        width: 100%;
+      }
     }
   }
   &__toggle-button-wrapper {
@@ -135,6 +142,9 @@
     margin-right: 2px;
     align-items: center;
     padding: 12px 24px;
+    @media (max-width: 850px) {
+      display: none;
+    }
     li,
     span {
       color: $gray-600;

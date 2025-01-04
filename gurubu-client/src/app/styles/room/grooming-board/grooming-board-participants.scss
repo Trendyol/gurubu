@@ -5,6 +5,9 @@
   max-height: 500px;
   overflow-y: scroll;
   position: relative;
+  @media (max-width: 850px) {
+    display: none;
+  }
   li {
     width: 100%;
     border-top: 1px solid $gray-100;

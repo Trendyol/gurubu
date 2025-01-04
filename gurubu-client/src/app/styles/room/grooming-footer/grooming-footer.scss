@@ -8,6 +8,9 @@
   position: relative;
   &__content {
     padding: 12px 48px 12px 48px;
+    @media (max-width: 850px) {
+      padding: 12px 0;
+    }
     display: flex;
     align-items: center;
     gap: 12px;
@@ -24,6 +27,9 @@
       border-left: 1px solid $gray-100;
       padding-left: 12px;
       text-decoration: underline;
+      @media (max-width: 850px) {
+        display: none;
+      }
     }
   }
 }
