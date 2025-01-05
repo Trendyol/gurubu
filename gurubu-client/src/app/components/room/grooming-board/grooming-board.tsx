@@ -6,6 +6,8 @@ import GroomingBoardResult from "./grooming-board-result";
 import GroomingBoardLogs from "./grooming-board-logs";
 import GroomingBoardActions from "./grooming-board-actions";
 import Loading from "../loading";
+import VotingStickV2 from "./voting-stick-v2";
+import GroomingBoardLiveChart from "./grooming-board-live-chart";
 import {
   checkUserJoinedLobbyBefore,
   getCurrentLobby,
@@ -19,7 +21,6 @@ import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
 import { useLoader } from "@/contexts/LoaderContext";
-import VotingStickV2 from "./voting-stick-v2";
 
 interface IProps {
   roomId: string;
@@ -169,6 +170,7 @@ const GroomingBoard = ({
             ))}
           </div>
         )}
+        <GroomingBoardLiveChart />
         {!editVoteClicked && <MetricAverages />}
         {groomingInfo.isResultShown && isScoreGrooming && (
           <div className="grooming-board__toggle-button-wrapper">
