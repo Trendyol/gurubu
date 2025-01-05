@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import * as echarts from "echarts";
 import ReactECharts from "echarts-for-react";
 
 import { calculateVotesOptimized } from "@/shared/helpers/calculateVotesCount";
