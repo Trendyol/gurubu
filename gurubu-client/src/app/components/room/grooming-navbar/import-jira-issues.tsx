@@ -4,6 +4,7 @@ import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { debounce } from 'lodash';
 import { useLoader } from "@/contexts/LoaderContext";
+import { useToast } from "@/contexts/ToastContext";
 
 type Props = {
   roomId: string;
@@ -21,6 +22,8 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const [boards, setBoards] = useState<{ id: string; name: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
   const [sprints, setSprints] = useState<{ id: string; name: string }[]>([]);
+  const { currentJiraIssueIndex } = useGroomingRoom();
+  const { showFailureToast, showSuccessToast } = useToast();
 
   const { setShowLoader } = useLoader();
 
@@ -55,7 +58,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const debouncedChangeHandler = useCallback(
     debounce((board: string) => {
       fetchBoards(board);
-    }, 1000),
+    }, 1500),
     []
   );
 
@@ -79,20 +82,31 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
 
   const handleSprintChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSprint(e.target.value);
+    localStorage.setItem("selectedSprint", e.target.value);
   };
 
   const fetchBoards = async (searchQuery: string) => {
+    setShowLoader(true);
     var response = await jiraService.searchBoards(searchQuery);
     if (response.isSuccess && response.data) {
+      showSuccessToast("Jira Boards Found", "You can select the board you want", "top-center");
       setBoards(response.data);
+    } else {
+      showFailureToast("Search Board Error", "Try to search different board", "top-center");
     }
+    setShowLoader(false);
   };
 
   const fetchSprints = async (boardId: string) => {
+    setShowLoader(true);
     var response = await jiraService.getSprints(boardId);
     if (response.isSuccess && response.data) {
+      showSuccessToast("Sprints Found Successfully", "You can select the sprint you want", "top-center");
       setSprints(response.data);
+    } else {
+      showFailureToast("Get Sprint Error", "Try to search different sprint", "top-center");
     }
+    setShowLoader(false);
   };
 
   const handleImportIssues = async () => {
@@ -100,9 +114,12 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     const customFieldName = localStorage.getItem("story_points_custom_field_name");
     var response = await jiraService.getSprintIssues(selectedSprint, customFieldName!);
     if (response.isSuccess && response.data) {
-      response.data[0].selected = true;
+      showSuccessToast("Import Jira Success", "Jira Issues Imported Successfully! You can check the board from the sidebar.", "top-center");
+      response.data[currentJiraIssueIndex].selected = true;
       socket.emit("setIssues", roomId, response.data, userInfo.lobby.credentials);
       closeModal();
+    } else {
+      showFailureToast("Import Jira Fail", "Try again later or check your form", "top-center");
     }    
     setShowLoader(false);
   };

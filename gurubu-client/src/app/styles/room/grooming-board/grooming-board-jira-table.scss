@@ -7,11 +7,44 @@
   .grooming-board-jira-table-header {
     padding: 1.5rem;
     border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+
+    .grooming-board-jira-table-title-container{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0055d6;
+      gap: 12px;
+      .grooming-board-jira-table-sync-task-icon{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
 
     h2 {
       color: #0055d6;
       font-size: 1.5rem;
       font-weight: 600;
+    }
+
+    .grooming-board-jira-table-header-select-button{
+      background: #ffffff;
+      border: none;
+      color: #0055d6;
+      border: 1px solid #0055d6;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+      margin-left: auto;
+      cursor: pointer;
+      max-width: 250px;
+      &:hover {
+        background-color: #f3f4f6;
+      }
     }
   }
   .grooming-board-jira-table-search {
@@ -147,7 +180,8 @@
   .grooming-board-jira-issue-description {
     color: #333333;
     width: 100%;
-    height: 200px;
+    height: 300px;
+    max-height: 500px;
     border: none;
     overflow: auto;
     outline: none;
