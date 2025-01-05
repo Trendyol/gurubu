@@ -5,11 +5,13 @@ import ReactECharts from "echarts-for-react";
 import { calculateVotesOptimized } from "@/shared/helpers/calculateVotesCount";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { GroomingMode } from "@/shared/enums";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const GroomingBoardLiveChart = () => {
   const chartRef = useRef<ReactECharts>(null);
 
   const { groomingInfo } = useGroomingRoom();
+  const { currentTheme } = useTheme();
   const calculatedVotes = calculateVotesOptimized(
     groomingInfo.metrics?.[0]?.points,
     groomingInfo.participants
@@ -25,6 +27,7 @@ const GroomingBoardLiveChart = () => {
       axisLabel: {
         fontFamily: "Inter, sans-serif",
         fontSize: "16px",
+        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
       },
     },
     yAxis: {
@@ -37,6 +40,7 @@ const GroomingBoardLiveChart = () => {
       axisLabel: {
         fontFamily: "Inter, sans-serif",
         fontSize: "16px",
+        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
       },
     },
     legend: {
@@ -46,6 +50,7 @@ const GroomingBoardLiveChart = () => {
       textStyle: {
         fontFamily: "Inter, sans-serif",
         fontSize: "16px",
+        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
       },
     },
     series: [
@@ -91,7 +96,7 @@ const GroomingBoardLiveChart = () => {
 
   useEffect(() => {
     updateData();
-  }, [groomingInfo.participants]);
+  }, [groomingInfo.participants, currentTheme]);
 
   if (!groomingInfo.isResultShown || groomingInfo.mode === GroomingMode.ScoreGrooming) {
     return null;
