@@ -1,23 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
 import { JiraService } from "@/services/jiraService";
 import { convertJiraToMarkdown } from "@/shared/helpers/convertJiraMarkdown";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconRefresh,
+} from "@tabler/icons-react";
 import { marked } from "marked";
+import { useLoader } from "@/contexts/LoaderContext";
+import { useToast } from "@/contexts/ToastContext";
 
 interface IProps {
   roomId: string;
 }
 
 const GroomingBoardJiraTable = ({ roomId }: IProps) => {
-  const { userInfo, groomingInfo } = useGroomingRoom();
+  const {
+    userInfo,
+    groomingInfo,
+    currentJiraIssueIndex,
+    setCurrentJiraIssueIndex,
+  } = useGroomingRoom();
   const socket = useSocket();
-
-  const [currentIssueIndex, setCurrentIssueIndex] = useState(0);
+  const { setShowLoader } = useLoader();
+  const { showSuccessToast } = useToast();
 
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
-  const customFieldName = process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? "";
+  const customFieldName =
+    process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? "";
 
   const selectedIssueIndex = groomingInfo.issues?.findIndex(
     (issue) => issue.selected
@@ -47,6 +59,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   );
 
   const handleSetVote = async () => {
+    setShowLoader(true);
     if (groomingInfo.isResultShown && groomingInfo.issues.length > 0) {
       const selectedIssue = groomingInfo.issues.find((issue) => issue.selected);
       if (selectedIssue && customFieldName != "") {
@@ -57,6 +70,11 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
           customFieldName
         );
         if (response.isSuccess) {
+          showSuccessToast(
+            "Set Vote Success",
+            "You can continue to next task.",
+            "top-right"
+          );
           selectedIssue.point = groomingInfo.score.toString();
           socket.emit(
             "setIssues",
@@ -67,12 +85,13 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
         }
       }
     }
+    setShowLoader(false);
   };
 
   const handleNextIssue = () => {
-    if (currentIssueIndex < groomingInfo.issues.length - 1) {
-      const nextIssueIndex = currentIssueIndex + 1;
-      setCurrentIssueIndex(nextIssueIndex);
+    if (currentJiraIssueIndex < groomingInfo.issues.length - 1) {
+      const nextIssueIndex = currentJiraIssueIndex + 1;
+      setCurrentJiraIssueIndex(nextIssueIndex);
       const updatedIssues = groomingInfo.issues.map((issue, index) => ({
         ...issue,
         selected: index === nextIssueIndex,
@@ -90,7 +109,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   const handlePrevIssue = () => {
     if (selectedIssueIndex > 0) {
       const prevIssueIndex = selectedIssueIndex - 1;
-      setCurrentIssueIndex(prevIssueIndex);
+      setCurrentJiraIssueIndex(prevIssueIndex);
       const updatedIssues = groomingInfo.issues.map((issue, index) => ({
         ...issue,
         selected: index === prevIssueIndex,
@@ -105,6 +124,49 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
     }
   };
 
+  const handleSelectIssue = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const targetValue = event.target.value;
+    const newSelectedIssueIndex = groomingInfo.issues.findIndex(
+      (issue) => issue.key === targetValue
+    );
+    setCurrentJiraIssueIndex(newSelectedIssueIndex);
+    const updatedIssues = groomingInfo.issues.map((issue, index) => ({
+      ...issue,
+      selected: index === newSelectedIssueIndex,
+    }));
+    socket.emit("setIssues", roomId, updatedIssues, userInfo.lobby.credentials);
+    socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleSyncIssues = async () => {
+    setShowLoader(true);
+    const customFieldName = localStorage.getItem(
+      "story_points_custom_field_name"
+    );
+    const selectedSprint = localStorage.getItem("selectedSprint");
+    if (selectedSprint) {
+      var response = await jiraService.getSprintIssues(
+        selectedSprint,
+        customFieldName!
+      );
+      if (response.isSuccess && response.data) {
+        showSuccessToast(
+          "Sync Task Success",
+          "Tasks sync with Jira successfully!",
+          "top-right"
+        );
+        response.data[currentJiraIssueIndex].selected = true;
+        socket.emit(
+          "setIssues",
+          roomId,
+          response.data,
+          userInfo.lobby.credentials
+        );
+      }
+    }
+    setShowLoader(false);
+  };
+
   if (!(groomingInfo.issues && groomingInfo.issues.length > 0)) {
     return null;
   }
@@ -112,7 +174,33 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   return (
     <section className="grooming-board-jira-table-container">
       <div className="grooming-board-jira-table-header">
-        <h2>Jira Table</h2>
+        <div className="grooming-board-jira-table-title-container">
+          <h2>Jira Table</h2>
+          {userInfo.lobby?.isAdmin && (
+            <div
+              className="grooming-board-jira-table-sync-task-icon"
+              title="Sync Task"
+            >
+              <IconRefresh onClick={handleSyncIssues} />
+            </div>
+          )}
+        </div>
+        {userInfo.lobby?.isAdmin && (
+          <select
+            id="board issue"
+            name="board issue"
+            className="grooming-board-jira-table-header-select-button"
+            onChange={handleSelectIssue}
+            value={groomingInfo.issues[currentJiraIssueIndex]?.key}
+            disabled={!groomingInfo.issues?.length}
+          >
+            {groomingInfo.issues.map((issue) => (
+              <option key={issue.key} value={issue.key}>
+                {issue.key} {issue.summary}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       <table className="grooming-board-jira-table">
         <thead>
@@ -161,7 +249,9 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
             <button
               className="grooming-board-jira-table-button grooming-board-jira-table-button--secondary"
               onClick={handleNextIssue}
-              disabled={currentIssueIndex === groomingInfo.issues.length - 1}
+              disabled={
+                currentJiraIssueIndex === groomingInfo.issues.length - 1
+              }
             >
               Next
               <IconChevronRight size={16} />

@@ -9,19 +9,19 @@ import NicknameForm from "@/components/room/grooming-board/nickname-form";
 import GroomingNavbar from "@/components/room/grooming-navbar/grooming-navbar";
 import ThemeLayout from "theme-layout";
 import GroomingFooter from "@/components/room/grooming-footer/grooming-footer";
-import toast, { Toaster } from "react-hot-toast";
+import JiraSidebar from "@/components/room/jira-sidebar";
+import { Toaster } from "react-hot-toast";
 import { SocketProvider } from "@/contexts/SocketContext";
 import {
   GroomingRoomProvider,
   useGroomingRoom,
 } from "@/contexts/GroomingRoomContext";
-import JiraSidebar from "@/components/room/jira-sidebar";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { useSearchParams } from "next/navigation";
-import { IconX } from "@tabler/icons-react";
 import { TourProvider, useTour } from "@/contexts/TourContext";
 import { ROOM_STATUS } from "./enums";
 import { LoaderProvider } from "@/contexts/LoaderContext";
+import { ToastProvider, useToast } from "@/contexts/ToastContext";
 import "@/styles/room/style.scss";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
@@ -31,7 +31,9 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
         <ThemeProvider>
           <TourProvider>
             <LoaderProvider>
-              <GroomingRoomContent params={params} />
+              <ToastProvider>
+                <GroomingRoomContent params={params} />
+              </ToastProvider>
             </LoaderProvider>
           </TourProvider>
         </ThemeProvider>
@@ -45,6 +47,7 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
   const { currentTheme, isThemeActive } = useTheme();
   const { startTour, showTour } = useTour();
   const { roomStatus, userInfo, groomingInfo } = useGroomingRoom();
+  const { showSuccessToast } = useToast();
   const searchParams = useSearchParams();
 
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
@@ -59,26 +62,10 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const isFastJoin = searchParams.get("isFastJoin");
     if (isFastJoin === "true") {
-      toast.success(
-        <div className="fast-join-toaster">
-          <span className="Toastify__toast-icon" />
-          <div>
-            <h4 className="fast-join-toaster-title">Fast Join Success</h4>
-            <p className="fast-join-toaster-description">
-              You can change your nickname from your profile if you want
-            </p>
-          </div>
-          <button
-            className="fast-join-toaster-close"
-            onClick={() => toast.dismiss()}
-          >
-            <IconX />
-          </button>
-        </div>,
-        {
-          position: "top-center",
-          duration: 5000,
-        }
+      showSuccessToast(
+        "Fast Join Success",
+        "You can change your nickname from your profile if you want",
+        "top-center"
       );
     }
   }, [searchParams]);

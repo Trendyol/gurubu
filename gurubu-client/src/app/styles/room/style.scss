@@ -44,6 +44,10 @@
   font-family: "Inter", sans-serif;
 }
 
+.introjs-tooltipReferenceLayer{
+ z-index: 9999998;
+}
+
 .introjs-tooltip-title {
   color: $primary-700;
 }
@@ -115,21 +119,21 @@
   }
 }
 
-.fast-join-toaster {
+.toaster {
   display: flex;
   align-items: center;
-  .fast-join-toaster-title {
+  .toaster-title {
     color: $primary-700;
     font-size: 16px;
     line-height: 20px;
     font-weight: 600;
   }
-  .fast-join-toaster-description {
+  .toaster-description {
     color: $gray-500;
     font-size: 14px;
     line-height: 18px;
   }
-  .fast-join-toaster-close {
+  .toaster-close {
     background: none;
     border: none;
     cursor: pointer;

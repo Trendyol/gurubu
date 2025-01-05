@@ -16,10 +16,10 @@ interface GroomingContextValues {
   setEncounteredError: Function;
   showErrorPopup: boolean;
   setShowErrorPopup: Function;
-  issues: Issue[];
-  setIssues: Function;
   editVoteClicked: boolean;
   setEditVoteClicked: Function;
+  currentJiraIssueIndex: number;
+  setCurrentJiraIssueIndex: (value: number) => void;
 }
 
 const GroomingRoomContext = createContext({} as GroomingContextValues);
@@ -35,8 +35,8 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
   const [userVote, setUserVote] = useState({} as UserVote);
   const [encounteredError, setEncounteredError] = useState({} as EncounteredError);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
-  const [issues, setIssues] = useState<Issue[]>([]);
   const [editVoteClicked, setEditVoteClicked] = useState(false);
+  const [currentJiraIssueIndex, setCurrentJiraIssueIndex] = useState(0);
 
   useEffect(() => {
     const nickname = localStorage.getItem("nickname");
@@ -66,10 +66,10 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       setEncounteredError,
       showErrorPopup,
       setShowErrorPopup,
-      issues,
-      setIssues,
       editVoteClicked,
-      setEditVoteClicked
+      setEditVoteClicked,
+      currentJiraIssueIndex,
+      setCurrentJiraIssueIndex
     }),
     [
       roomStatus,
@@ -84,10 +84,10 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       setEncounteredError,
       showErrorPopup,
       setShowErrorPopup,
-      issues,
-      setIssues,
       editVoteClicked,
-      setEditVoteClicked
+      setEditVoteClicked,
+      currentJiraIssueIndex,
+      setCurrentJiraIssueIndex
     ]
   );
   return <GroomingRoomContext.Provider value={values}>{children}</GroomingRoomContext.Provider>;

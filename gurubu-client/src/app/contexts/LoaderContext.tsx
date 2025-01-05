@@ -2,10 +2,8 @@ import React, {
     createContext,
     ReactNode,
     useContext,
-    useEffect,
     useState,
   } from "react";
-  import introJs from "intro.js";
   
   const LoaderContext = createContext<any>(null);
   
