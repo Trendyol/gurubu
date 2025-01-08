@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconStarFilled, IconWifiOff } from "@tabler/icons-react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import Image from "next/image";
 import { GroomingMode, PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
@@ -66,22 +66,10 @@ const GroomingBoardParticipants = () => {
             >
               <div className="grooming-board-participants__nickname-container">
                 {isAdmin && (
-                  <Image
-                    src="/admin.svg"
-                    width={16}
-                    height={16}
-                    alt="Admin Logo"
-                    priority
-                  />
+                  <IconStarFilled width={16} height={16} className="icon-star-filled"/>
                 )}
                 {!hasSockets && (
-                  <Image
-                    src="/wifi-off.svg"
-                    width={14.26}
-                    height={12}
-                    alt="Wifi Off Logo"
-                    priority
-                  />
+                  <IconWifiOff width={16} height={16} className="icon-wifi-off" />
                 )}
                 {hasSockets && !isAdmin && !isPlanningPokerMode && (
                   <div

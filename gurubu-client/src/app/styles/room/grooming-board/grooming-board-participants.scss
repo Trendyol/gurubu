@@ -70,6 +70,12 @@
     padding: 10px 14px;
     align-items: center;
     gap: 0 $space-medium;
+    .icon-star-filled{
+      color: #FAC515;
+    }
+    .icon-wifi-off{
+      color: #F04438;
+    }
   }
   &__nickname {
     &.connection-lost {
