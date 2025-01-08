@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@tabler/icons-react": "^2.40.0",
-    "axios": "^1.6.0",
+    "axios": "^1.7.9",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",
     "framer-motion": "^11.15.0",
