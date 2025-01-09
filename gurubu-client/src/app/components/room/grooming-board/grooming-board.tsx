@@ -21,6 +21,7 @@ import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
 import { useLoader } from "@/contexts/LoaderContext";
+import Avatar from "@/components/common/avatar";
 
 interface IProps {
   roomId: string;

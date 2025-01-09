@@ -4,6 +4,7 @@ import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { Modal } from "@/components/common/modal";
 import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
+import Avatar from "@/components/common/avatar";
 
 type Props = {
   roomId: string;
@@ -58,7 +59,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     <>
       <div className="grooming-board-profile" id="grooming-board-profile" onClick={handleClick}>
         <div className="grooming-board-profile__icon">
-          <Image src="/icon-user.svg" width={16} height={16} alt="User information" />
+          <Avatar />
         </div>
         {showProfileBar && (
           <div className="grooming-board-profile__bar" id="grooming-board-profile__bar">
