@@ -9,6 +9,7 @@ import { ROOM_STATUS } from "@/room/[id]/enums";
 import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
 import { GroomingMode } from "@/shared/enums";
+import { AnnouncementTooltip } from "./announcement-tooltip";
 
 interface Props {
   showNickNameForm: boolean;
@@ -93,6 +94,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
           <div className="grooming-navbar__content-user-section">
             <Timer roomId={roomId} />
             <ThemeSelector />
+            <AnnouncementTooltip />
             <GroomingBoardProfile roomId={roomId} />
           </div>
         </div>
