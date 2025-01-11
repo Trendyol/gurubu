@@ -1,0 +1,11 @@
+.avatar-container {
+  min-width: 32px;
+  min-height: 32px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  overflow: hidden;
+}

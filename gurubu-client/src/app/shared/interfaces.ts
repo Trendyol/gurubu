@@ -1,3 +1,5 @@
+import { BackgroundType } from "@dicebear/core";
+
 export interface Votes {
   [key: string]: string;
 }
@@ -9,6 +11,7 @@ export interface User {
   sockets: string[];
   votes: Votes;
   isAdmin: boolean;
+  avatar: Avatar;
 }
 
 export interface Metric {
@@ -43,6 +46,15 @@ export interface GroomingInfo {
   isResultShown: boolean;
   issues: Issue[];
   timer: Timer;
+}
+
+export interface Avatar {
+  seed: string;
+  backgroundColor: string[];
+  scale: number;
+  backgroundType: BackgroundType[] | undefined;
+  accessories: any;
+  accessoriesProbability: number;
 }
 
 export interface Timer {

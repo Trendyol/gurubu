@@ -25,10 +25,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.svg" type="image/x-icon" sizes="7x10" />
         <Script
-          src="https://scripts.simpleanalyticscdn.com/latest.js"
-          strategy="afterInteractive"
-        />
-        <Script
           id="clarity-script"
           type="text/javascript"
           dangerouslySetInnerHTML={{
