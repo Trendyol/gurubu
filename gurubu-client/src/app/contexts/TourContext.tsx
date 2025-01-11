@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import introJs from "intro.js";
-import { useGroomingRoom } from "./GroomingRoomContext";
 import { groomingBoardTour } from "./constants";
 
 const TourContext = createContext<any>(null);
@@ -22,8 +21,6 @@ interface TourProviderResponse {
 
 export const TourProvider = ({ children }: TourProviderProps) => {
   const [showTour, setShowTour] = useState(false);
-
-  const { userInfo } = useGroomingRoom();
 
   useEffect(() => {
     const tourCompleted = localStorage.getItem("tourCompleted");

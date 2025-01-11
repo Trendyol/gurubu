@@ -30,27 +30,27 @@
     &.no-vote {
       margin-bottom: 8px;
     }
-    &.vote-above-average{
+    &.vote-above-average {
       border-top: 1px solid transparent;
       background-color: $primary-50;
       color: $primary-700;
       border-top: 1px solid transparent;
       font-weight: 600;
     }
-    &.vote-below-average{
+    &.vote-below-average {
       font-weight: 600;
       border-top: 1px solid transparent;
-      background-color: #E8F5FF;
-      color: #0085FF;
+      background-color: #e8f5ff;
+      color: #0085ff;
     }
-    &.on-average{
+    &.on-average {
       background-color: #fefbe8;
       color: #a15c07;
       font-weight: 600;
       border: none;
       border-top: 1px solid transparent;
     }
-    &.no-vote{
+    &.no-vote {
       background-color: $gray-100;
       color: $gray-500;
     }
@@ -67,35 +67,22 @@
   &__nickname-container {
     display: flex;
     min-width: 140px;
-    padding: 10px 14px;
+    padding: 10px 0 10px 14px;
     align-items: center;
     gap: 0 $space-medium;
-    .icon-star-filled{
-      width: 16px;
-      height: 16px;
-      color: #FAC515;
+    .icon-star-filled {
+      min-width: 16px;
+      min-height: 16px;
+      color: #fac515;
     }
-    .icon-wifi-off{
-      color: #F04438;
+    .icon-wifi-off {
+      color: #f04438;
     }
-    &.planning-poker-mode{
-      padding: 10px 0 10px 14px;
-      .icon-star-filled{
-        min-width: 16px;
-        min-height: 16px;
-      }
-      gap: 0 4px;
-      .additional-space {
-        margin-left: 0;
-      }
-    }
+    gap: 0 8px;
   }
   &__nickname {
     &.connection-lost {
       color: red;
-    }
-    &.additional-space {
-      margin-left: 26px;
     }
   }
   &__icon-plug {
@@ -126,15 +113,14 @@
     flex-direction: column;
   }
   &__metric-voted {
-     background-color: #85E13A;
-     border: 1px solid #4CA30D;
+    background-color: #85e13a;
+    border: 1px solid #4ca30d;
   }
   &__all-metrics-voted {
-     background-color: $primary-600;
-     border: 1px solid $primary-600;
-     width: 20px;
-     height: 20px;
-
+    background-color: $primary-600;
+    border: 1px solid $primary-600;
+    width: 20px;
+    height: 20px;
   }
   &__check-icon-container {
     display: flex;

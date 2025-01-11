@@ -47,6 +47,9 @@ const Timer = ({ roomId }: Props) => {
   };
 
   const addTime = (minutes: number) => {
+    if (localTimeLeft + minutes * 60 > 3600) {
+      return;
+    }
     socket.emit(
       "updateTimer",
       roomId,

@@ -87,8 +87,7 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
         <Avatar svg={avatarSvg} />
         <label
           className={classNames("grooming-board-participants__nickname", {
-            "connection-lost": !hasSockets,
-            "additional-space": hasSockets && isPlanningPokerMode && !isAdmin,
+            "connection-lost": !hasSockets
           })}
         >
           {nickname}

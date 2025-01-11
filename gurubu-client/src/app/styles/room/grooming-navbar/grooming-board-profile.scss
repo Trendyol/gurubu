@@ -7,12 +7,137 @@
   gap: 0 $space-semi-small;
   cursor: pointer;
   position: relative;
+  position: relative;
+  cursor: pointer;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: $radius-large;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+
+    &:hover {
+      background-color: $gray-50;
+      border-color: $gray-200;
+    }
+  }
+
+  &__tooltip {
+    position: absolute;
+    bottom: -70px;
+    right: 0;
+    background: #ffffff;
+    color: $gray-900;
+    padding: 8px 12px;
+    border: 2px solid $gray-900;
+    border-radius: $radius-medium;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeIn 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+    width: 300px;
+
+    &-close {
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: $radius-small;
+      transition: all 0.2s ease;
+      margin-left: 4px;
+      pointer-events: all;
+
+      &:hover {
+        color: $gray-900;
+        background: $gray-100;
+      }
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -9px;
+      right: 20px;
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-bottom: 9px solid $gray-900;
+    }
+
+    svg {
+      flex-shrink: 0;
+      color: $primary-700;
+    }
+  }
+
+  &__icon {
+    width: 30px;
+    height: 30px;
+    border: 1px solid $primary-200;
+    border-radius: 100%;
+    color: $primary-600;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__nickname {
+    font-size: $font-size-paragraph-4;
+    color: $gray-700;
+    font-weight: $medium;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__chevron {
+    color: $gray-400;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover &__chevron {
+    color: $gray-600;
+  }
+
+  &[aria-expanded="true"] &__chevron {
+    transform: rotate(180deg);
+  }
+
+  &__bar {
+    top: calc(100% + 4px);
+    right: 0;
+    position: absolute;
+    background: $white;
+    min-width: 180px;
+    border: 1px solid $gray-200;
+    border-radius: $radius-large;
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 90;
+    box-shadow: $shadow-sm;
+  }
 
   .theme-selector {
     display: flex;
     flex-direction: column;
     gap: 4px;
-  
+
     &__option {
       display: flex;
       align-items: center;
@@ -28,13 +153,13 @@
       cursor: pointer;
       transition: all 0.2s;
       text-align: left;
-  
+
       &:hover {
         background-color: $white;
         color: $gray-700;
         box-shadow: $shadow-sm;
       }
-  
+
       &.active {
         background-color: $primary-50;
         color: $primary-700;
@@ -66,22 +191,6 @@
     color: $purple-600;
   }
 
-  &__bar {
-    top: 36px;
-    position: absolute;
-    background: $gray-50-v2;
-    width: 130px;
-    border: 1px solid $v2-gray-100;
-    border-radius: $radius-large;
-    padding: 4px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    gap: 4px;
-    z-index: 90;
-    box-shadow: $shadow-sm;
-  }
-
   &__update-nickname-button {
     border: none;
     padding: 8px 12px;
@@ -107,7 +216,7 @@
     transition: all 0.2s;
     text-align: left;
     width: 100%;
-    
+
     &:hover {
       background-color: $white;
       color: $gray-700;
@@ -138,5 +247,16 @@
     background-color: #fff4ed;
     color: $orange-dark;
     box-shadow: $shadow-sm;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

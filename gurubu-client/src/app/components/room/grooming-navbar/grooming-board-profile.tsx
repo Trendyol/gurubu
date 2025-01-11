@@ -5,6 +5,9 @@ import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { ChangeAvatar } from "./change-avatar";
+import { IconChevronDown, IconInfoCircle, IconX } from "@tabler/icons-react";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { useTour } from "@/contexts/TourContext";
 
 type Props = {
   roomId: string;
@@ -16,6 +19,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
   const [showProfileBar, setShowProfileBar] = useState(false);
   const [selectedModal, setSelectedModal] = useState<ModalType>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const {
     createAvatarSvg,
     updateAvatar,
@@ -23,6 +27,8 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     avatar,
     setAvatar,
   } = useAvatar();
+  const { userInfo } = useGroomingRoom();
+  const { showTour } = useTour();
 
   const openModal = (modalType: ModalType) => {
     setModalOpen(true);
@@ -73,6 +79,27 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     updateAvatar(options);
   }, []);
 
+  useEffect(() => {
+    const hasSeenTooltip = localStorage.getItem("hasSeenProfileTooltip");
+    const tourCompleted = localStorage.getItem("tourCompleted");
+
+    if (!hasSeenTooltip && tourCompleted) {
+      setShowTooltip(true);
+      localStorage.setItem("hasSeenProfileTooltip", "true");
+
+      const timer = setTimeout(() => {
+        setShowTooltip(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showTour]);
+
+  const handleCloseTooltip = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowTooltip(false);
+  };
+
   return (
     <>
       <div
@@ -80,9 +107,31 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
         id="grooming-board-profile"
         onClick={handleClick}
       >
-        <div className="grooming-board-profile__icon">
-          <Avatar svg={avatar} />
+        <div className="grooming-board-profile__content">
+          <div className="grooming-board-profile__icon">
+            <Avatar svg={avatar} />
+          </div>
+          <span className="grooming-board-profile__nickname">
+            {userInfo.nickname}
+          </span>
+          <IconChevronDown
+            size={16}
+            className="grooming-board-profile__chevron"
+          />
         </div>
+        {showTooltip && (
+          <div className="grooming-board-profile__tooltip">
+            <IconInfoCircle size={16} />
+            <span>You can customize your avatar and profile from here</span>
+            <button 
+              className="grooming-board-profile__tooltip-close"
+              onClick={handleCloseTooltip}
+              aria-label="Close tooltip"
+            >
+              <IconX size={16} color="gray" />
+            </button>
+          </div>
+        )}
         {showProfileBar && (
           <div
             className="grooming-board-profile__bar"
@@ -92,7 +141,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
               className="grooming-board-profile__update-avatar-button"
               onClick={() => openModal("changeAvatar")}
             >
-              Change avatar
+              Avatar
             </button>
             <button
               className="grooming-board-profile__update-nickname-button"

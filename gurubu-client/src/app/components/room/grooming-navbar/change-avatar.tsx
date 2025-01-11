@@ -1,6 +1,12 @@
-import Image from "next/image";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { useState } from "react";
+import {
+  IconDeviceFloppy,
+  IconEyeglass,
+  IconPalette,
+  IconRefresh,
+  IconResize,
+} from "@tabler/icons-react";
 
 type Props = {
   closeModal: () => void;
@@ -12,6 +18,7 @@ const accessoryTypes = [
   { value: "prescription01", label: "Glasses" },
   { value: "prescription02", label: "Round Glasses" },
   { value: "wayfarers", label: "Wayfarers" },
+  { value: "eyepatch", label: "Eyepatch" },
 ];
 
 export const ChangeAvatar = ({ closeModal }: Props) => {
@@ -46,15 +53,13 @@ export const ChangeAvatar = ({ closeModal }: Props) => {
 
   return (
     <div className="change-avatar-container">
-      <div className="change-avatar-container__logo">
-        <Image
-          src="/logo.svg"
-          width={24}
-          height={24}
-          alt="Gurubu Logo"
-          priority
-        />
-        <h4>GuruBu</h4>
+      <div className="change-avatar-container__header">
+        <h2 className="change-avatar-container__header-title">
+          Customize Your Avatar
+        </h2>
+        <p className="change-avatar-container__header-subtitle">
+          Make it uniquely yours with colors and accessories
+        </p>
       </div>
 
       <div className="change-avatar-container__preview">
@@ -64,23 +69,61 @@ export const ChangeAvatar = ({ closeModal }: Props) => {
         />
       </div>
 
+      <button
+        type="button"
+        onClick={handleGenerateNew}
+        className="change-avatar-container__random-button"
+      >
+        <IconRefresh size={18} />
+        Change Avatar
+      </button>
+
       <div className="change-avatar-container__options">
         <div className="option-group">
-          <label>Background Color</label>
-          <input
-            type="color"
-            value={
-              previewOptions.backgroundColor
-                ? `#${previewOptions.backgroundColor}`
-                : "#ffffff"
-            }
-            onChange={(e) =>
-              updatePreview({ backgroundColor: [e.target.value.split("#")[1]] })
-            }
-          />
+          <label>
+            <IconPalette
+              size={16}
+              style={{ verticalAlign: "middle", marginRight: "8px" }}
+            />
+            Background Color
+          </label>
+          <div className="color-picker-group">
+            <div className="color-picker-group__preview">
+              <div
+                className="color-swatch"
+                style={{
+                  backgroundColor: previewOptions.backgroundColor
+                    ? `#${previewOptions.backgroundColor}`
+                    : "#ffffff",
+                }}
+              />
+              <span className="color-value">
+                {previewOptions.backgroundColor || "ffffff"}
+              </span>
+            </div>
+            <input
+              type="color"
+              value={
+                previewOptions.backgroundColor
+                  ? `#${previewOptions.backgroundColor}`
+                  : "#ffffff"
+              }
+              onChange={(e) =>
+                updatePreview({
+                  backgroundColor: [e.target.value.split("#")[1]],
+                })
+              }
+            />
+          </div>
         </div>
         <div className="option-group">
-          <label>Scale</label>
+          <label>
+            <IconResize
+              size={16}
+              style={{ verticalAlign: "middle", marginRight: "8px" }}
+            />
+            Avatar Scale
+          </label>
           <input
             type="range"
             min="50"
@@ -90,10 +133,21 @@ export const ChangeAvatar = ({ closeModal }: Props) => {
           />
         </div>
         <div className="option-group">
-          <label>Accessories</label>
+          <label>
+            <IconEyeglass
+              size={16}
+              style={{ verticalAlign: "middle", marginRight: "8px" }}
+            />
+            Accessories
+          </label>
           <select
             value={previewOptions.accessories || "none"}
-            onChange={(e) => updatePreview({ accessoriesProbability: 100, accessories: [e.target.value] })}
+            onChange={(e) =>
+              updatePreview({
+                accessoriesProbability: 100,
+                accessories: [e.target.value],
+              })
+            }
           >
             {accessoryTypes.map((type) => (
               <option key={type.value} value={type.value}>
@@ -105,11 +159,9 @@ export const ChangeAvatar = ({ closeModal }: Props) => {
       </div>
 
       <div className="change-avatar-container__actions">
-        <button type="button" onClick={handleGenerateNew}>
-          Generate New
-        </button>
         <button type="button" onClick={handleSave} className="save-button">
-          Save Changes
+          <IconDeviceFloppy size={18} />
+          Save
         </button>
       </div>
     </div>
