@@ -5,6 +5,7 @@ export const AnnouncementTooltip = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
+  const whatsNewText = "What's New - 11.01.2025";
 
   useEffect(() => {
     const hasSeenAnnouncement = localStorage.getItem("hasSeenAnnouncement");
@@ -47,7 +48,7 @@ export const AnnouncementTooltip = () => {
       {showTooltip && (
         <div className="announcement-tooltip__content">
           <div className="announcement-tooltip__header">
-            <h3>What's New - 11.01.2025</h3>
+            <h3>{whatsNewText}</h3>
             <button onClick={handleClose}>
               <IconX size={16} />
             </button>
