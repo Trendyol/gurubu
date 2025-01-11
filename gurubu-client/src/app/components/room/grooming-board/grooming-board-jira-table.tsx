@@ -102,7 +102,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
         updatedIssues,
         userInfo.lobby.credentials
       );
-      socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
+      socket.emit("resetVotes", roomId, userInfo.lobby?.credentials);
     }
   };
 
@@ -120,7 +120,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
         updatedIssues,
         userInfo.lobby.credentials
       );
-      socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
+      socket.emit("resetVotes", roomId, userInfo.lobby?.credentials);
     }
   };
 
@@ -134,8 +134,8 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
       ...issue,
       selected: index === newSelectedIssueIndex,
     }));
-    socket.emit("setIssues", roomId, updatedIssues, userInfo.lobby.credentials);
-    socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
+    socket.emit("setIssues", roomId, updatedIssues, userInfo.lobby?.credentials);
+    socket.emit("resetVotes", roomId, userInfo.lobby?.credentials);
   };
 
   const handleSyncIssues = async () => {

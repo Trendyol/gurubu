@@ -25,7 +25,7 @@ export const ChangeNameForm = ({ closeModal }: Props) => {
   ) => {
     e.preventDefault();
     if (newNickname.trim()) {
-      socket.emit("updateNickName", userInfo.lobby.roomID, newNickname, userInfo.lobby.credentials);
+      socket.emit("updateNickName", userInfo.lobby?.roomID, newNickname, userInfo.lobby?.credentials);
       setUserinfo({ ...userInfo, nickname: newNickname.trim() });
       localStorage.setItem("nickname", newNickname.trim());
       closeModal();

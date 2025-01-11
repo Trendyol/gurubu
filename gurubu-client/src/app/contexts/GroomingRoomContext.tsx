@@ -1,7 +1,7 @@
 import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
-import { EncounteredError, GroomingInfo, Issue, UserInfo, UserVote } from "@/shared/interfaces";
+import { EncounteredError, GroomingInfo, UserInfo, UserVote } from "@/shared/interfaces";
 
 interface GroomingContextValues {
   roomStatus: keyof typeof ROOM_STATUS;

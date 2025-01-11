@@ -343,6 +343,24 @@ const updateTimer = (data, credentials, roomID, socket) => {
   return groomings[user.roomID];
 };
 
+const updateAvatar = (data, credentials, roomID, socket) => {
+  const user = getCurrentUser(credentials);
+  if (!user) {
+    return handleErrors("updateAvatar", roomID, socket);
+  }
+  if (!groomings[user.roomID]) {
+    return;
+  }
+
+  const userLobbyData = groomings[user.roomID].participants[user.userID];
+  groomings[user.roomID].participants[user.userID] = {
+    ...userLobbyData,
+    avatar: data,
+  };
+
+  return groomings[user.roomID];
+};
+
 const resetVotes = (credentials, roomID, socket) => {
   const user = getCurrentUser(credentials);
   if (!user) {
@@ -441,5 +459,6 @@ module.exports = {
   updateNickName,
   removeUserFromOngoingGrooming,
   setIssues,
-  updateTimer
+  updateTimer,
+  updateAvatar
 };

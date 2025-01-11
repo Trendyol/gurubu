@@ -55,7 +55,7 @@ const Timer = ({ roomId }: Props) => {
         timeLeft: timeLeft + minutes * 60,
         startTime: isRunning ? startTime : null,
       },
-      userInfo.lobby.credentials
+      userInfo.lobby?.credentials
     );
   };
 

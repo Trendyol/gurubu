@@ -71,10 +71,23 @@
     align-items: center;
     gap: 0 $space-medium;
     .icon-star-filled{
+      width: 16px;
+      height: 16px;
       color: #FAC515;
     }
     .icon-wifi-off{
       color: #F04438;
+    }
+    &.planning-poker-mode{
+      padding: 10px 0 10px 14px;
+      .icon-star-filled{
+        min-width: 16px;
+        min-height: 16px;
+      }
+      gap: 0 4px;
+      .additional-space {
+        margin-left: 0;
+      }
     }
   }
   &__nickname {

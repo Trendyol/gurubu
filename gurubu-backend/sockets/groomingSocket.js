@@ -8,7 +8,8 @@ const {
   updateNickName,
   removeUserFromOngoingGrooming,
   setIssues,
-  updateTimer
+  updateTimer,
+  updateAvatar
 } = require("../utils/groomings");
 
 module.exports = (io) => {
@@ -23,7 +24,7 @@ module.exports = (io) => {
       console.log(`A user connected with nickname ${nickname} to room ${roomID}`);
       socket.join(roomID);
 
-      updateUserSocket(lobby.credentials, socket.id);
+      updateUserSocket(lobby?.credentials, socket.id);
       io.to(roomID).emit("initialize", getGrooming(roomID));
     });
 
@@ -58,6 +59,11 @@ module.exports = (io) => {
     socket.on("updateTimer", (roomID, data, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
       io.to(roomID).emit("updateTimer", updateTimer(data, credentials, roomID, socket));
+    });
+
+    socket.on("updateAvatar", (roomID, data, credentials) => {
+      joinRoomMiddleware(socket, roomID, credentials);
+      io.to(roomID).emit("updateAvatar", updateAvatar(data, credentials, roomID, socket));
     });
 
     socket.on("disconnect", (reason) => {

@@ -104,6 +104,11 @@ The backend server should now be running at http://localhost:5000.
 
 We welcome and appreciate contributions from the community. Whether it's reporting issues, suggesting improvements, or submitting code, your help is valuable. Thank you for being a part of our project!
 
+### External License
+
+This project uses DiceBear for avatar generation. DiceBear is licensed under the MIT License.
+
+
 
 
 

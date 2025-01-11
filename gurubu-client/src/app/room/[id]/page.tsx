@@ -22,6 +22,7 @@ import { TourProvider, useTour } from "@/contexts/TourContext";
 import { ROOM_STATUS } from "./enums";
 import { LoaderProvider } from "@/contexts/LoaderContext";
 import { ToastProvider, useToast } from "@/contexts/ToastContext";
+import { AvatarProvider } from "@/contexts/AvatarContext";
 import "@/styles/room/style.scss";
 
 const GroomingRoom = ({ params }: { params: { id: string } }) => {
@@ -32,7 +33,9 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
           <TourProvider>
             <LoaderProvider>
               <ToastProvider>
-                <GroomingRoomContent params={params} />
+                <AvatarProvider>
+                  <GroomingRoomContent params={params} />
+                </AvatarProvider>
               </ToastProvider>
             </LoaderProvider>
           </TourProvider>

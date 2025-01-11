@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { createAvatar } from '@dicebear/core';
-import { avataaars } from '@dicebear/collection';
+import React from "react";
+import parse from "html-react-parser";
 
-const Avatar = () => {
-  const [svg, setSvg] = useState("");
+interface Props {
+  svg: string;
+}
 
-  useEffect(() => {
-    const avatar = createAvatar(avataaars, {
-      seed: Math.random().toString(36).substring(2),
-    });
-    setSvg(avatar.toString());
-  }, []);
-
-  return <div className="avatar-container" dangerouslySetInnerHTML={{ __html: svg }}></div>;
+const Avatar = ({ svg }: Props) => {
+  return <div className="avatar-container">{parse(svg ?? "")}</div>;
 };
 
 export default Avatar;

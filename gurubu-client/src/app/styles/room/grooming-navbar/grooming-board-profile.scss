@@ -52,7 +52,6 @@
     width: 30px;
     height: 30px;
     border: 1px solid $primary-200;
-    background-color: $primary-50;
     border-radius: 100%;
     color: $primary-600;
     position: relative;
@@ -94,6 +93,26 @@
     background: $gray-50-v2;
     transition: all 0.2s;
     text-align: left;
+  }
+
+  &__update-avatar-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: $radius-medium;
+    cursor: pointer;
+    font-weight: $semibold;
+    font-size: $font-size-paragraph-4;
+    color: $gray-500-v2;
+    background: $gray-50-v2;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    
+    &:hover {
+      background-color: $white;
+      color: $gray-700;
+      box-shadow: $shadow-sm;
+    }
   }
 
   &__leave-room-button {
