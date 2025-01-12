@@ -1,5 +1,5 @@
 import Avatar from "@/components/common/avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Modal } from "@/components/common/modal";
 import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
@@ -29,6 +29,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
   } = useAvatar();
   const { userInfo } = useGroomingRoom();
   const { showTour } = useTour();
+  const selectorRef = useRef<HTMLDivElement>(null);
 
   const openModal = (modalType: ModalType) => {
     setModalOpen(true);
@@ -100,6 +101,20 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     setShowTooltip(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        selectorRef.current &&
+        !selectorRef.current.contains(event.target as Node)
+      ) {
+        setShowTooltip(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <>
       <div
@@ -120,7 +135,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
           />
         </div>
         {showTooltip && (
-          <div className="grooming-board-profile__tooltip">
+          <div className="grooming-board-profile__tooltip" ref={selectorRef}>
             <IconInfoCircle size={16} />
             <span>You can customize your avatar and profile from here</span>
             <button 
