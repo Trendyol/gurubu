@@ -3,29 +3,30 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-right: 8px;
+  margin-right: 4px;
+  &.is-locale-time-left{
+    .timer-trigger {
+      padding: 0 $space-semi-medium;
+      background-color: #f9f5ff;
+    }
+  }
 }
 
 .timer-trigger {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 $space-semi-medium;
   height: 30px;
   border: none;
   border-radius: $radius-large;
-  background-color: #FFF4E5;
-  color: #FF9800;
+  color: #6941c6;
   cursor: pointer;
   font-size: $font-size-paragraph-4;
   transition: all 0.2s;
   font-size: 16px;
   line-height: 20px;
   font-weight: 600;
-
-  &:hover {
-    background-color: #FFE4BC;
-  }
+  background: none;
 }
 
 .timer-dropdown {
@@ -69,8 +70,8 @@
   justify-content: center;
 
   &:hover {
-    background-color: #FFF4E5;
-    color: #FF9800;
+    background-color: #f9f5ff;
+    color: #6941c6;
   }
 }
 
@@ -90,13 +91,13 @@
   height: 30px;
   border: none;
   border-radius: $radius-medium;
-  background-color: #FFF4E5;
-  color: #FF9800;
+  background-color: #f9f5ff;
+  color: #6941c6;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover:not(.disabled) {
-    background-color: #FFE4BC;
+    background-color: #f9f5ff;
   }
 
   &.disabled {

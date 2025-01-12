@@ -7,6 +7,7 @@ import {
 } from "@tabler/icons-react";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import classNames from "classnames";
 
 interface Props {
   roomId: string;
@@ -148,13 +149,18 @@ const Timer = ({ roomId }: Props) => {
   }, []);
 
   return (
-    <div className="timer-container" ref={timerRef}>
+    <div
+      className={classNames("timer-container", {
+        "is-locale-time-left": Boolean(localTimeLeft),
+      })}
+      ref={timerRef}
+    >
       <button
         className="timer-trigger"
         onClick={() => setShowOptions(!showOptions)}
       >
-        <IconAlarm size={24} />
-        <span>{formatTime(localTimeLeft)}</span>
+        <IconAlarm size={26} />
+        {Boolean(localTimeLeft) && <span>{formatTime(localTimeLeft)}</span>}
       </button>
 
       {showOptions && (

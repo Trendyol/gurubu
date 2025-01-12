@@ -1,16 +1,16 @@
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 import { useState, useEffect, useCallback } from "react";
 import { JiraService } from "@/services/jiraService";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useLoader } from "@/contexts/LoaderContext";
 import { useToast } from "@/contexts/ToastContext";
+import { IconHelp } from "@tabler/icons-react";
 
 type Props = {
   roomId: string;
   closeModal: () => void;
 };
-
 
 export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const socket = useSocket();
@@ -28,13 +28,16 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const { setShowLoader } = useLoader();
 
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
+  const jiraIssueImporterHelp =
+    process.env.NEXT_PUBLIC_JIRA_ISSUE_IMPORTER_HELP || "";
 
-  const {
-    userInfo
-  } = useGroomingRoom();
+  const { userInfo } = useGroomingRoom();
 
   useEffect(() => {
-    const retrieveFromLocalStorage = (key: string, setter: (value: string) => void) => {
+    const retrieveFromLocalStorage = (
+      key: string,
+      setter: (value: string) => void
+    ) => {
       const storedValue = localStorage.getItem(key);
       if (storedValue) setter(JSON.parse(storedValue));
     };
@@ -44,16 +47,18 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   }, []);
 
   useEffect(() => {
-    if(process.env.NEXT_PUBLIC_JIRA_URL){
-      setJiraUrl(process.env.NEXT_PUBLIC_JIRA_URL)
+    if (process.env.NEXT_PUBLIC_JIRA_URL) {
+      setJiraUrl(process.env.NEXT_PUBLIC_JIRA_URL);
     }
   }, []);
 
-  const handleInputChange = (setState: (value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim();
-    setState(value);
-    localStorage.setItem(e.target.name, JSON.stringify(value));
-  };
+  const handleInputChange =
+    (setState: (value: string) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value.trim();
+      setState(value);
+      localStorage.setItem(e.target.name, JSON.stringify(value));
+    };
 
   const debouncedChangeHandler = useCallback(
     debounce((board: string) => {
@@ -89,10 +94,18 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     setShowLoader(true);
     var response = await jiraService.searchBoards(searchQuery);
     if (response.isSuccess && response.data) {
-      showSuccessToast("Jira Boards Found", "You can select the board you want", "top-center");
+      showSuccessToast(
+        "Jira Boards Found",
+        "You can select the board you want",
+        "top-center"
+      );
       setBoards(response.data);
     } else {
-      showFailureToast("Search Board Error", "Try to search different board", "top-center");
+      showFailureToast(
+        "Search Board Error",
+        "Try to search different board",
+        "top-center"
+      );
     }
     setShowLoader(false);
   };
@@ -101,26 +114,52 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     setShowLoader(true);
     var response = await jiraService.getSprints(boardId);
     if (response.isSuccess && response.data) {
-      showSuccessToast("Sprints Found Successfully", "You can select the sprint you want", "top-center");
+      showSuccessToast(
+        "Sprints Found Successfully",
+        "You can select the sprint you want",
+        "top-center"
+      );
       setSprints(response.data);
     } else {
-      showFailureToast("Get Sprint Error", "Try to search different sprint", "top-center");
+      showFailureToast(
+        "Get Sprint Error",
+        "Try to search different sprint",
+        "top-center"
+      );
     }
     setShowLoader(false);
   };
 
   const handleImportIssues = async () => {
     setShowLoader(true);
-    const customFieldName = localStorage.getItem("story_points_custom_field_name");
-    var response = await jiraService.getSprintIssues(selectedSprint, customFieldName!);
+    const customFieldName = localStorage.getItem(
+      "story_points_custom_field_name"
+    );
+    var response = await jiraService.getSprintIssues(
+      selectedSprint,
+      customFieldName!
+    );
     if (response.isSuccess && response.data) {
-      showSuccessToast("Import Jira Success", "Jira Issues Imported Successfully! You can check the board from the sidebar.", "top-center");
+      showSuccessToast(
+        "Import Jira Success",
+        "Jira Issues Imported Successfully! You can check the board from the sidebar.",
+        "top-center"
+      );
       response.data[currentJiraIssueIndex].selected = true;
-      socket.emit("setIssues", roomId, response.data, userInfo.lobby.credentials);
+      socket.emit(
+        "setIssues",
+        roomId,
+        response.data,
+        userInfo.lobby.credentials
+      );
       closeModal();
     } else {
-      showFailureToast("Import Jira Fail", "Try again later or check your form", "top-center");
-    }    
+      showFailureToast(
+        "Import Jira Fail",
+        "Try again later or check your form",
+        "top-center"
+      );
+    }
     setShowLoader(false);
   };
 
@@ -142,6 +181,11 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   return (
     <form onSubmit={handleImportIssues} className="import-jira-issues">
       <h3>Jira Sprint Issue Importer</h3>
+      {jiraIssueImporterHelp && (
+        <a className="import-jira-issues-help" href={jiraIssueImporterHelp} target="_blank">
+          How to import?
+        </a>
+      )}
       <div className="import-jira-issues__row">
         <input
           type="text"
@@ -153,20 +197,34 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
         />
       </div>
       <div className="import-jira-issues__row">
-        <input
-          type="text"
-          placeholder="Username"
-          name="username"
-          value={username}
-          onChange={handleInputChange(setUsername)}
-        />
-        <input
-          type="password"
-          placeholder="API Token"
-          name="token"
-          value={token}
-          onChange={handleInputChange(setToken)}
-        />
+        <div className="import-jira-issues__row-input-container">
+          <input
+            type="text"
+            placeholder="Username"
+            name="username"
+            value={username}
+            onChange={handleInputChange(setUsername)}
+          />
+          {jiraIssueImporterHelp && (
+            <a href={jiraIssueImporterHelp} target="_blank">
+              <IconHelp className="help-icon" />
+            </a>
+          )}
+        </div>
+        <div className="import-jira-issues__row-input-container">
+          <input
+            type="password"
+            placeholder="API Token"
+            name="token"
+            value={token}
+            onChange={handleInputChange(setToken)}
+          />
+          {jiraIssueImporterHelp && (
+            <a href={jiraIssueImporterHelp} target="_blank">
+              <IconHelp className="help-icon" />
+            </a>
+          )}
+        </div>
       </div>
 
       <div className="import-jira-issues__row">
@@ -181,7 +239,13 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       </div>
 
       <div className="import-jira-issues__row">
-        <select id="board" name="board" onChange={handleBoardChange} value={selectedBoard} disabled={!boards.length}>
+        <select
+          id="board"
+          name="board"
+          onChange={handleBoardChange}
+          value={selectedBoard}
+          disabled={!boards.length}
+        >
           <option value="">Select</option>
           {boards.map((board) => (
             <option key={board.id} value={board.id}>
@@ -209,7 +273,11 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       </div>
 
       <div className="import-jira-issues__row">
-        <button type="button" onClick={handleImportIssues} disabled={!selectedSprint}>
+        <button
+          type="button"
+          onClick={handleImportIssues}
+          disabled={!selectedSprint}
+        >
           Import
         </button>
         <button type="button" onClick={handleClearForm}>
