@@ -12,33 +12,26 @@ Live demo 👉 https://gurubu.vercel.app/
 
 Gurubu is a tool designed to streamline task estimation grooming sessions and prioritize tasks using a room-based, user-friendly approach. With a single click, users can create a room, invite team members, and start estimating story points or voting on multiple metrics for score card grooming.
 
-
-![Ekran Resmi 2023-11-07 17 06 17](https://github.com/Trendyol/gurubu/assets/77741597/30dd19b8-84db-49bb-a46f-f2acc7a75011)
+<img width="1728" alt="Ekran Resmi 2025-01-12 15 39 02" src="https://github.com/user-attachments/assets/f204a21f-947b-4431-8cb0-b9e63d96d81d" />
 
 ## Features
 
 
 - **One-Click Room Setup:** Quickly create a dedicated room for your task estimation or score card grooming session.
   
-![Ekran Resmi 2023-11-07 17 06 34](https://github.com/Trendyol/gurubu/assets/77741597/c1daa141-fa7a-4758-a967-bc8de1a2242f)
+<img width="1728" alt="Ekran Resmi 2025-01-12 15 38 01" src="https://github.com/user-attachments/assets/c37929e4-1b3d-43bc-b8a0-7d27d0b9dfee" />
 
 - **User-Friendly Interface:** Easily enter your name and join a room, making collaboration simple and efficient.
 
 - **Story Point Estimation:** Streamline the process of estimating story points to better plan and manage your project.
 
 - **Score Card Grooming:** Prioritize tasks effectively by allowing users to vote on multiple metrics.
-
-![Ekran Resmi 2023-11-07 17 08 39](https://github.com/Trendyol/gurubu/assets/77741597/d15fdd31-26c4-4914-a517-d2de5177dc09)
+  
+<img width="1728" alt="Ekran Resmi 2025-01-12 15 41 01" src="https://github.com/user-attachments/assets/804f04be-1660-48a5-a119-23d0a23895e2" />
 
 - **Jira Issue Importer**: Import your Jira issues
-
-![image](https://github.com/Trendyol/gurubu/assets/33116071/d9da083c-5939-411f-9008-e2b6aef26a9f)
-
-- **Set Story Point to Imported Jira Issues***:
-    ##### 1. your api token must have write access 
-    ##### 2. you must set the story custom field(jira default is *customfield_10016*)
-
-  ![image](https://github.com/Trendyol/gurubu/assets/33116071/d81e3f99-b5e3-44ed-a02f-2b2d66c45190)
+  
+<img width="1728" alt="Ekran Resmi 2025-01-12 15 42 20" src="https://github.com/user-attachments/assets/53085a97-3956-452b-a7a8-3f47fddb5aa1" />
 
 ## Getting Started
 
