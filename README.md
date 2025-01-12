@@ -8,18 +8,18 @@ Live demo 👉 https://gurubu.vercel.app/
 
 ### Agree with your teammates quickly and reliably! Start by setting up a room.
 
-![how-to-gurubu](https://github.com/Trendyol/gurubu/assets/77741597/09020514-17f0-473d-87b9-3d7a50c95c37)
+<img width="1728" alt="GuruBu How To" src="https://github.com/user-attachments/assets/7746fcf8-8d25-4bb3-bc6a-ace740cb0954" />
 
 Gurubu is a tool designed to streamline task estimation grooming sessions and prioritize tasks using a room-based, user-friendly approach. With a single click, users can create a room, invite team members, and start estimating story points or voting on multiple metrics for score card grooming.
 
-<img width="1728" alt="Ekran Resmi 2025-01-12 15 39 02" src="https://github.com/user-attachments/assets/f204a21f-947b-4431-8cb0-b9e63d96d81d" />
+<img width="1728" alt="GuruBu Home" src="https://github.com/user-attachments/assets/f204a21f-947b-4431-8cb0-b9e63d96d81d" />
 
 ## Features
 
 
 - **One-Click Room Setup:** Quickly create a dedicated room for your task estimation or score card grooming session.
   
-<img width="1728" alt="Ekran Resmi 2025-01-12 15 38 01" src="https://github.com/user-attachments/assets/c37929e4-1b3d-43bc-b8a0-7d27d0b9dfee" />
+<img width="1728" alt="GuruBu Setup" src="https://github.com/user-attachments/assets/c37929e4-1b3d-43bc-b8a0-7d27d0b9dfee" />
 
 - **User-Friendly Interface:** Easily enter your name and join a room, making collaboration simple and efficient.
 
@@ -27,11 +27,11 @@ Gurubu is a tool designed to streamline task estimation grooming sessions and pr
 
 - **Score Card Grooming:** Prioritize tasks effectively by allowing users to vote on multiple metrics.
   
-<img width="1728" alt="Ekran Resmi 2025-01-12 15 41 01" src="https://github.com/user-attachments/assets/804f04be-1660-48a5-a119-23d0a23895e2" />
+<img width="1728" alt="GuruBu Score Card" src="https://github.com/user-attachments/assets/804f04be-1660-48a5-a119-23d0a23895e2" />
 
 - **Jira Issue Importer**: Import your Jira issues
   
-<img width="1728" alt="Ekran Resmi 2025-01-12 15 42 20" src="https://github.com/user-attachments/assets/53085a97-3956-452b-a7a8-3f47fddb5aa1" />
+<img width="1728" alt="GuruBu Jira Import" src="https://github.com/user-attachments/assets/53085a97-3956-452b-a7a8-3f47fddb5aa1" />
 
 ## Getting Started
 
