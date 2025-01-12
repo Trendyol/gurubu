@@ -5,7 +5,7 @@ export const AnnouncementTooltip = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
-  const whatsNewText = "What's New - 11.01.2025";
+  const whatsNewText = "What's New - v1.0.0";
 
   useEffect(() => {
     const hasSeenAnnouncement = localStorage.getItem("hasSeenAnnouncement");

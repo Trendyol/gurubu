@@ -3,6 +3,10 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  padding: 16px;
+  .import-jira-issues-help{
+    color: $primary-700;
+  }
 
   &__logo {
     display: flex;
@@ -16,6 +20,23 @@
     align-items: center;
     gap: 0.5rem;
     width: 100%;
+    &-input-container{
+      position: relative;
+      .help-icon{
+        position: absolute;
+        top: 50%;
+        right: -10px;
+        transform: translate(-50%, -50%);
+        color: $primary-700;
+        cursor: pointer;
+      }
+      >input{
+        width: 100%;
+        padding: 10px 25px 10px 14px;
+        border: 1px solid $gray-300;
+        border-radius: $radius-large;
+      }
+    }
 
     &>label {
       flex: 1;
