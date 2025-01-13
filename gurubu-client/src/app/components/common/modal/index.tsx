@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { IconX } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 
 interface Props {
@@ -35,11 +35,12 @@ export const Modal = ({ isOpen, onClose, children }: Props) => {
     <div
       className={`modal ${isOpen || modalVisible ? "open" : ""}`}
       role="dialog"
-      aria-modal="true">
+      aria-modal="true"
+    >
       <div className="overlay" onClick={closeModal}></div>
       <div className="modal-content" role="document">
         <button className="close-btn" onClick={closeModal} aria-label="Close">
-          <Image src="/close-icon.svg" alt="Close" width={12} height={12} />
+          <IconX size={16} color="gray" />
         </button>
         {children}
       </div>

@@ -1,5 +1,6 @@
 import Button from "../common/button";
 import Image from "next/image";
+import { IconCircleCaretRight } from "@tabler/icons-react";
 
 const HeroSection = () => {
   return (
@@ -11,22 +12,19 @@ const HeroSection = () => {
           room.
         </p>
         <Button as="a" href="/create/room">
-          <Image
-            src="/play-circle.svg"
-            width={24}
-            height={24}
-            alt="Create room"
-          />
+          <IconCircleCaretRight />
           Create room
         </Button>
       </div>
       <Image
-        src="/demo-preview.png"
+        src="https://cdn.dsmcdn.com/web/production/gurubu-demo-preview.png"
         width={688}
         height={512}
         alt="Demo preview of Gurubu"
         priority
         className="hero-section__demo-preview"
+        placeholder="blur"
+        blurDataURL="/gurubu-logo.svg"
       />
     </section>
   );
