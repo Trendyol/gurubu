@@ -17,9 +17,9 @@ const HeroSection = () => {
         </Button>
       </div>
       <Image
-        src="https://cdn.dsmcdn.com/web/production/gurubu-demo-preview.png"
-        width={688}
-        height={512}
+        src="https://cdn.dsmcdn.com/web/production/gurubu-home-demo.png"
+        width={1000}
+        height={900}
         alt="Demo preview of Gurubu"
         priority
         className="hero-section__demo-preview"
