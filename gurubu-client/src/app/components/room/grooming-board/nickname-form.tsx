@@ -18,19 +18,18 @@ const defaultNickname = () => {
   );
 };
 
-
-
-
 // If roomId is provided, then the user is joining a room.
 const NicknameForm = ({ roomId }: IProps) => {
   const [nickname, setNickname] = useState(defaultNickname);
-  const [groomingType, setGroomingType] = useState<GroomingType>(GroomingType.PlanningPoker);
+  const [groomingType, setGroomingType] = useState<GroomingType>(
+    GroomingType.PlanningPoker
+  );
 
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-
   const roomService = new RoomService(process.env.NEXT_PUBLIC_API_URL || "");
+  const vercelInfo = process.env.NEXT_PUBLIC_VERCEL_INFO || "";
 
   const handleNicknameChange = (e: {
     target: { value: SetStateAction<string> };
@@ -52,7 +51,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     const payload = {
       nickName: trimmedNickName,
       // TODO?: Actually, backend api should be accept string value for groomingType
-      groomingType: groomingType === 'PlanningPoker' ? "0" : "1"
+      groomingType: groomingType === "PlanningPoker" ? "0" : "1",
     };
     const response = await roomService.createRoom(payload);
 
@@ -115,10 +114,10 @@ const NicknameForm = ({ roomId }: IProps) => {
   };
 
   const handleFastJoin = async () => {
-    if(!roomId){
+    if (!roomId) {
       return;
     }
-    if(!defaultNickname()){
+    if (!defaultNickname()) {
       return;
     }
     setLoading(true);
@@ -151,7 +150,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     localStorage.setItem("lobby", JSON.stringify(lobby));
 
     window.location.assign(`/room/${response.roomID}?isFastJoin=true`);
-  }
+  };
 
   const connectionButtonText = () => {
     if (loading && roomId) {
@@ -179,29 +178,27 @@ const NicknameForm = ({ roomId }: IProps) => {
   useEffect(() => {
     const executeFastJoin = async () => {
       await handleFastJoin();
-    }; 
+    };
     executeFastJoin();
- }, []);
+  }, []);
 
- if(defaultNickname() && roomId){
-  return null;
- }
+  if (defaultNickname() && roomId) {
+    return null;
+  }
 
   return (
     <div className="nickname-form">
       <h1 className="nickname-form__header">
-        <Image
-          priority
-          src="/logo.svg"
-          alt="logo"
-          width={30}
-          height={30}
-        />
-        GuruBu</h1>
+        <Image priority src="/logo.svg" alt="logo" width={30} height={30} />
+        GuruBu
+      </h1>
       <h1 className="nickname-form__title">Welcome to Gurubu</h1>
       <div className="nickname-form__action-wrapper">
         <div className="nickname-form__input-wrapper">
-          <label htmlFor="nickname-input" className="nickname-form__label-enter-room">
+          <label
+            htmlFor="nickname-input"
+            className="nickname-form__label-enter-room"
+          >
             To enter the room, choose a nickname.
           </label>
           <input
@@ -236,7 +233,6 @@ const NicknameForm = ({ roomId }: IProps) => {
               })}
               onClick={() => setGroomingType(GroomingType.ScoreGrooming)}
             >
-
               <p>Score Grooming</p>
             </button>
           </div>
@@ -250,7 +246,14 @@ const NicknameForm = ({ roomId }: IProps) => {
         >
           {connectionButtonText()}
         </button>
-
+        {vercelInfo && (
+          <p className="vercel-info">
+            {vercelInfo.split("_")[0]}
+            <a href="https://gurubu.trendyol.com" target="_blank">
+              {vercelInfo.split("_")[1]}
+            </a>
+          </p>
+        )}
       </div>
     </div>
   );

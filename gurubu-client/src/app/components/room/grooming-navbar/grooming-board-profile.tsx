@@ -27,9 +27,10 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     avatar,
     setAvatar,
   } = useAvatar();
-  const { userInfo } = useGroomingRoom();
+  const { userInfo, groomingInfo } = useGroomingRoom();
   const { showTour } = useTour();
   const selectorRef = useRef<HTMLDivElement>(null);
+  const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
   const openModal = (modalType: ModalType) => {
     setModalOpen(true);
@@ -84,7 +85,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     const hasSeenTooltip = localStorage.getItem("hasSeenProfileTooltip");
     const tourCompleted = localStorage.getItem("tourCompleted");
 
-    if (!hasSeenTooltip && tourCompleted) {
+    if (!hasSeenTooltip && tourCompleted && isGroomingInfoLoaded) {
       setShowTooltip(true);
       localStorage.setItem("hasSeenProfileTooltip", "true");
 
@@ -94,7 +95,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
 
       return () => clearTimeout(timer);
     }
-  }, [showTour]);
+  }, [showTour, isGroomingInfoLoaded]);
 
   const handleCloseTooltip = (e: React.MouseEvent) => {
     e.stopPropagation();
