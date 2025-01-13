@@ -1669,10 +1669,10 @@ form-data@^4.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-framer-motion@^11.15.0:
-  version "11.16.4"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-11.16.4.tgz#42fd3ec78e50b47812aad80de177e3125107def1"
-  integrity sha512-7ncPlBjrYX6iQXcTSw1kvZcHSVjEuOAW3uWuu+/+chUS4UWBMe8kCjniE4VMc2/BMo0su0Uw9sw0aWS9anpPWA==
+framer-motion@^11.17.0:
+  version "11.17.0"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-11.17.0.tgz#2c8fe7e008b3c5301efc6288a990cd5e73805353"
+  integrity sha512-uTNLH9JPMD3ad14WBt3KYRTR+If4tGPLgKTKTIIPaEBMkvazs6EkWNcmCh65qA/tyinOqIbQiuCorXX0qQsNoQ==
   dependencies:
     motion-dom "^11.16.4"
     motion-utils "^11.16.0"
