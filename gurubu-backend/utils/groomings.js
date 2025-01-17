@@ -141,6 +141,12 @@ const handleJoinRoom = (nickName, roomID) => {
 
   const { credentials, ...userWithoutCredentials } = user;
 
+  if(!groomings[roomID]){
+    return handleErrors("handleJoinRoom", roomID);
+  }
+  if(!groomings[roomID]?.participants){
+    return handleErrors("handleJoinRoom", roomID);
+  }
   groomings[roomID].participants[user.userID] = userWithoutCredentials;
 
   const room = rooms.find((room) => room.roomID === roomID);
