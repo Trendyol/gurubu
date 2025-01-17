@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .import-jira-issues {
   display: flex;
   flex-direction: column;
@@ -5,7 +7,7 @@
   gap: 1rem;
   padding: 16px;
   .import-jira-issues-help{
-    color: $primary-700;
+    color: variables.$primary-700;
   }
 
   &__logo {
@@ -27,14 +29,14 @@
         top: 50%;
         right: -10px;
         transform: translate(-50%, -50%);
-        color: $primary-700;
+        color: variables.$primary-700;
         cursor: pointer;
       }
       >input{
         width: 100%;
         padding: 10px 25px 10px 14px;
-        border: 1px solid $gray-300;
-        border-radius: $radius-large;
+        border: 1px solid variables.$gray-300;
+        border-radius: variables.$radius-large;
       }
     }
 
@@ -46,31 +48,31 @@
     &>select {
       width: 100%;
       padding: 10px 14px;
-      border: 1px solid $gray-300;
-      border-radius: $radius-large;
+      border: 1px solid variables.$gray-300;
+      border-radius: variables.$radius-large;
     }
 
     &>button {
       font-family: var(--font-inter);
       width: 100%;
-      background: $primary-600;
+      background: variables.$primary-600;
       color: white;
-      font-weight: $semibold;
-      font-size: $font-size-paragraph-3;
-      line-height: $line-height-paragraph-4;
+      font-weight: variables.$semibold;
+      font-size: variables.$font-size-paragraph-3;
+      line-height: variables.$line-height-paragraph-4;
       padding: 10px 18px;
-      border: 1px solid $primary-600;
-      border-radius: $radius-large;
+      border: 1px solid variables.$primary-600;
+      border-radius: variables.$radius-large;
       cursor: pointer;
       &:hover{
-        background-color: $purple-500;
+        background-color: variables.$purple-500;
       }
       &:nth-child(2){
-        background-color: $white;
+        background-color: variables.$white;
         border: 1px solid #cdd1d4;
-        color: $gray-700;
+        color: variables.$gray-700;
         &:hover {
-          background-color: $off-white;
+          background-color: variables.$off-white;
         }
       }
     }

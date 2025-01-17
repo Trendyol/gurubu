@@ -1,87 +1,89 @@
+@use "../../variables";
+
 .vote-card {
   width: 40px;
   height: 40px;
   display: flex;
-  border-color: $gray-300;
+  border-color: variables.$gray-300;
   border-width: 1px;
   border-style: solid hidden solid solid;
   align-items: center;
-  background-color: $white;
+  background-color: variables.$white;
   justify-content: center;
   cursor: pointer;
 
   &:first-child{
-    border-radius: $radius-large 0px 0px $radius-large;
+    border-radius: variables.$radius-large 0px 0px variables.$radius-large;
     &:hover {
-      background-color: $dark-orange-300;
+      background-color: variables.$dark-orange-300;
     }
     &.selected {
-      background: $dark-orange-400;
+      background: variables.$dark-orange-400;
     }
   }    
 
   &:nth-child(2){
     &:hover {
-      background: $dark-orange-200;
+      background: variables.$dark-orange-200;
     }
     &.selected {
-      background: $dark-orange-300;
+      background: variables.$dark-orange-300;
     }
   }
 
   &:nth-child(3){
     &:hover {
-      background: $yellow-100-v2;
+      background: variables.$yellow-100-v2;
     }
     &.selected {
-      background: $yellow-200-v2;
+      background: variables.$yellow-200-v2;
     }
   }
 
   &:nth-child(4){
     &:hover {
-      background: $green-light-50;
+      background: variables.$green-light-50;
     }
     &.selected {
-      background: $green-light-100;
+      background: variables.$green-light-100;
     }
   }
   &:nth-child(5){
     &:hover {
-      background:  $green-light-100;
+      background: variables.$green-light-100;
     }
     &.selected {
-      background: $green-light-200;
+      background: variables.$green-light-200;
     }
   }
 
   
   &:nth-child(6){
     &:hover {
-      background: $dark-orange-400;
+      background: variables.$dark-orange-400;
     }
     &.selected {
-      background: $dark-orange-500;
+      background: variables.$dark-orange-500;
     }
   }
 
   &:nth-child(7){
     &:hover {
-      background: $dark-orange-500;
+      background: variables.$dark-orange-500;
     }
     &.selected {
-      background: $dark-orange-600;
+      background: variables.$dark-orange-600;
     }
   }
 
   &:last-child{
     &:hover {
-      background: $light-blue-100;
+      background: variables.$light-blue-100;
     }
     border-right-style: solid;
-    border-radius: 0px $radius-large $radius-large 0px;
+    border-radius: 0px variables.$radius-large variables.$radius-large 0px;
     &.selected {
-      background: $light-blue-200;
+      background: variables.$light-blue-200;
     }
   }
 
@@ -95,9 +97,9 @@
   }
 
   .vote-point-text {
-    font-size: $font-size-paragraph-4;
-    font-weight: $semibold;
-    color: $gray-700;
+    font-size: variables.$font-size-paragraph-4;
+    font-weight: variables.$semibold;
+    color: variables.$gray-700;
     line-height: 20px;
   }
 }

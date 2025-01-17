@@ -1,28 +1,30 @@
+@use "../../variables";
+
 .nickname-form {
   width: 384px;
-  padding: $space-xlarge $space-xlarge;
+  padding: variables.$space-xlarge variables.$space-xlarge;
   max-width: 90%;
-  border-radius: $radius-large;
+  border-radius: variables.$radius-large;
   box-shadow: 0px 20px 24px -4px #10182814;
-  background-color: $white;
+  background-color: variables.$white;
   margin: auto;
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: $space-xsmall;
+    gap: variables.$space-xsmall;
     font-family: var(--font-space-grotesk);
-    color: $black;
-    font-size: $font-size-header-5;
-    font-weight: $bold;
-    margin-bottom: $space-xlarge;
+    color: variables.$black;
+    font-size: variables.$font-size-header-5;
+    font-weight: variables.$bold;
+    margin-bottom: variables.$space-xlarge;
   }
   &__title {
-    color: $title-color;
-    font-size: $font-size-paragraph-2;
-    line-height: $line-height-header-4;
-    font-weight: $semibold;
+    color: variables.$title-color;
+    font-size: variables.$font-size-paragraph-2;
+    line-height: variables.$line-height-header-4;
+    font-weight: variables.$semibold;
   }
   &__input-wrapper {
     display: flex;
@@ -39,46 +41,46 @@
       content: "";
       flex: 1;
       height: 1px;
-      background-color: $gray-200;
+      background-color: variables.$gray-200;
     }
   }
 
   &__label-enter-room {
     color: #475467;
-    font-weight: $light;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-3;
+    font-weight: variables.$light;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-3;
     flex-shrink: 0;
-    margin: 0 $space-small;
+    margin: 0 variables.$space-small;
   }
   &__label-select-grooming {
     color: #475467;
     font-weight: 500;
-    font-size: $font-size-paragraph-4;
+    font-size: variables.$font-size-paragraph-4;
     flex-shrink: 0;
-    margin: 0 $space-small;
+    margin: 0 variables.$space-small;
     line-height: 20px;
   }
   &__input {
-    padding: $space-small $space-large;
-    margin: $space-base 0;
-    border: 1px solid $gray-100;
-    border-radius: $radius-small;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $regular;
+    padding: variables.$space-small variables.$space-large;
+    margin: variables.$space-base 0;
+    border: 1px solid variables.$gray-100;
+    border-radius: variables.$radius-small;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$regular;
     width: 100%;
   }
   &__input:focus {
     outline: none;
   }
   &__grooming-options {
-    margin-top: $space-xlarge;
+    margin-top: variables.$space-xlarge;
     display: flex;
     align-items: center;
     overflow: hidden;
-    border-radius: $radius-medium;
-    border: 1px solid $gray-300;
+    border-radius: variables.$radius-medium;
+    border: 1px solid variables.$gray-300;
     position: relative;
 
     &.divider::after {
@@ -88,24 +90,24 @@
       top: 0;
       width: 1px;
       height: 100%;
-      background-color: $gray-300;
+      background-color: variables.$gray-300;
     }
   }
   &__grooming-option {
     border: 1px solid transparent;
     flex: 1;
-    background-color: $white;
-    padding: 10px $space-large;
+    background-color: variables.$white;
+    padding: 10px variables.$space-large;
     align-items: center;
     justify-content: space-between;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $medium;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$medium;
     cursor: pointer;
     position: relative;
 
     p {
-      font-weight: $semibold;
+      font-weight: variables.$semibold;
     }
 
     &:hover {
@@ -117,7 +119,7 @@
       background-color: #7f56d9;
 
       p {
-        color: $white;
+        color: variables.$white;
       }
     }
   }
@@ -125,22 +127,22 @@
     cursor: pointer;
   }
   &__error-message {
-    margin-top: $space-large;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $regular;
-    color: $red-700;
+    margin-top: variables.$space-large;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$regular;
+    color: variables.$red-700;
   }
   &__button {
     display: inline-block;
-    margin-top: $space-base;
-    padding: $space-small;
-    color: $white;
+    margin-top: variables.$space-base;
+    padding: variables.$space-small;
+    color: variables.$white;
     background-color: #7656cc;
-    font-size: $font-size-paragraph-2;
-    line-height: $line-height-paragraph-2;
-    font-weight: $medium;
-    border-radius: $radius-large;
+    font-size: variables.$font-size-paragraph-2;
+    line-height: variables.$line-height-paragraph-2;
+    font-weight: variables.$medium;
+    border-radius: variables.$radius-large;
     border: none;
     width: 100%;
     cursor: pointer;
@@ -148,17 +150,17 @@
   }
 
   &__info-message {
-    margin-top: $space-large;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
-    color: $gray-800;
+    margin-top: variables.$space-large;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
+    color: variables.$gray-800;
   }
   .vercel-info{
     margin-top: 12px;
-    background-color: $primary-200;
+    background-color: variables.$primary-200;
     border-radius: 8px;
-    color: $primary-700;
+    color: variables.$primary-700;
     font-weight: 600;
     padding: 4px;
     a {

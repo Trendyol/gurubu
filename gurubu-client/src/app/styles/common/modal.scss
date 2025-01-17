@@ -1,3 +1,5 @@
+@use "../variables";
+
 .modal {
   display: none;
   position: fixed;
@@ -26,7 +28,7 @@
   .modal-content {
     background: #fff;
     padding: 24px;
-    border-radius: $radius-xlarge;
+    border-radius: variables.$radius-xlarge;
     position: relative;
     z-index: 1;
     width: 400px;

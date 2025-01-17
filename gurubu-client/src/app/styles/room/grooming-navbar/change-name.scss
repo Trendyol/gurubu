@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .change-name-container {
   display: flex;
   flex-direction: column;
@@ -9,16 +11,16 @@
     gap: 4px;
     & > h4 {
       font-family: var(--font-space-grotesk);
-      font-weight: $bold;
-      font-size: $font-size-header-5;
-      line-height: $line-height-paragraph-4;
+      font-weight: variables.$bold;
+      font-size: variables.$font-size-header-5;
+      line-height: variables.$line-height-paragraph-4;
     }
   }
   & > h5 {
-    color: $gray-600;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-header-5;
-    font-weight: $regular;
+    color: variables.$gray-600;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-header-5;
+    font-weight: variables.$regular;
     padding-top: 16px;
     padding-bottom: 20px;
   }
@@ -29,21 +31,21 @@
     & > input {
       width: 100%;
       padding: 10px 14px;
-      border: 1px solid $gray-300;
-      border-radius: $radius-large;
+      border: 1px solid variables.$gray-300;
+      border-radius: variables.$radius-large;
     }
   }
   & > button {
     font-family: var(--font-inter);
     width: 100%;
-    background: $primary-600;
+    background: variables.$primary-600;
     color: white;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-4;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-4;
     padding: 10px 18px;
-    border: 1px solid $primary-600;
-    border-radius: $radius-large;
+    border: 1px solid variables.$primary-600;
+    border-radius: variables.$radius-large;
     margin-bottom: 32px;
     cursor: pointer;
   }

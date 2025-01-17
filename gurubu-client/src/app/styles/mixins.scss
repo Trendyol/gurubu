@@ -1,6 +1,9 @@
+@use "sass:map";
+@use "variables";
+
 @mixin media($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key(variables.$breakpoints, $breakpoint) {
+    @media (min-width: map.get(variables.$breakpoints, $breakpoint)) {
       @content;
     }
   } @else {
@@ -9,7 +12,7 @@
 }
 
 @mixin container {
-  max-width: $max-width;
+  max-width: variables.$max-width;
   margin: 0 auto;
-  padding: $space-xxxxlarge $space-xxlarge;
+  padding: variables.$space-xxxxlarge variables.$space-xxlarge;
 }

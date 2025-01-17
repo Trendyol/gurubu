@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .change-avatar-container {
   display: flex;
   flex-direction: column;
@@ -21,21 +23,21 @@
 
       h4 {
         font-family: var(--font-space-grotesk);
-        font-weight: $bold;
-        font-size: $font-size-header-5;
+        font-weight: variables.$bold;
+        font-size: variables.$font-size-header-5;
       }
     }
 
     &-title {
-      font-size: $font-size-paragraph-2;
-      font-weight: $semibold;
-      color: $gray-900;
+      font-size: variables.$font-size-paragraph-2;
+      font-weight: variables.$semibold;
+      color: variables.$gray-900;
       margin-bottom: 8px;
     }
 
     &-subtitle {
-      font-size: $font-size-paragraph-4;
-      color: $gray-600;
+      font-size: variables.$font-size-paragraph-4;
+      color: variables.$gray-600;
     }
   }
 
@@ -45,7 +47,7 @@
     margin-bottom: 12px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid $primary-700;
+    border: 3px solid variables.$primary-700;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease;
 
@@ -66,18 +68,18 @@
     gap: 8px;
     padding: 10px 16px;
     margin-bottom: 16px;
-    border: 1px solid $gray-300;
-    border-radius: $radius-medium;
-    background: $gray-50;
-    color: $gray-700;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-4;
+    border: 1px solid variables.$gray-300;
+    border-radius: variables.$radius-medium;
+    background: variables.$gray-50;
+    color: variables.$gray-700;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-4;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: $gray-100;
-      border-color: $gray-400;
+      background: variables.$gray-100;
+      border-color: variables.$gray-400;
       transform: translateY(-1px);
     }
 
@@ -107,28 +109,28 @@
       gap: 8px;
 
       label {
-        font-size: $font-size-paragraph-4;
-        font-weight: $medium;
-        color: $gray-700;
+        font-size: variables.$font-size-paragraph-4;
+        font-weight: variables.$medium;
+        color: variables.$gray-700;
       }
 
       input,
       select {
         padding: 10px 12px;
-        border: 1px solid $gray-300;
-        border-radius: $radius-medium;
-        font-size: $font-size-paragraph-4;
+        border: 1px solid variables.$gray-300;
+        border-radius: variables.$radius-medium;
+        font-size: variables.$font-size-paragraph-4;
         cursor: pointer;
         transition: all 0.2s ease;
 
         &:hover {
-          border-color: $primary-700;
+          border-color: variables.$primary-700;
         }
 
         &:focus {
           outline: none;
-          border-color: $primary-700;
-          box-shadow: 0 0 0 3px rgba($primary-700, 0.1);
+          border-color: variables.$primary-700;
+          box-shadow: 0 0 0 3px rgba(variables.$primary-700, 0.1);
         }
       }
 
@@ -150,9 +152,9 @@
     button {
       flex: 1;
       padding: 12px;
-      border-radius: $radius-large;
-      font-weight: $semibold;
-      font-size: $font-size-paragraph-3;
+      border-radius: variables.$radius-large;
+      font-weight: variables.$semibold;
+      font-size: variables.$font-size-paragraph-3;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -161,12 +163,12 @@
       gap: 8px;
 
       &.save-button {
-        background: $primary-600;
+        background: variables.$primary-600;
         color: white;
         border: none;
 
         &:hover {
-          background: $primary-700;
+          background: variables.$primary-700;
           transform: translateY(-1px);
         }
 
@@ -185,25 +187,25 @@
       align-items: center;
       gap: 12px;
       padding: 10px 12px;
-      border: 1px solid $gray-300;
-      border-radius: $radius-medium;
+      border: 1px solid variables.$gray-300;
+      border-radius: variables.$radius-medium;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: $primary-700;
+        border-color: variables.$primary-700;
       }
 
       .color-swatch {
         width: 24px;
         height: 24px;
-        border-radius: $radius-small;
-        border: 1px solid $gray-200;
+        border-radius: variables.$radius-small;
+        border: 1px solid variables.$gray-200;
       }
 
       .color-value {
-        font-size: $font-size-paragraph-4;
-        color: $gray-700;
+        font-size: variables.$font-size-paragraph-4;
+        color: variables.$gray-700;
         font-family: var(--font-space-grotesk);
         text-transform: uppercase;
       }

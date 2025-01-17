@@ -1,8 +1,10 @@
+@use "../../variables.scss";
+
 .grooming-board {
   display: flex;
   width: 80%;
   margin: 0 auto;
-  padding: 0 $space-xxxlarge;
+  padding: 0 variables.$space-xxxlarge;
   justify-content: space-between;
   margin-top: 48px;
   @media (max-width: 850px) {
@@ -32,20 +34,20 @@
     width: 180px;
     height: 36px;
     border: none;
-    background-color: $gray-300;
-    color: $gray-800;
-    border-radius: $radius-medium;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-3;
-    font-weight: $medium;
+    background-color: variables.$gray-300;
+    color: variables.$gray-800;
+    border-radius: variables.$radius-medium;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-3;
+    font-weight: variables.$medium;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0 $space-small;
+    gap: 0 variables.$space-small;
     &.clicked {
       background-color: transparent;
-      border: 1px solid $blue-600;
-      color: $blue-600;
+      border: 1px solid variables.$blue-600;
+      color: variables.$blue-600;
     }
   }
   &__edit-vote-toggle-button:hover {
@@ -58,27 +60,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0 $space-xlarge;
+    gap: 0 variables.$space-xlarge;
 
     &.story-point-mode {
       flex-direction: column;
-      gap: $space-small;
+      gap: variables.$space-small;
       height: fit-content;
-      border-top: 1px solid $gray-100;
-      padding-top: $space-large;
+      border-top: 1px solid variables.$gray-100;
+      padding-top: variables.$space-large;
       .grooming-board__reset-votes-button {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: $space-small 0;
+        padding: variables.$space-small 0;
       }
       .grooming-board__show-result-button {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: $space-small 0;
+        padding: variables.$space-small 0;
       }
     }
   }
@@ -87,33 +89,33 @@
     background-color: transparent;
     height: 48px;
     cursor: pointer;
-    color: $gray-700;
-    padding: 0 $space-base;
-    border: 1px solid $gray-200;
-    border-radius: $radius-large;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
+    color: variables.$gray-700;
+    padding: 0 variables.$space-base;
+    border: 1px solid variables.$gray-200;
+    border-radius: variables.$radius-large;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
     min-width: 133px;
     transition: 0.3s;
   }
   &__reset-votes-button:hover {
-    background-color: $off-white;
+    background-color: variables.$off-white;
   }
   &__show-result-button {
     display: flex;
     align-items: center;
-    gap: $space-small;
+    gap: variables.$space-small;
     border: none;
     height: 48px;
     cursor: pointer;
-    padding: 0 $space-base;
-    background-color: $purple-700;
-    color: $white;
-    border-radius: $radius-large;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
+    padding: 0 variables.$space-base;
+    background-color: variables.$purple-700;
+    color: variables.$white;
+    border-radius: variables.$radius-large;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
     min-width: 133px;
     transition: 0.3s;
     &.disabled {
@@ -123,21 +125,21 @@
   }
   &__show-result-button:hover {
     &:not(.disabled) {
-      background-color: $purple-500;
+      background-color: variables.$purple-500;
     }
   }
   &__logs-section {
-    border-radius: $radius-medium;
+    border-radius: variables.$radius-medium;
     display: flex;
     flex-direction: column;
-    border: 1px solid $gray-20;
+    border: 1px solid variables.$gray-20;
     padding: 0 12px 12px 12px;
     max-height: max-content;
     margin-bottom: 24px;
   }
   &__metrics {
     display: flex;
-    gap: 0 $space-large;
+    gap: 0 variables.$space-large;
     justify-content: flex-end;
     margin-right: 2px;
     align-items: center;
@@ -147,10 +149,10 @@
     }
     li,
     span {
-      color: $gray-600;
-      font-size: $font-size-paragraph-5;
-      line-height: $line-height-paragraph-5;
-      font-weight: $medium;
+      color: variables.$gray-600;
+      font-size: variables.$font-size-paragraph-5;
+      line-height: variables.$line-height-paragraph-5;
+      font-weight: variables.$medium;
     }
     li {
       position: relative;
@@ -173,7 +175,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: $space-small 0;
+    gap: variables.$space-small 0;
     max-height: 80%;
     overflow-y: scroll;
     &::-webkit-scrollbar{
@@ -183,16 +185,16 @@
     scrollbar-width: none;
     li {
       width: 100%;
-      border: 1px solid $gray-100;
-      padding: $space-xsmall $space-large;
-      border-radius: $radius-small;
+      border: 1px solid variables.$gray-100;
+      padding: variables.$space-xsmall variables.$space-large;
+      border-radius: variables.$radius-small;
       display: flex;
       align-items: center;
       justify-content: space-between;
       label {
-        font-size: $font-size-paragraph-4;
-        line-height: $line-height-paragraph-4;
-        font-weight: $regular;
+        font-size: variables.$font-size-paragraph-4;
+        line-height: variables.$line-height-paragraph-4;
+        font-weight: variables.$regular;
         max-width: 100px;
       }
     }
@@ -204,21 +206,21 @@
   }
   &__point-cards-container {
     display: flex;
-    gap: 0 $space-large;
+    gap: 0 variables.$space-large;
     justify-content: flex-end;
   }
   &__point-card {
     border-radius: 50%;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $regular;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$regular;
     text-align: right;
     width: 24px;
     height: 24px;
-    padding: $space-small 0;
-    border: 1px solid $gray-100;
+    padding: variables.$space-small 0;
+    border: 1px solid variables.$gray-100;
     display: flex;
-    background: $voting-card-color;
+    background: variables.$voting-card-color;
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -228,7 +230,7 @@
       0 4px 6px -4px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
       var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-    color: $gray-500;
+    color: variables.$gray-500;
   }
   &__check-icon-container {
     display: flex;
@@ -294,28 +296,28 @@
     background-color: transparent;
     height: 48px;
     cursor: pointer;
-    color: $gray-700;
-    padding: 0 $space-base;
-    border: 1px solid $gray-200;
-    border-radius: $radius-large;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
+    color: variables.$gray-700;
+    padding: 0 variables.$space-base;
+    border: 1px solid variables.$gray-200;
+    border-radius: variables.$radius-large;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
     min-width: 133px;
     transition: 0.3s;
   }
   &__set-votes-button {
-    gap: $space-small;
+    gap: variables.$space-small;
     border: none;
     height: 48px;
     cursor: pointer;
-    padding: 0 $space-base;
-    background-color: $purple-700;
-    color: $white;
-    border-radius: $radius-large;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
+    padding: 0 variables.$space-base;
+    background-color: variables.$purple-700;
+    color: variables.$white;
+    border-radius:variables.$radius-large;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
     min-width: 133px;
     transition: 0.3s;
   }

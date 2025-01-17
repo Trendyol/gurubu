@@ -1,6 +1,8 @@
+@use "../../variables";
+
 .grooming-navbar {
   width: 100%;
-  border-bottom: 1px solid $gray-20;
+  border-bottom: 1px solid variables.$gray-20;
 
   &__content {
     display: flex;
@@ -8,9 +10,9 @@
     align-items: center;
     width: 80%;
     margin: 0 auto;
-    padding: $space-xlarge $space-xxxlarge;
+    padding: variables.$space-xlarge variables.$space-xxxlarge;
     @media (max-width: 850px) {
-      padding: $space-xlarge 12px;
+      padding: variables.$space-xlarge 12px;
       margin: 0 12px;
     }
 
@@ -22,7 +24,7 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      border-left: 1px solid $gray-100;
+      border-left: 1px solid variables.$gray-100;
       padding-left: 12px;
       margin-left: 12px;
       @media (max-width: 850px) {
@@ -33,7 +35,7 @@
 
     &-actions {
       display: flex;
-      gap: 0 $space-xlarge;
+      gap: 0 variables.$space-xlarge;
       @media (max-width: 850px) {
         display: none;
       }
@@ -41,46 +43,46 @@
 
     &-participants {
       display: flex;
-      gap: 0 $space-small;
+      gap: 0 variables.$space-small;
       align-items: center;
-      font-size: $font-size-paragraph-5;
-      font-weight: $medium;
+      font-size: variables.$font-size-paragraph-5;
+      font-weight: variables.$medium;
       user-select: none;
     }
 
     &-participant-number-section {
       display: flex;
       align-items: center;
-      color: $white;
-      background-color: $primary-700;
-      border: 1px solid $primary-200;
-      border-radius: $radius-xxlarge;
-      gap: $space-xsmall;
+      color: variables.$white;
+      background-color: variables.$primary-700;
+      border: 1px solid variables.$primary-200;
+      border-radius: variables.$radius-xxlarge;
+      gap: variables.$space-xsmall;
       height: 20px;
-      padding: 0 $space-small 0 $space-semi-small;
+      padding: 0 variables.$space-small 0 variables.$space-semi-small;
     }
 
     &-participant-number {
-      line-height: $line-height-paragraph-5;
+      line-height: variables.$line-height-paragraph-5;
     }
 
     &-participant-text {
-      color: $primary-700;
-      line-height: $line-height-paragraph-5;
+      color: variables.$primary-700;
+      line-height: variables.$line-height-paragraph-5;
     }
 
     &-copy-link {
       display: flex;
       align-items: center;
-      padding: $space-small $space-medium;
-      gap: 0 $space-small;
-      background-color: $primary-50;
-      color: $primary-700;
-      font-size: $font-size-paragraph-5;
-      font-weight: $semibold;
+      padding: variables.$space-small variables.$space-medium;
+      gap: 0 variables.$space-small;
+      background-color: variables.$primary-50;
+      color: variables.$primary-700;
+      font-size: variables.$font-size-paragraph-5;
+      font-weight: variables.$semibold;
       border: none;
       outline: none;
-      border-radius: $radius-large;
+      border-radius: variables.$radius-large;
       height: fit-content;
       cursor: pointer;
     }
@@ -88,15 +90,15 @@
     &-import-jira-issues {
       display: flex;
       align-items: center;
-      padding: $space-small $space-medium;
-      gap: 0 $space-small;
-      background-color: $primary-50;
-      color: $primary-700;
-      font-size: $font-size-paragraph-5;
-      font-weight: $semibold;
+      padding: variables.$space-small variables.$space-medium;
+      gap: 0 variables.$space-small;
+      background-color: variables.$primary-50;
+      color: variables.$primary-700;
+      font-size: variables.$font-size-paragraph-5;
+      font-weight: variables.$semibold;
       border: none;
       outline: none;
-      border-radius: $radius-large;
+      border-radius: variables.$radius-large;
       height: fit-content;
       cursor: pointer;
       position: relative;

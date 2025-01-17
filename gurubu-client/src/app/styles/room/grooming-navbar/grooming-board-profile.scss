@@ -1,10 +1,12 @@
+@use "../../variables";
+
 .grooming-board-profile {
   display: flex;
   height: 30px;
   justify-content: center;
   align-items: center;
-  padding: 0 0 0 $space-semi-small;
-  gap: 0 $space-semi-small;
+  padding: 0 0 0 variables.$space-semi-small;
+  gap: 0 variables.$space-semi-small;
   cursor: pointer;
   position: relative;
   position: relative;
@@ -15,13 +17,13 @@
     align-items: center;
     gap: 8px;
     padding: 4px 8px;
-    border-radius: $radius-large;
+    border-radius: variables.$radius-large;
     transition: all 0.2s ease;
     border: 1px solid transparent;
 
     &:hover {
-      background-color: $gray-50;
-      border-color: $gray-200;
+      background-color: variables.$gray-50;
+      border-color: variables.$gray-200;
     }
   }
 
@@ -30,10 +32,10 @@
     bottom: -70px;
     right: 0;
     background: #ffffff;
-    color: $gray-900;
+    color: variables.$gray-900;
     padding: 8px 12px;
-    border: 2px solid $gray-900;
-    border-radius: $radius-medium;
+    border: 2px solid variables.$gray-900;
+    border-radius: variables.$radius-medium;
     font-size: 16px;
     display: flex;
     align-items: center;
@@ -51,14 +53,14 @@
       border: none;
       background: transparent;
       cursor: pointer;
-      border-radius: $radius-small;
+      border-radius: variables.$radius-small;
       transition: all 0.2s ease;
       margin-left: 4px;
       pointer-events: all;
 
       &:hover {
-        color: $gray-900;
-        background: $gray-100;
+        color: variables.$gray-900;
+        background: variables.$gray-100;
       }
     }
 
@@ -71,21 +73,21 @@
       height: 0;
       border-left: 9px solid transparent;
       border-right: 9px solid transparent;
-      border-bottom: 9px solid $gray-900;
+      border-bottom: 9px solid variables.$gray-900;
     }
 
     svg {
       flex-shrink: 0;
-      color: $primary-700;
+      color: variables.$primary-700;
     }
   }
 
   &__icon {
     width: 30px;
     height: 30px;
-    border: 1px solid $primary-200;
+    border: 1px solid variables.$primary-200;
     border-radius: 100%;
-    color: $primary-600;
+    color: variables.$primary-600;
     position: relative;
     display: flex;
     align-items: center;
@@ -94,9 +96,9 @@
   }
 
   &__nickname {
-    font-size: $font-size-paragraph-4;
-    color: $gray-700;
-    font-weight: $medium;
+    font-size: variables.$font-size-paragraph-4;
+    color: variables.$gray-700;
+    font-weight: variables.$medium;
     max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -104,12 +106,12 @@
   }
 
   &__chevron {
-    color: $gray-400;
+    color: variables.$gray-400;
     transition: transform 0.2s ease;
   }
 
   &:hover &__chevron {
-    color: $gray-600;
+    color: variables.$gray-600;
   }
 
   &[aria-expanded="true"] &__chevron {
@@ -120,17 +122,17 @@
     top: calc(100% + 4px);
     right: 0;
     position: absolute;
-    background: $white;
+    background: variables.$white;
     min-width: 180px;
-    border: 1px solid $gray-200;
-    border-radius: $radius-large;
+    border: 1px solid variables.$gray-200;
+    border-radius: variables.$radius-large;
     padding: 4px;
     display: flex;
     justify-content: center;
     flex-direction: column;
     gap: 4px;
     z-index: 90;
-    box-shadow: $shadow-sm;
+    box-shadow: variables.$shadow-sm;
   }
 
   .theme-selector {
@@ -145,40 +147,40 @@
       width: 100%;
       padding: 8px 12px;
       border: none;
-      border-radius: $radius-medium;
+      border-radius: variables.$radius-medium;
       background: transparent;
-      color: $gray-500-v2;
-      font-weight: $semibold;
-      font-size: $font-size-paragraph-4;
+      color: variables.$gray-500-v2;
+      font-weight: variables.$semibold;
+      font-size: variables.$font-size-paragraph-4;
       cursor: pointer;
       transition: all 0.2s;
       text-align: left;
 
       &:hover {
-        background-color: $white;
-        color: $gray-700;
-        box-shadow: $shadow-sm;
+        background-color: variables.$white;
+        color: variables.$gray-700;
+        box-shadow: variables.$shadow-sm;
       }
 
       &.active {
-        background-color: $primary-50;
-        color: $primary-700;
+        background-color: variables.$primary-50;
+        color: variables.$primary-700;
       }
     }
   }
 
   &__theme-section {
     padding: 4px;
-    border-top: 1px solid $v2-gray-100;
-    border-bottom: 1px solid $v2-gray-100;
+    border-top: 1px solid variables.$v2-gray-100;
+    border-bottom: 1px solid variables.$v2-gray-100;
   }
 
   &__icon {
     width: 30px;
     height: 30px;
-    border: 1px solid $primary-200;
+    border: 1px solid variables.$primary-200;
     border-radius: 100%;
-    color: $primary-600;
+    color: variables.$primary-600;
     position: relative;
     display: flex;
     align-items: center;
@@ -187,19 +189,19 @@
   }
 
   &__text {
-    font-size: $font-size-paragraph-4;
-    color: $purple-600;
+    font-size: variables.$font-size-paragraph-4;
+    color: variables.$purple-600;
   }
 
   &__update-nickname-button {
     border: none;
     padding: 8px 12px;
-    border-radius: $radius-medium;
+    border-radius: variables.$radius-medium;
     cursor: pointer;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-4;
-    color: $gray-500-v2;
-    background: $gray-50-v2;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-4;
+    color: variables.$gray-500-v2;
+    background: variables.$gray-50-v2;
     transition: all 0.2s;
     text-align: left;
   }
@@ -207,46 +209,46 @@
   &__update-avatar-button {
     border: none;
     padding: 8px 12px;
-    border-radius: $radius-medium;
+    border-radius: variables.$radius-medium;
     cursor: pointer;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-4;
-    color: $gray-500-v2;
-    background: $gray-50-v2;
+    font-weight:variables.$semibold;
+    font-size: variables.$font-size-paragraph-4;
+    color: variables.$gray-500-v2;
+    background: variables.$gray-50-v2;
     transition: all 0.2s;
     text-align: left;
     width: 100%;
 
     &:hover {
-      background-color: $white;
-      color: $gray-700;
-      box-shadow: $shadow-sm;
+      background-color: variables.$white;
+      color: variables.$gray-700;
+      box-shadow: variables.$shadow-sm;
     }
   }
 
   &__leave-room-button {
     border: none;
     padding: 8px 12px;
-    border-radius: $radius-medium;
+    border-radius: variables.$radius-medium;
     cursor: pointer;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-4;
-    color: $gray-500-v2;
-    background: $gray-50-v2;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-4;
+    color: variables.$gray-500-v2;
+    background: variables.$gray-50-v2;
     transition: all 0.2s;
     text-align: left;
   }
 
   &__update-nickname-button:hover {
-    background-color: $white;
-    color: $gray-700;
-    box-shadow: $shadow-sm;
+    background-color: variables.$white;
+    color: variables.$gray-700;
+    box-shadow: variables.$shadow-sm;
   }
 
   &__leave-room-button:hover {
     background-color: #fff4ed;
-    color: $orange-dark;
-    box-shadow: $shadow-sm;
+    color: variables.$orange-dark;
+    box-shadow: variables.$shadow-sm;
   }
 }
 

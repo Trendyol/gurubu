@@ -1,7 +1,7 @@
 "use client";
 
 import classnames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
 import ConnectingInfo from "@/components/room/grooming-board/connecting-info";
 import GroomingBoard from "@/components/room/grooming-board/grooming-board";
@@ -25,7 +25,8 @@ import { ToastProvider, useToast } from "@/contexts/ToastContext";
 import { AvatarProvider } from "@/contexts/AvatarContext";
 import "@/styles/room/style.scss";
 
-const GroomingRoom = ({ params }: { params: { id: string } }) => {
+const GroomingRoom = (props: { params: Promise<{ id: string }> }) => {
+  const params = use(props.params);
   return (
     <GroomingRoomProvider roomId={params.id}>
       <SocketProvider>

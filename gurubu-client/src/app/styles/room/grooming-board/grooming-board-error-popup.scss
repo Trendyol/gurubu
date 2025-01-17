@@ -1,33 +1,35 @@
+@use "../../variables.scss";
+
 .grooming-board-error-popup {
   display: none;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: $space-large;
+  padding: variables.$space-large;
   background-color: #fff;
   border: 1px solid #ccc;
   z-index: 10000000;
   min-width: 300px;
-  border-radius: $radius-medium;
+  border-radius: variables.$radius-medium;
   text-align: center;
   &.active {
     display: block;
   }
   &__header {
-    color: $blue-700;
+    color: variables.$blue-700;
   }
   &__body {
-    margin-top: $space-medium;
-    color: $gray-700;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
+    margin-top: variables.$space-medium;
+    color: variables.$gray-700;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
   }
   &__close-icon {
-    color: $gray-500;
+    color: variables.$gray-500;
     position: absolute;
-    right: $space-large;
-    top: $space-medium;
+    right: variables.$space-large;
+    top: variables.$space-medium;
     cursor: pointer;
   }
   &__overlay {
@@ -44,20 +46,20 @@
     }
   }
   &__button {
-    margin-top: $space-medium;
+    margin-top: variables.$space-medium;
     border: none;
     height: 36px;
     cursor: pointer;
-    padding: 0 $space-xlarge;
-    background-color: $yellow-500;
-    color: $blue-900;
-    border-radius: $radius-medium;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-3;
-    font-weight: $medium;
+    padding: 0 variables.$space-xlarge;
+    background-color: variables.$yellow-500;
+    color: variables.$blue-900;
+    border-radius: variables.$radius-medium;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-3;
+    font-weight: variables.$medium;
     width: 180px;
   }
   &__button:hover {
-    background-color: $yellow-400;
+    background-color: variables.$yellow-400;
   }
 }

@@ -1,3 +1,5 @@
+@use "../../variables.scss";
+
 .feedback-container {
   font-size: 12px;
   line-height: 16px;
@@ -22,7 +24,7 @@
       overflow: hidden;
       position: relative;
       transition: background-color 0.4s ease, color 0.4s ease;
-      border: 1px solid $white;
+      border: 1px solid variables.$white;
       svg {
         display: inline-block;
         transition: transform 0.4s ease;

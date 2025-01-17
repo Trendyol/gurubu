@@ -1,3 +1,5 @@
+@use "../../variables.scss";
+
 .grooming-board-participants {
   display: flex;
   align-items: center;
@@ -10,8 +12,8 @@
   }
   li {
     width: 100%;
-    border-top: 1px solid $gray-100;
-    border-radius: $radius-small;
+    border-top: 1px solid variables.$gray-100;
+    border-radius: variables.$radius-small;
     gap: 16px;
     display: flex;
     align-items: center;
@@ -32,8 +34,8 @@
     }
     &.vote-above-average {
       border-top: 1px solid transparent;
-      background-color: $primary-50;
-      color: $primary-700;
+      background-color: variables.$primary-50;
+      color: variables.$primary-700;
       border-top: 1px solid transparent;
       font-weight: 600;
     }
@@ -51,13 +53,13 @@
       border-top: 1px solid transparent;
     }
     &.no-vote {
-      background-color: $gray-100;
-      color: $gray-500;
+      background-color: variables.$gray-100;
+      color: variables.$gray-500;
     }
     label {
-      font-size: $font-size-paragraph-4;
-      line-height: $line-height-paragraph-4;
-      font-weight: $regular;
+      font-size: variables.$font-size-paragraph-4;
+      line-height: variables.$line-height-paragraph-4;
+      font-weight: variables.$regular;
       max-width: 100px;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -69,7 +71,7 @@
     min-width: 140px;
     padding: 10px 0 10px 14px;
     align-items: center;
-    gap: 0 $space-medium;
+    gap: 0 variables.$space-medium;
     .icon-star-filled {
       min-width: 16px;
       min-height: 16px;
@@ -89,25 +91,25 @@
     color: red;
   }
   &__icon-crown {
-    color: $yellow-500;
+    color: variables.$yellow-500;
   }
   &__point-cards-container {
     display: flex;
-    gap: 0 $space-large;
+    gap: 0 variables.$space-large;
     width: 100%;
     justify-content: space-around;
   }
   &__point-card {
     border-radius: 50%;
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-paragraph-4;
-    font-weight: $regular;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$regular;
     text-align: right;
     width: 20px;
     height: 20px;
     display: flex;
-    background: $white;
-    border: 1px solid $gray-100;
+    background: variables.$white;
+    border: 1px solid variables.$gray-100;
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -117,8 +119,8 @@
     border: 1px solid #4ca30d;
   }
   &__all-metrics-voted {
-    background-color: $primary-600;
-    border: 1px solid $primary-600;
+    background-color: variables.$primary-600;
+    border: 1px solid variables.$primary-600;
     width: 20px;
     height: 20px;
   }

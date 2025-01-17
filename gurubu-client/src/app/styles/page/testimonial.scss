@@ -1,7 +1,10 @@
+@use "../mixins";
+@use "../variables";
+
 .testimonial-section {
   width: 100%;
-  margin: $space-xxxxlarge 0;
-  padding: 0 $space-xxlarge;
+  margin: variables.$space-xxxxlarge 0;
+  padding: 0 variables.$space-xxlarge;
 
   .testimonial {
     max-width: 1280px;
@@ -9,7 +12,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: $space-xxlarge 0;
+    gap: variables.$space-xxlarge 0;
     margin: 0 auto;
 
     &__avatar {
@@ -19,14 +22,14 @@
     }
 
     &__text {
-      font-size: $font-size-body-2;
-      font-weight: $medium;
-      line-height: $line-height-header-3;
+      font-size: variables.$font-size-body-2;
+      font-weight: variables.$medium;
+      line-height: variables.$line-height-header-3;
       text-align: center;
 
-      @include media(xl) {
-        font-size: $font-size-body-1;
-        line-height: $line-height-header-2;
+      @include mixins.media(xl) {
+        font-size: variables.$font-size-body-1;
+        line-height: variables.$line-height-header-2;
       }
     }
 
@@ -37,14 +40,14 @@
       flex-direction: column;
 
       &__name {
-        margin: $space-large 0 $space-xsmall 0;
-        font-size: $font-size-paragraph-2;
-        font-weight: $semibold;
+        margin: variables.$space-large 0 variables.$space-xsmall 0;
+        font-size: variables.$font-size-paragraph-2;
+        font-weight: variables.$semibold;
       }
 
       &__title {
         color: #475467;
-        line-height: $line-height-paragraph-4;
+        line-height: variables.$line-height-paragraph-4;
       }
     }
   }

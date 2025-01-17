@@ -1,3 +1,6 @@
+@use "../mixins";
+@use "../variables";
+
 .footer {
   margin: auto auto 0;
   width: 100%;
@@ -6,7 +9,7 @@
   flex-direction: column-reverse;
   gap: 24px;
   padding: 8px 32px 18px;
-  @include media(md) {
+  @include mixins.media(md) {
     padding: 16px 32px 18px;
     flex-direction: column;
   }
@@ -19,7 +22,7 @@
     flex-direction: column;
     align-items: center;
     gap: 21px;
-    @include media(md) {
+    @include mixins.media(md) {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
@@ -29,19 +32,19 @@
       flex-direction: column;
       gap: 2px;
       text-align: center;
-      @include media(md) {
+      @include mixins.media(md) {
         flex-direction: row;
         gap: 32px;
       }
       & > a {
-        line-height: $line-height-paragraph-4;
-        color: $gray-600;
-        font-weight: $semibold;
+        line-height: variables.$line-height-paragraph-4;
+        color: variables.$gray-600;
+        font-weight: variables.$semibold;
       }
     }
     &__copyright {
-      line-height: $line-height-paragraph-4;
-      color: $gray-500;
+      line-height: variables.$line-height-paragraph-4;
+      color: variables.$gray-500;
     }
   }
   &__logo {
@@ -50,9 +53,9 @@
     justify-content: center;
     gap: 6px;
     font-family: var(--font-family-grotest);
-    font-weight: $bold;
-    font-size: $font-size-paragraph-2;
-    line-height: $line-height-paragraph-4;
+    font-weight: variables.$bold;
+    font-size: variables.$font-size-paragraph-2;
+    line-height: variables.$line-height-paragraph-4;
     padding-top: 21px;
   }
 }
