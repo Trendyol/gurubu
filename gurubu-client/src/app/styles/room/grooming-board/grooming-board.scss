@@ -176,6 +176,11 @@
     gap: $space-small 0;
     max-height: 80%;
     overflow-y: scroll;
+    &::-webkit-scrollbar{
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     li {
       width: 100%;
       border: 1px solid $gray-100;
