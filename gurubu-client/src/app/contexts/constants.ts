@@ -23,7 +23,7 @@ export const groomingBoardTour = [
     title: "Jira Table",
     element: ".grooming-navbar__content-import-jira-issues",
     intro:
-      "You can easily access the Jira board, detailed explanation will shared soon!",
+      "You can easily access the Jira board, to see the details, you can click import jira ( only admins can see the button ).",
     position: "bottom",
   },
   {
