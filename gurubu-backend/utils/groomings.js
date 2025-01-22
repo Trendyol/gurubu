@@ -67,14 +67,20 @@ const rooms = [];
 const groomings = {};
 
 const handleErrors = (errorFunctionName, roomID, socket) => {
-  console.log("A user encountered with error from:", errorFunctionName, roomID, rooms, groomings);
+  if(!socket){
+    console.log("Socket not found on handle join.", errorFunctionName, roomID, rooms);
+    return null;
+  }
   if (!rooms.includes(roomID)) {
+    console.log("Room is deleted, error shown to the user.", errorFunctionName, roomID, rooms);
     return socket.emit("encounteredError", {
       id: 1,
       message:
         "Room is not exist. Rooms are available for only 6 hours after they are created. You can continue by creating new one.",
     });
   }
+
+  console.log("User lost connection but popup shown.", errorFunctionName, roomID, rooms);
 
   return socket.emit("encounteredError", {
     id: 2,
