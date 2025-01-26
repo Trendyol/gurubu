@@ -28,16 +28,18 @@ const GroomingBoardParticipants = () => {
   }, [groomingInfo]);
 
   return (
-    <ul className="grooming-board-participants">
-      <AnimatePresence>
-        {sortedParticipants.map((participantKey) => (
-          <GroomingBoardParticipant
-            key={participantKey}
-            participantKey={participantKey}
-          />
-        ))}
-      </AnimatePresence>
-    </ul>
+    <>
+      <ul className="grooming-board-participants">
+        <AnimatePresence>
+          {sortedParticipants.map((participantKey) => (
+            <GroomingBoardParticipant
+              key={participantKey}
+              participantKey={participantKey}
+            />
+          ))}
+        </AnimatePresence>
+      </ul>
+    </>
   );
 };
 

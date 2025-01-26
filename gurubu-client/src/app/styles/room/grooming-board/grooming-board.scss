@@ -1,10 +1,11 @@
 .grooming-board {
   display: flex;
   width: 80%;
+  height: calc(100vh - 182px);
   margin: 0 auto;
   padding: 0 $space-xxxlarge;
   justify-content: space-between;
-  margin-top: 48px;
+  margin-top: 24px;
   @media (max-width: 850px) {
     padding: 12px;
     flex-direction: column;
@@ -133,7 +134,6 @@
     border: 1px solid $gray-20;
     padding: 0 12px 12px 12px;
     max-height: max-content;
-    margin-bottom: 24px;
   }
   &__metrics {
     display: flex;
