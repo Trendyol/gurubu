@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { GroomingMode, PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
-import { IconCheck, IconStarFilled, IconWifiOff } from "@tabler/icons-react";
+import { IconCheck } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -65,12 +65,6 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
           { "planning-poker-mode": isPlanningPokerMode }
         )}
       >
-        {isAdmin && (
-          <IconStarFilled width={16} height={16} className="icon-star-filled" />
-        )}
-        {!hasSockets && (
-          <IconWifiOff width={16} height={16} className="icon-wifi-off" />
-        )}
         {hasSockets && !isAdmin && !isPlanningPokerMode && (
           <div
             className={classNames("grooming-board-participants__point-card", {
@@ -84,7 +78,12 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
             )}
           </div>
         )}
-        <Avatar svg={avatarSvg} />
+        <div className={classNames({
+          'admin-avatar': isAdmin,
+          'disconnected-avatar': !hasSockets
+        })}>
+          <Avatar svg={avatarSvg} />
+        </div>
         <label
           className={classNames("grooming-board-participants__nickname", {
             "connection-lost": !hasSockets

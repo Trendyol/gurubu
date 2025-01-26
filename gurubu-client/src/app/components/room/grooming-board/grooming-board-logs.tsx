@@ -5,6 +5,7 @@ import GroomingBoardActions from "./grooming-board-actions";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { MetricToggleTooltip } from "./metricToggleTooltip";
 import { GroomingMode } from "@/shared/enums";
+import ConsensusBanner from "./consensus-banner";
 
 interface Props {
   roomId: string;
@@ -44,6 +45,7 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
           {groomingInfo.mode === GroomingMode.PlanningPoker && (
             <GroomingBoardResultV2 />
           )}
+          <ConsensusBanner />
           {
             groomingInfo.mode === GroomingMode.PlanningPoker && (
               <GroomingBoardActions
