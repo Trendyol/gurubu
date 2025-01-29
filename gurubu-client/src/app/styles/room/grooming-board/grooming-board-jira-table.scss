@@ -1,9 +1,11 @@
+@use "../../variables.scss";
+
 .grooming-board-jira-table-container {
   width: 100%;
   margin: 24px auto 24px auto;
   background-color: #fff;
   border-radius: 0.5rem;
-  border: 1px solid $gray-20;
+  border: 1px solid variables.$gray-20;
   .grooming-board-jira-table-header {
     padding: 1.5rem;
     border-bottom: 1px solid #e5e7eb;
@@ -79,7 +81,7 @@
     tr {
       cursor: pointer;
       &:hover {
-        background-color: $gray-20;
+        background-color: variables.$gray-20;
       }
     }
 
@@ -190,7 +192,7 @@
     box-shadow: none;
     resize: none;
     &:disabled{
-        background-color: $white;
+        background-color: variables.$white;
     }
     padding: 0.75rem 1rem;
     display: flex;

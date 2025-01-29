@@ -1,3 +1,5 @@
+@use "../../variables.scss";
+
 .vote-card-v2 {
   width: 60px;
   height: 110px;
@@ -43,14 +45,14 @@
   }
 
   .card-back {
-    background-color: $primary-700;
+    background-color: variables.$primary-700;
     transform: rotateY(180deg);
   }
 
   .card-value {
     font-size: 12px;
     font-weight: bold;
-    color: $primary-700;
+    color: variables.$primary-700;
   }
 
   .card-value-top-left {

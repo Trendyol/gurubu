@@ -1,11 +1,11 @@
-@import "../variables.scss";
-@import "../mixins.scss";
+@use "../variables.scss";
+@use "../mixins.scss";
 
 // Sections
-@import "./hero-section.scss";
-@import "./testimonial.scss";
-@import "./pricing.scss";
-@import "./features.scss";
+@use "hero-section.scss";
+@use "testimonial.scss";
+@use "pricing.scss";
+@use "features.scss";
 
 main {
   min-height: 100vh;

@@ -1,20 +1,22 @@
+@use "../../variables.scss";
+
 .voting-stick {
   display: flex;
   align-items: center;
-  gap: 0 $space-xlarge;
-  margin-bottom: $space-xlarge;
+  gap: 0 variables.$space-xlarge;
+  margin-bottom:variables.$space-xlarge;
 
   &__vote-cards {
     display: flex;
     align-items: center;
-    border-radius: $radius-large;
+    border-radius: variables.$radius-large;
     box-shadow: 0px 1px 2px 0px #1018280D;
   }
   &__label {
-    color: $gray-900-v2;
-    font-size: $font-size-paragraph-2;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
+    color: variables.$gray-900-v2;
+    font-size: variables.$font-size-paragraph-2;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
     width: 187px;
   }
 }

@@ -1,3 +1,5 @@
+@use "../variables";
+
 .not-found-page {
   min-height: 100vh;
   display: flex;
@@ -6,27 +8,27 @@
   flex-direction: column;
 
   &__title {
-    color: $primary-700;
-    line-height: $line-height-paragraph-4;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-3;
-    padding-bottom: $space-medium;
+    color: variables.$primary-700;
+    line-height: variables.$line-height-paragraph-4;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-3;
+    padding-bottom: variables.$space-medium;
   }
   &__subtitle {
-    color: $gray-900;
-    line-height: $line-height-header-1;
-    font-weight: $semibold;
-    font-size: $font-size-header-1;
-    padding-bottom: $space-xlarge;
-    letter-spacing: $letter-spacing-1;
+    color: variables.$gray-900;
+    line-height: variables.$line-height-header-1;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-header-1;
+    padding-bottom: variables.$space-xlarge;
+    letter-spacing: variables.$letter-spacing-1;
     text-align: center;
   }
   &__description {
-    color: $gray-600;
-    line-height: $line-height-paragraph-2;
-    font-weight: $regular;
-    font-size: $font-size-body-4;
-    padding-bottom: $space-xxxlarge;
+    color: variables.$gray-600;
+    line-height: variables.$line-height-paragraph-2;
+    font-weight: variables.$regular;
+    font-size: variables.$font-size-body-4;
+    padding-bottom: variables.$space-xxxlarge;
     max-width: 576px;
     text-align: center;
   }
@@ -35,36 +37,36 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: $space-medium;
+    gap: variables.$space-medium;
 
     &__go-back {
       padding: 16px 28px;
-      border-radius: $radius-large;
-      border: 1px solid $gray-300;
+      border-radius: variables.$radius-large;
+      border: 1px solid variables.$gray-300;
       display: flex;
       align-items: center;
-      gap: $space-medium;
-      color: $gray-700;
-      font-weight: $semibold;
-      font-size: $font-size-paragraph-2;
+      gap: variables.$space-medium;
+      color: variables.$gray-700;
+      font-weight: variables.$semibold;
+      font-size: variables.$font-size-paragraph-2;
       cursor: pointer;
       height: 60px;
-      background: $white;
+      background: variables.$white;
     }
     &__take-me-home {
       height: 60px;
-      border-radius: $radius-large;
+      border-radius: variables.$radius-large;
       padding: 16px 28px;
-      background: $primary-600;
-      color: $white;
-      font-weight: $semibold;
-      font-size: $font-size-paragraph-2;
-      border: 1px solid $primary-600;
+      background: variables.$primary-600;
+      color: variables.$white;
+      font-weight: variables.$semibold;
+      font-size: variables.$font-size-paragraph-2;
+      border: 1px solid variables.$primary-600;
       display: flex;
       align-items: center;
     }
   }
   &__link:hover {
-    background-color: $yellow-400;
+    background-color: variables.$yellow-400;
   }
 }

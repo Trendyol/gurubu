@@ -1,6 +1,6 @@
-@import "./variables.scss";
-@import "./mixins.scss";
-@import "./common/style.scss";
+@use "variables.scss";
+@use "mixins.scss";
+@use "common/style.scss";
 
 * {
   box-sizing: border-box;
@@ -13,7 +13,7 @@ body {
   max-width: 100vw;
   min-height: 100vh;
   scroll-behavior: smooth;
-  scroll-padding: $scroll-padding;
+  scroll-padding: variables.$scroll-padding;
 }
 
 body {

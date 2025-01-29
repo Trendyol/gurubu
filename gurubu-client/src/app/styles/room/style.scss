@@ -1,36 +1,37 @@
+@use "sass:meta";
+@use "../variables.scss";
+@use "../mixins.scss";
 @import "intro.js/introjs.css";
-@import "../variables.scss";
-@import "../mixins.scss";
 
-@import "./grooming-navbar/grooming-navbar.scss";
-@import "./grooming-navbar/announcement-tooltip.scss";
-@import "./grooming-navbar/grooming-board-profile.scss";
-@import "./grooming-navbar/change-name.scss";
-@import "./grooming-navbar/change-avatar.scss";
-@import "./grooming-navbar/leave-room.scss";
-@import "./grooming-navbar/timer.scss";
-@import "./grooming-navbar/import-jira-issues.scss";
-@import "./grooming-board/vote-card.scss";
-@import "./grooming-board/vote-card-v2.scss";
-@import "./grooming-board/voting-stick.scss";
-@import "./grooming-board/voting-stick-v2.scss";
-@import "./grooming-board/nickname-form.scss";
-@import "./grooming-board/grooming-board.scss";
-@import "./grooming-board/connecting-info.scss";
-@import "./grooming-board/metric-averages.scss";
-@import "./grooming-board/grooming-board-participants.scss";
-@import "./grooming-board/grooming-board-error-popup.scss";
-@import "./grooming-board/grooming-board-jira-table.scss";
-@import "./grooming-board/grooming-board-result.scss";
-@import "./grooming-board/grooming-board-resultv2.scss";
-@import "./grooming-board/metricToggleTooltip.scss";
-@import "./grooming-board/grooming-board-live-chart.scss";
-@import "./grooming-footer/grooming-footer.scss";
-@import "./grooming-footer/feedback.scss";
-@import "./jira-sidebar/jira-sidebar.scss";
-@import "./themes/theme.scss";
-@import "./not-found.scss";
-@import "./loading.scss";
+@include meta.load-css("grooming-navbar/grooming-navbar.scss");
+@include meta.load-css("grooming-navbar/announcement-tooltip.scss");
+@include meta.load-css("grooming-navbar/grooming-board-profile.scss");
+@include meta.load-css("grooming-navbar/change-name.scss");
+@include meta.load-css("grooming-navbar/change-avatar.scss");
+@include meta.load-css("grooming-navbar/leave-room.scss");
+@include meta.load-css("grooming-navbar/timer.scss");
+@include meta.load-css("grooming-navbar/import-jira-issues.scss");
+@include meta.load-css("grooming-board/vote-card.scss");
+@include meta.load-css("grooming-board/vote-card-v2.scss");
+@include meta.load-css("grooming-board/voting-stick.scss");
+@include meta.load-css("grooming-board/voting-stick-v2.scss");
+@include meta.load-css("grooming-board/nickname-form.scss");
+@include meta.load-css("grooming-board/grooming-board.scss");
+@include meta.load-css("grooming-board/connecting-info.scss");
+@include meta.load-css("grooming-board/metric-averages.scss");
+@include meta.load-css("grooming-board/grooming-board-participants.scss");
+@include meta.load-css("grooming-board/grooming-board-error-popup.scss");
+@include meta.load-css("grooming-board/grooming-board-jira-table.scss");
+@include meta.load-css("grooming-board/grooming-board-result.scss");
+@include meta.load-css("grooming-board/grooming-board-resultv2.scss");
+@include meta.load-css("grooming-board/metricToggleTooltip.scss");
+@include meta.load-css("grooming-board/grooming-board-live-chart.scss");
+@include meta.load-css("grooming-footer/grooming-footer.scss");
+@include meta.load-css("grooming-footer/feedback.scss");
+@include meta.load-css("jira-sidebar/jira-sidebar.scss");
+@include meta.load-css("themes/theme.scss");
+@include meta.load-css("not-found.scss");
+@include meta.load-css("loading.scss");
 
 @media (max-width: 850px) {
   .introjsFloatingElement,
@@ -52,7 +53,7 @@
 }
 
 .introjs-tooltip-title {
-  color: $primary-700;
+  color: variables.$primary-700;
 }
 
 .introjs-tooltiptext {
@@ -94,7 +95,7 @@
   align-items: center;
   flex-direction: column;
   text-align: center;
-  background: $body-color;
+  background: variables.$body-color;
 }
 
 .grooming-room {
@@ -118,7 +119,7 @@
     align-items: center;
     flex-direction: column;
     text-align: center;
-    background: $body-color;
+    background: variables.$body-color;
   }
 }
 
@@ -126,13 +127,13 @@
   display: flex;
   align-items: center;
   .toaster-title {
-    color: $primary-700;
+    color: variables.$primary-700;
     font-size: 16px;
     line-height: 20px;
     font-weight: 600;
   }
   .toaster-description {
-    color: $gray-500;
+    color: variables.$gray-500;
     font-size: 14px;
     line-height: 18px;
   }

@@ -1,3 +1,5 @@
+@use "../../variables";
+
 .leave-room {
   display: flex;
   flex-direction: column;
@@ -5,30 +7,30 @@
   width: 100%;
   &__error-sign {
     border-radius: 50%;
-    background: $red-100;
+    background: variables.$red-100;
     padding: 16px;
     width: 52px;
     height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 8px solid $red-50;
+    border: 8px solid variables.$red-50;
     margin-bottom: 16px;
   }
   & > h4 {
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-2;
-    line-height: $font-size-body-3;
-    color: $gray-900;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-2;
+    line-height: variables.$font-size-body-3;
+    color: variables.$gray-900;
     padding-bottom: 4px;
   }
 
   & > h5 {
-    font-size: $font-size-paragraph-4;
-    line-height: $line-height-header-5;
-    font-weight: $regular;
+    font-size: variables.$font-size-paragraph-4;
+    line-height: variables.$line-height-header-5;
+    font-weight: variables.$regular;
     padding-bottom: 32px;
-    color: $gray-600;
+    color: variables.$gray-600;
   }
   &__dialog-buttons {
     display: flex;
@@ -37,36 +39,36 @@
 
     & > * {
       padding: 10px 18px;
-      border-radius: $radius-large;
+      border-radius: variables.$radius-large;
       width: 100%;
       cursor: pointer;
-      font-size: $font-size-paragraph-3;
-      font-weight: $semibold;
-      line-height: $line-height-paragraph-4;
+      font-size: variables.$font-size-paragraph-3;
+      font-weight: variables.$semibold;
+      line-height: variables.$line-height-paragraph-4;
     }
 
     & > :first-child {
-      border: 1px solid $gray-300;
-      background: $white;
-      color: $gray-700;
+      border: 1px solid variables.$gray-300;
+      background: variables.$white;
+      color: variables.$gray-700;
     }
     & > :last-child {
-      border: 1px solid $red-600;
-      background: $red-600;
-      color: $white;
+      border: 1px solid variables.$red-600;
+      background: variables.$red-600;
+      color: variables.$white;
     }
   }
 
   & > button {
     width: 100%;
-    background: $primary-600;
+    background: variables.$primary-600;
     color: white;
-    font-weight: $semibold;
-    font-size: $font-size-paragraph-3;
-    line-height: $line-height-paragraph-4;
+    font-weight: variables.$semibold;
+    font-size: variables.$font-size-paragraph-3;
+    line-height: variables.$line-height-paragraph-4;
     padding: 10px 18px;
-    border: 1px solid $primary-600;
-    border-radius: $radius-large;
+    border: 1px solid variables.$primary-600;
+    border-radius: variables.$radius-large;
     margin-bottom: 32px;
     cursor: pointer;
   }

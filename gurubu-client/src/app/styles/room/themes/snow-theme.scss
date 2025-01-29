@@ -1,3 +1,5 @@
+@use "../../variables.scss";
+
 .snow-active {
   background-color: #1a1a2e;
 }
@@ -17,9 +19,9 @@
     }
 
     .grooming-board__reset-votes-button {
-      color: $gray-50-v2;
+      color: variables.$gray-50-v2;
       &:hover {
-        color: $gray-700;
+        color: variables.$gray-700;
       }
     }
 
