@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: auto;
   position: relative;
   @media (max-width: 850px) {
     display: none;

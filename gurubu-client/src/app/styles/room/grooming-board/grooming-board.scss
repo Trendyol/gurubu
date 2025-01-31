@@ -175,7 +175,7 @@
     flex-direction: column;
     gap: $space-small 0;
     max-height: 80%;
-    overflow-y: scroll;
+    overflow-y: auto;
     &::-webkit-scrollbar{
       display: none;
     }
