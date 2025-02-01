@@ -22,62 +22,54 @@ const GroomingBoardLiveChart = () => {
   ).fill(0);
 
   const getOption = (data: number[]): echarts.EChartsOption => ({
-    xAxis: {
-      max: "dataMax",
-      axisLabel: {
-        fontFamily: "Inter, sans-serif",
-        fontSize: "16px",
-        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
-      },
-    },
-    yAxis: {
-      type: "category",
-      data: groomingInfo.metrics?.[0]?.points,
-      inverse: true,
-      animationDuration: 300,
-      animationDurationUpdate: 300,
-      max: 5,
-      axisLabel: {
-        fontFamily: "Inter, sans-serif",
-        fontSize: "16px",
-        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
-      },
+    tooltip: {
+      trigger: 'item',
+      formatter: 'Story Point {b}: {c} votes ({d}%)'
     },
     legend: {
-      show: true,
-      type: "plain",
-      data: ["Vote Numbers"],
+      orient: 'vertical',
+      left: 'left',
       textStyle: {
         fontFamily: "Inter, sans-serif",
         fontSize: "16px",
         ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
       },
+      formatter: 'Story Point {name}'
     },
     series: [
       {
-        realtimeSort: true,
-        type: "bar",
-        data,
-        name: "Vote Numbers",
+        type: 'pie',
+        radius: '70%',
+        data: groomingInfo.metrics?.[0]?.points
+          .map((point, index) => ({
+            value: data[index],
+            name: point.toString()
+          }))
+          .filter(item => item.value > 0),
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
         label: {
           show: true,
-          position: "right",
-          valueAnimation: true,
+          formatter: 'SP {b}\n{c} votes',
           fontSize: 16,
           fontFamily: "Inter, sans-serif",
-          color: "#6941c6",
-          fontWeight: "bold",
+          lineHeight: 20,
         },
         itemStyle: {
-          borderRadius: [10, 10, 10, 10],
-          color: "#6941c6",
-        },
-      },
+          color: function(params: any) {
+            const colors = ['#6941c6', '#9f75ff', '#d4b7ff', '#f4ebff', '#7f56d9', '#5925dc', '#4a1fb8'];
+            return colors[params.dataIndex % colors.length];
+          }
+        }
+      }
     ],
-    animationDuration: 0,
-    animationDurationUpdate: 750,
+    animationDuration: 750,
     animationEasing: "linear",
-    animationEasingUpdate: "linear",
   });
 
   const updateData = () => {
@@ -87,8 +79,13 @@ const GroomingBoardLiveChart = () => {
     chartRef.current?.getEchartsInstance().setOption<echarts.EChartsOption>({
       series: [
         {
-          type: "bar",
-          data: calculatedVotes,
+          type: 'pie',
+          data: groomingInfo.metrics?.[0]?.points
+            .map((point, index) => ({
+              value: calculatedVotes[index],
+              name: point.toString()
+            }))
+            .filter(item => item.value > 0)
         },
       ],
     });
