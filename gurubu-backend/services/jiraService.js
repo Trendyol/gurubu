@@ -65,8 +65,17 @@ class JiraService {
   }
 
   calculateSprintStatistics(sprintId, issues) {
-    const assignees = process.env.JIRA_DEFAULT_ASSIGNEES || {};
-    const parsedAssignees = JSON.parse(assignees);
+    let parsedAssignees = {};
+
+    try {
+        const assignees = process.env.JIRA_DEFAULT_ASSIGNEES 
+            ? Buffer.from(process.env.JIRA_DEFAULT_ASSIGNEES, 'base64').toString('utf-8')
+            : "{}"; // Default to an empty JSON string
+
+        parsedAssignees = JSON.parse(assignees); // Convert string to object
+    } catch (error) {
+        console.error("Failed to parse JIRA_DEFAULT_ASSIGNEES:", error);
+    }
     // Initialize statistics for all assignees
     const statisticsMap = new Map();
 
