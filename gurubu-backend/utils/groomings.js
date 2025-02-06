@@ -71,7 +71,7 @@ const handleErrors = (errorFunctionName, roomID, socket) => {
     console.log("Socket not found on handle join.", errorFunctionName, roomID, rooms);
     return null;
   }
-  if (!rooms.includes(roomID)) {
+  if (rooms && !rooms.some(room => room.roomID === roomID)) {
     console.log("Room is deleted, error shown to the user.", errorFunctionName, roomID, rooms);
     return socket.emit("encounteredError", {
       id: 1,
