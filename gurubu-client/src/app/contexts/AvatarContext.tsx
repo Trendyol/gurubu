@@ -74,7 +74,7 @@ export const AvatarProvider = ({ children }: AvatarProviderProps) => {
 
   const updateAvatar = useCallback(
     (options: Avatar) => {
-      if(!userInfo.lobby?.roomID){
+      if(!userInfo.lobby?.roomID || !userInfo.lobby?.credentials) {
         return;
       }
       socket.emit(

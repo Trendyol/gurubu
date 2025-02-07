@@ -51,17 +51,15 @@ const JiraSidebar = ({ roomId }: Props) => {
           expanded: jiraSidebarExpanded,
         })}
       >
-        <div className="jira-sidebar-icon-container">
+        <div className="jira-sidebar-icon-container" onClick={handleToggleJiraSidebar}>
           {!jiraSidebarExpanded && (
             <IconPlayerTrackPrev
               className="jira-sidebar-icon"
-              onClick={handleToggleJiraSidebar}
             />
           )}
           {jiraSidebarExpanded && (
             <IconPlayerTrackNext
               className="jira-sidebar-icon"
-              onClick={handleToggleJiraSidebar}
             />
           )}
         </div>
@@ -74,11 +72,6 @@ const JiraSidebar = ({ roomId }: Props) => {
           </div>
         )}
         {jiraSidebarExpanded && <GroomingBoardJiraTable roomId={roomId} />}
-        {jiraSidebarExpanded && userInfo.lobby?.isAdmin && groomingInfo.isResultShown && <p className="jira-sidebar-vote-text">{voteText}</p>}
-        {jiraSidebarExpanded &&
-          groomingInfo.mode === GroomingMode.PlanningPoker && (
-            <GroomingBoardResultV2 />
-          )}
       </div>
     </Sidebar>
   );

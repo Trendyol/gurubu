@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 exports.fetchGet = async (req, res) => {
   const { endpoint } = req.query;
   if (!endpoint || endpoint.trim() === '') {
@@ -37,22 +39,25 @@ exports.fetchGet = async (req, res) => {
   }
 
   const options = {
-    headers: {
-      Authorization: req.headers.authorization
+    auth: {
+      username: process.env.JIRA_USERNAME || "",
+      password: process.env.JIRA_API_TOKEN || "",
     }
   };
   try {
-    const response = await fetch(apiUrl, options);
+    const response = await axios.get(apiUrl, options);
     if (response.status == 401) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    if (!response.ok) {
+    if (!response.data) {
       return res.status(response.status).json({ message: "Failed to fetch data from JIRA API" });
     }
-    const data = await response.json();
-    res.status(200).json(data);
+    res.status(200).json(response.data);
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     res.status(400).json({ message: "Error fetching data from JIRA API" });
   }
 };
@@ -88,15 +93,16 @@ exports.fetchPut = async (req, res) => {
   }
 
   const options = {
-    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: req.headers.authorization
     },
-    body: JSON.stringify(req.body)
+    auth: {
+      username: process.env.JIRA_USERNAME || "",
+      password: process.env.JIRA_API_TOKEN || "",
+    }
   };
   try {
-    const response = await fetch(apiUrl, options);
+    const response = await axios.put(apiUrl, req.body, options);
     if (response.status == 401) {
       return res.status(401).json({ message: "Unauthorized" });
     }
@@ -104,8 +110,11 @@ exports.fetchPut = async (req, res) => {
     if (response.status != 201) {
       return res.status(response.status).json({ message: "Failed to put data from JIRA API" });
     }
-    res.status(response.status);
+    res.status(response.status).send();
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     res.status(400).json({ message: "Error put operation from JIRA API" });
   }
 };
