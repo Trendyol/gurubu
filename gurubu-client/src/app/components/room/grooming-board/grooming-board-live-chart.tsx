@@ -9,106 +9,99 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 const GroomingBoardLiveChart = () => {
   const chartRef = useRef<ReactECharts>(null);
-
   const { groomingInfo } = useGroomingRoom();
   const { currentTheme } = useTheme();
+  
   const calculatedVotes = calculateVotesOptimized(
     groomingInfo.metrics?.[0]?.points,
     groomingInfo.participants
   );
 
-  const initialData: number[] = Array(
-    groomingInfo.metrics?.[0]?.points.length ?? 9
-  ).fill(0);
-
-  const getOption = (data: number[]): echarts.EChartsOption => ({
-    xAxis: {
-      max: "dataMax",
-      axisLabel: {
-        fontFamily: "Inter, sans-serif",
-        fontSize: "16px",
-        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
-      },
-    },
-    yAxis: {
-      type: "category",
-      data: groomingInfo.metrics?.[0]?.points,
-      inverse: true,
-      animationDuration: 300,
-      animationDurationUpdate: 300,
-      max: 5,
-      axisLabel: {
-        fontFamily: "Inter, sans-serif",
-        fontSize: "16px",
-        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
-      },
+  const getOption = (): echarts.EChartsOption => ({
+    tooltip: {
+      trigger: 'item',
+      formatter: 'Story Point {b}: {c} votes ({d}%)'
     },
     legend: {
-      show: true,
-      type: "plain",
-      data: ["Vote Numbers"],
+      orient: 'vertical',
+      left: 'left',
       textStyle: {
         fontFamily: "Inter, sans-serif",
         fontSize: "16px",
         ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
       },
+      formatter: 'Story Point {name}'
     },
     series: [
       {
-        realtimeSort: true,
-        type: "bar",
-        data,
-        name: "Vote Numbers",
+        type: 'pie',
+        radius: '70%',
+        data: groomingInfo.metrics?.[0]?.points.map((point, index) => ({
+          value: 0,
+          name: point.toString()
+        })),
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
         label: {
           show: true,
-          position: "right",
-          valueAnimation: true,
+          formatter: 'SP {b}\n{c} votes',
           fontSize: 16,
           fontFamily: "Inter, sans-serif",
-          color: "#6941c6",
-          fontWeight: "bold",
+          lineHeight: 20,
         },
         itemStyle: {
-          borderRadius: [10, 10, 10, 10],
-          color: "#6941c6",
+          color: function(params: any) {
+            const colors = ['#6941c6', '#9f75ff', '#d4b7ff', '#f4ebff', '#7f56d9', '#5925dc', '#4a1fb8'];
+            return colors[params.dataIndex % colors.length];
+          }
         },
-      },
-    ],
-    animationDuration: 0,
-    animationDurationUpdate: 750,
-    animationEasing: "linear",
-    animationEasingUpdate: "linear",
+        animationType: 'expansion',
+        animationDuration: 1000,
+        animationEasing: 'cubicInOut',
+        animationDelay: function (idx: number) {
+          return idx * 100;
+        }
+      }
+    ]
   });
 
-  const updateData = () => {
-    if (!calculatedVotes || !groomingInfo.isResultShown) {
-      return;
-    }
-    chartRef.current?.getEchartsInstance().setOption<echarts.EChartsOption>({
-      series: [
-        {
-          type: "bar",
-          data: calculatedVotes,
-        },
-      ],
-    });
-  };
-
   useEffect(() => {
-    updateData();
-  }, [groomingInfo.participants, currentTheme]);
+    const chart = chartRef.current?.getEchartsInstance();
+    if (!chart || !calculatedVotes || !groomingInfo.isResultShown) return;
+
+    const newData = groomingInfo.metrics?.[0]?.points
+      .map((point, index) => ({
+        value: calculatedVotes[index],
+        name: point.toString()
+      }))
+      .filter(item => item.value > 0);
+
+    // Update data with animation
+    chart.setOption({
+      series: [{
+        data: newData
+      }]
+    });
+  }, [groomingInfo.participants, groomingInfo.isResultShown, calculatedVotes]);
 
   if (!groomingInfo.isResultShown || groomingInfo.mode === GroomingMode.ScoreGrooming) {
     return null;
   }
 
   return (
-    <ReactECharts
-      className="grooming-board-live-chart"
-      ref={chartRef}
-      option={getOption(initialData)}
-      style={{ width: "100%", height: "400px" }}
-    />
+    <div className="grooming-board-live-chart">
+      <ReactECharts
+        ref={chartRef}
+        option={getOption()}
+        style={{ height: '400px' }}
+        opts={{ renderer: 'canvas' }}
+      />
+    </div>
   );
 };
 
