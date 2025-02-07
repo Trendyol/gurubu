@@ -52,14 +52,6 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
     }
   }, []);
 
-  const handleInputChange =
-    (setState: (value: string) => void) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value.trim();
-      setState(value);
-      localStorage.setItem(e.target.name, JSON.stringify(value));
-    };
-
   const debouncedChangeHandler = useCallback(
     debounce((board: string) => {
       fetchBoards(board);
@@ -145,7 +137,9 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
         "Jira Issues Imported Successfully! You can check the board from the sidebar.",
         "top-center"
       );
-      response.data[currentJiraIssueIndex].selected = true;
+      if(response.data[currentJiraIssueIndex]){
+        response.data[currentJiraIssueIndex].selected = true;
+      }
       socket.emit(
         "setIssues",
         roomId,
@@ -188,53 +182,11 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       )}
       <div className="import-jira-issues__row">
         <input
-          type="text"
-          placeholder="Jira Url"
-          name="jiraUrl"
-          value={jiraUrl}
-          onChange={handleInputChange(setJiraUrl)}
-          disabled={!!process.env.NEXT_PUBLIC_JIRA_URL}
-        />
-      </div>
-      <div className="import-jira-issues__row">
-        <div className="import-jira-issues__row-input-container">
-          <input
-            type="text"
-            placeholder="Username"
-            name="username"
-            value={username}
-            onChange={handleInputChange(setUsername)}
-          />
-          {jiraIssueImporterHelp && (
-            <a href={jiraIssueImporterHelp} target="_blank">
-              <IconHelp className="help-icon" />
-            </a>
-          )}
-        </div>
-        <div className="import-jira-issues__row-input-container">
-          <input
-            type="password"
-            placeholder="API Token"
-            name="token"
-            value={token}
-            onChange={handleInputChange(setToken)}
-          />
-          {jiraIssueImporterHelp && (
-            <a href={jiraIssueImporterHelp} target="_blank">
-              <IconHelp className="help-icon" />
-            </a>
-          )}
-        </div>
-      </div>
-
-      <div className="import-jira-issues__row">
-        <input
           placeholder="Board"
           id="boardSearch"
           name="boardSearch"
           onChange={handleBoardSearchChange}
           value={boardSearch}
-          disabled={!username || !token}
         />
       </div>
 

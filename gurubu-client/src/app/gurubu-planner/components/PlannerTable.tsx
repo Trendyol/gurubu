@@ -172,7 +172,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
                     <span>{stat.assignee.name}</span>
                   </div>
                 </div>
-                <div className="body-cell">{stat.assignedTasks.length}</div>
+                <div className="body-cell">{stat.assignedTasks.length || stat.testTasks.length }</div>
                 <div className="body-cell">{stat.totalStoryPoints}</div>
                 <div className="body-cell">{stat.totalPairStoryPoints}</div>
                 <div className="body-cell">{stat.totalTestStoryPoints}</div>
