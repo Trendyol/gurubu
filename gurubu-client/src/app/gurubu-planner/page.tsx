@@ -16,6 +16,7 @@ export default function GurubuPlanner() {
   const [lastUpdate, setLastUpdate] = React.useState<Date | null>(null);
   const [nextUpdateIn, setNextUpdateIn] = React.useState(AUTO_REFRESH_INTERVAL);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = React.useState(true);
 
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -23,23 +24,36 @@ export default function GurubuPlanner() {
     setNextUpdateIn(AUTO_REFRESH_INTERVAL);
   };
 
+  const handleAutoRefreshToggle = () => {
+    const newState = !autoRefreshEnabled;
+    setAutoRefreshEnabled(newState);
+    if (newState) {
+      setNextUpdateIn(AUTO_REFRESH_INTERVAL);
+    }
+  };
+
   React.useEffect(() => {
-    // Auto refresh every 15 seconds
+    if (!autoRefreshEnabled) return;
+    
     const intervalId = setInterval(() => {
       handleRefresh();
     }, AUTO_REFRESH_INTERVAL * 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [autoRefreshEnabled]);
 
   React.useEffect(() => {
-    // Update countdown timer every second
+    if (!autoRefreshEnabled) {
+      setNextUpdateIn(0);
+      return;
+    }
+
     const timerId = setInterval(() => {
       setNextUpdateIn(prev => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, []);
+  }, [autoRefreshEnabled]);
 
   const formatUpdateInfo = () => {
     if (!lastUpdate) return '';
@@ -65,8 +79,14 @@ export default function GurubuPlanner() {
               <div className="gurubu-planner-controls-right">
                 <div className="update-info">
                   <span className="last-update">{formatUpdateInfo()}</span>
-                  <span className="next-update">Next update in {nextUpdateIn}s</span>
+                  {autoRefreshEnabled && <span className="next-update">Next update in {nextUpdateIn}s</span>}
                 </div>
+                <button 
+                  className="auto-refresh-toggle"
+                  onClick={handleAutoRefreshToggle}
+                >
+                  {autoRefreshEnabled ? "Stop Auto Refresh" : "Enable Auto Refresh"}
+                </button>
                 <button 
                   className={`gurubu-planner-sync-button ${isRefreshing ? 'is-refreshing' : ''}`}
                   onClick={handleRefresh}

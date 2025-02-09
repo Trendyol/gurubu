@@ -55,7 +55,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const debouncedChangeHandler = useCallback(
     debounce((board: string) => {
       fetchBoards(board);
-    }, 1500),
+    }, 800),
     []
   );
 
@@ -123,6 +123,14 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   };
 
   const handleImportIssues = async () => {
+    if (!selectedSprint) {
+      showFailureToast(
+        "Sprint Required",
+        "Please select a sprint first",
+        "top-center"
+      );
+      return;
+    }
     setShowLoader(true);
     const customFieldName = localStorage.getItem(
       "story_points_custom_field_name"
@@ -175,14 +183,9 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   return (
     <form onSubmit={handleImportIssues} className="import-jira-issues">
       <h3>Jira Sprint Issue Importer</h3>
-      {jiraIssueImporterHelp && (
-        <a className="import-jira-issues-help" href={jiraIssueImporterHelp} target="_blank">
-          How to import?
-        </a>
-      )}
       <div className="import-jira-issues__row">
         <input
-          placeholder="Board"
+          placeholder="Enter your board name (SFWC, SFWD etc.)"
           id="boardSearch"
           name="boardSearch"
           onChange={handleBoardSearchChange}
@@ -198,7 +201,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
           value={selectedBoard}
           disabled={!boards.length}
         >
-          <option value="">Select</option>
+          <option value="">Select the board</option>
           {boards.map((board) => (
             <option key={board.id} value={board.id}>
               {board.name}
@@ -215,7 +218,7 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
           value={selectedSprint}
           disabled={!sprints.length}
         >
-          <option value="">Select</option>
+          <option value="">Select the sprint</option>
           {sprints.map((sprint) => (
             <option key={sprint.id} value={sprint.id}>
               {sprint.name}
@@ -228,7 +231,6 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
         <button
           type="button"
           onClick={handleImportIssues}
-          disabled={!selectedSprint}
         >
           Import
         </button>
