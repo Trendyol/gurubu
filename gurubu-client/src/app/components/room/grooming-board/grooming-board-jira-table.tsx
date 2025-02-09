@@ -165,10 +165,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   };
 
   const handleSelectIssue = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const targetValue = event.target.value;
-    const newSelectedIssueIndex = groomingInfo.issues.findIndex(
-      (issue) => issue.key === targetValue
-    );
+    const newSelectedIssueIndex = parseInt(event.target.value);
     setCurrentJiraIssueIndex(newSelectedIssueIndex);
     const updatedIssues = groomingInfo.issues.map((issue, index) => ({
       ...issue,
@@ -229,6 +226,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
             <a href={groomingInfo.issues?.[selectedIssueIndex]?.url} target="_blank">
               {groomingInfo.issues?.[selectedIssueIndex]?.key || "No issue selected"}
             </a>
+            {userInfo?.lobby?.isAdmin && (    
             <button
               className="sync-button"
               onClick={handleSyncJiraIssue}
@@ -237,6 +235,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
               <IconRefresh size={16} />
               <span>Sync</span>
             </button>
+            )}
           </div>
         </div>
 
@@ -245,6 +244,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
             className="issue-select"
             value={selectedIssueIndex}
             onChange={(e) => handleSelectIssue(e)}
+            disabled={!userInfo?.lobby?.isAdmin}
           >
             {groomingInfo.issues?.map((issue, index) => (
               <option key={issue.id} value={index}>
@@ -253,6 +253,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
             ))}
           </select>
 
+        {userInfo?.lobby?.isAdmin && (    
           <div className="navigation-buttons">
             <button
               className="navigation-button"
@@ -271,6 +272,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
               <IconChevronRight size={16} />
             </button>
           </div>
+        )}
         </div>
         <EstimateInput
           label="Story Estimate"
