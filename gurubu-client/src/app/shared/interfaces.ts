@@ -101,6 +101,15 @@ export interface Issue {
   selected: boolean;
 }
 
+export interface JiraPanelStyle {
+  borderStyle?: string;
+  borderColor?: string;
+  titleBgColor?: string;
+  bgColor?: string;
+  emoji?: string;
+  title?: string;
+}
+
 export interface ServiceResponse<T> {
   isSuccess: boolean;
   data?: T;
