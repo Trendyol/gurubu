@@ -7,13 +7,12 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconRefresh,
-  IconCheck,
-  IconX,
 } from "@tabler/icons-react";
 import { marked } from "marked";
 import { useLoader } from "@/contexts/LoaderContext";
 import { useToast } from "@/contexts/ToastContext";
 import { EstimateInput } from "./estimate-input";
+import { JiraPanel } from "@/components/common/jira-panel";
 
 interface IProps {
   roomId: string;
@@ -214,6 +213,65 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
     await handleTestEstimateConfirm();
   };
 
+  const renderDescriptionSections = (description: string) => {
+    if (!description) {
+      console.log('Description is empty');
+      return null;
+    }
+
+    const panels: JSX.Element[] = [];
+
+    // First try to parse panel format
+    const panelRegex = /\{panel:([^}]+)\}([\s\S]*?)\{panel\}/g;
+    let match;
+
+    while ((match = panelRegex.exec(description)) !== null) {
+      const attributes = match[1];
+      const content = match[2];
+
+      // Parse panel attributes
+      const attrMap: Record<string, string> = {};
+      attributes.split('|').forEach(attr => {
+        const [key, value] = attr.split('=');
+        if (key && value) {
+          attrMap[key.trim()] = value.trim();
+        }
+      });
+
+      const panelStyle = {
+        title: attrMap.title?.replace(/^📈\s*/, '') || 'Description',
+        emoji: attrMap.title?.match(/^(📈)/)?.[0] || '',
+        titleBgColor: attrMap?.titleBGColor || '#f0f0f0',
+        bgColor: attrMap?.bgColor,
+        borderColor: attrMap?.borderColor || '#dfe1e6',
+        borderStyle: attrMap?.borderStyle === 'solid' ? undefined : 'left-border' as const
+      };
+
+      panels.push(
+        <JiraPanel key={attrMap.title || content.slice(0, 20)} style={panelStyle}>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: marked(convertJiraToMarkdown(content), { renderer })
+            }}
+          />
+        </JiraPanel>
+      );
+    }
+
+    // If no panels found, try to parse section headers
+    if (panels.length === 0) {
+      panels.push(
+        <div
+          key={description}
+          className="issue-description"
+          dangerouslySetInnerHTML={{ __html: formattedDescription }}
+        />
+      );
+    }
+
+    return panels.length > 0 ? <>{panels}</> : null;
+  };
+
   if (!(groomingInfo.issues && groomingInfo.issues.length > 0)) {
     return null;
   }
@@ -318,10 +376,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
             (issue) =>
               issue.selected && (
                 <div key={issue.id} className="issue-item">
-                  <div
-                    className="issue-description"
-                    dangerouslySetInnerHTML={{ __html: formattedDescription }}
-                  />
+                  {issue.description && renderDescriptionSections(issue.description)}
                 </div>
               )
           )}
