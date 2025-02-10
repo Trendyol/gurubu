@@ -29,6 +29,11 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   const { setShowLoader } = useLoader();
   const { showSuccessToast } = useToast();
 
+  const [formattedDescription, setFormattedDescription] = React.useState<string>("");
+  const [customVote, setCustomVote] = React.useState<string>("");
+  const [testEstimate, setTestEstimate] = React.useState<string>("");
+  const [descriptionSections, setDescriptionSections] = React.useState<React.ReactNode>(null);
+
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
   const customFieldName =
     process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? "";
@@ -55,15 +60,17 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
     }">${text}</a>`;
   };
 
-  const formattedDescription = marked.parse(
-    convertJiraToMarkdown(
-      groomingInfo.issues?.[selectedIssueIndex]?.description
-    ),
-    { renderer }
-  );
-
-  const [customVote, setCustomVote] = React.useState<string>("");
-  const [testEstimate, setTestEstimate] = React.useState<string>("");
+  React.useEffect(() => {
+    const formatDescription = async () => {
+      if (groomingInfo.issues?.[selectedIssueIndex]?.description) {
+        const formatted = await convertJiraToMarkdown(groomingInfo.issues?.[selectedIssueIndex]?.description);
+        const parsedContent = await Promise.resolve(marked.parse(formatted, { renderer }));
+        setFormattedDescription(parsedContent);
+      }
+    };
+    
+    formatDescription();
+  }, [selectedIssueIndex, groomingInfo.issues]);
 
   const handleSetVote = async () => {
     setShowLoader(true);
@@ -213,7 +220,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
     await handleTestEstimateConfirm();
   };
 
-  const renderDescriptionSections = (description: string) => {
+  const renderDescriptionSections = async (description: string) => {
     if (!description) {
       console.log('Description is empty');
       return null;
@@ -251,7 +258,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
         <JiraPanel key={attrMap.title || content.slice(0, 20)} style={panelStyle}>
           <div
             dangerouslySetInnerHTML={{
-              __html: marked(convertJiraToMarkdown(content), { renderer })
+              __html: await marked(convertJiraToMarkdown(content), { renderer })
             }}
           />
         </JiraPanel>
@@ -271,6 +278,14 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
 
     return panels.length > 0 ? <>{panels}</> : null;
   };
+
+  React.useEffect(() => {
+    const loadDescriptionSections = async () => {
+      const sections = await renderDescriptionSections(groomingInfo.issues?.[selectedIssueIndex]?.description);
+      setDescriptionSections(sections);
+    };
+    loadDescriptionSections();
+  }, [groomingInfo.issues, selectedIssueIndex]);
 
   if (!(groomingInfo.issues && groomingInfo.issues.length > 0)) {
     return null;
@@ -376,7 +391,9 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
             (issue) =>
               issue.selected && (
                 <div key={issue.id} className="issue-item">
-                  {issue.description && renderDescriptionSections(issue.description)}
+                  <div className="description-sections">
+                    {descriptionSections}
+                  </div>
                 </div>
               )
           )}
