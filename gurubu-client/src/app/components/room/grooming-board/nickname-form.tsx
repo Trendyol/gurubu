@@ -122,7 +122,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     // }
     setLoading(true);
     const trimmedNickName = "test";
-    if (trimmedNickName === "" || !roomId) {
+    if (!roomId) {
       return;
     }
     const payload = { nickName: trimmedNickName };
