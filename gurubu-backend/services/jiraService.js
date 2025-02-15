@@ -94,6 +94,7 @@ class JiraService {
 
     let totalStoryPoints = 0;
     let totalTestStoryPoints = 0;
+    let totalAssignedStoryPoints = 0;
 
     // Process each issue
     issues.forEach((issue) => {
@@ -107,6 +108,7 @@ class JiraService {
       if (issue.assignee?.name) {
         const stats = statisticsMap.get(issue.assignee.name);
         if (stats) {
+          totalAssignedStoryPoints += storyPoint;
           stats.totalStoryPoints += storyPoint;
           stats.assignedTasks.push({
             key: issue.key,
@@ -160,6 +162,7 @@ class JiraService {
       statistics,
       totalStoryPoints,
       totalTestStoryPoints,
+      totalAssignedStoryPoints
     };
   }
 

@@ -29,6 +29,7 @@ interface SprintStatisticsResponse {
   statistics: AssigneeStatistics[];
   totalStoryPoints: number;
   totalTestStoryPoints: number;
+  totalAssignedStoryPoints: number;
 }
 
 interface PlannerTableProps {
@@ -173,17 +174,68 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
                   </div>
                 </div>
                 <div className="body-cell">{stat.assignedTasks.length || stat.testTasks.length }</div>
-                <div className="body-cell">{stat.totalStoryPoints}</div>
-                <div className="body-cell">{stat.totalPairStoryPoints}</div>
-                <div className="body-cell">{stat.totalTestStoryPoints}</div>
+                <div className="body-cell">
+                  <div className="story-points-container">
+                    <div className="story-points-total">{stat.totalStoryPoints}</div>
+                    {stat.assignedTasks.length > 1 && (
+                      <div className="story-points-breakdown">
+                        {stat.assignedTasks.map((task, taskIndex) => (
+                          <div key={taskIndex} className="story-point-item">
+                            {task.storyPoint}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="body-cell">
+                  <div className="story-points-container">
+                    <div className="story-points-total">{stat.totalPairStoryPoints}</div>
+                    {stat.pairedTasks.length > 1 && (
+                      <div className="story-points-breakdown">
+                        {stat.pairedTasks.map((task, taskIndex) => (
+                          <div key={taskIndex} className="story-point-item">
+                            {task.storyPoint}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="body-cell">
+                  <div className="story-points-container">
+                    <div className="story-points-total">{stat.totalTestStoryPoints}</div>
+                    {stat.testTasks.length > 1 && (
+                      <div className="story-points-breakdown">
+                        {stat.testTasks.map((task, taskIndex) => (
+                          <div key={taskIndex} className="story-point-item">
+                            {task.testStoryPoint}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
             <div className="table-row total-row">
               <div className="body-cell">Total</div>
               <div className="body-cell">-</div>
-              <div className="body-cell">{statistics.totalStoryPoints}</div>
-              <div className="body-cell">-</div>
-              <div className="body-cell">{statistics.totalTestStoryPoints}</div>
+              <div className="body-cell">
+                <div className="story-points-container">
+                  <div className="story-points-total">{`${statistics.totalAssignedStoryPoints} / ${statistics.totalStoryPoints}`}</div>
+                </div>
+              </div>
+              <div className="body-cell">
+                <div className="story-points-container">
+                  <div className="story-points-total">-</div>
+                </div>
+              </div>
+              <div className="body-cell">
+                <div className="story-points-container">
+                  <div className="story-points-total">{statistics.totalTestStoryPoints}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
