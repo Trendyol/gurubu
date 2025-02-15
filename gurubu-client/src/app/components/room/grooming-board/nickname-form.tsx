@@ -117,11 +117,11 @@ const NicknameForm = ({ roomId }: IProps) => {
     if (!roomId) {
       return;
     }
-    if (!defaultNickname()) {
-      return;
-    }
+    // if (!defaultNickname()) {
+    //   return;
+    // }
     setLoading(true);
-    const trimmedNickName = nickname.trim();
+    const trimmedNickName = "test";
     if (trimmedNickName === "" || !roomId) {
       return;
     }
@@ -182,7 +182,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     executeFastJoin();
   }, []);
 
-  if (defaultNickname() && roomId) {
+  if (roomId) {
     return null;
   }
 
