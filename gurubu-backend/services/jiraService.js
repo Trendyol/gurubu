@@ -172,7 +172,7 @@ class JiraService {
         `${this.baseUrl}/rest/agile/1.0/board/${boardId}/sprint`,
         {
           params: {
-            state: "active",
+            state: "future",
           },
           auth: this.auth,
           headers: {
