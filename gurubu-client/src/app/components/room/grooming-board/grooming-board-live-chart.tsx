@@ -20,7 +20,7 @@ const GroomingBoardLiveChart = () => {
   const getOption = (): echarts.EChartsOption => ({
     tooltip: {
       trigger: 'item',
-      formatter: 'Story Point {b}: {c} votes ({d}%)'
+      formatter: '{b} SP: {c} votes ({d}%)'
     },
     legend: {
       orient: 'vertical',
@@ -30,7 +30,7 @@ const GroomingBoardLiveChart = () => {
         fontSize: "16px",
         ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
       },
-      formatter: 'Story Point {name}'
+      formatter: '{name} SP'
     },
     series: [
       {
@@ -49,7 +49,7 @@ const GroomingBoardLiveChart = () => {
         },
         label: {
           show: true,
-          formatter: 'SP {b}\n{c} votes',
+          formatter: '{b} SP \n{c} votes',
           fontSize: 16,
           fontFamily: "Inter, sans-serif",
           lineHeight: 20,

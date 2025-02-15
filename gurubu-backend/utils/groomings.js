@@ -7,7 +7,7 @@ const groomingMode = {
       id: 1,
       name: "storyPoint",
       displayName: "Story Point",
-      points: ["0.5", "1", "2", "3", "5", "8", "13", "21", "?"],
+      points: ["1", "2", "3", "5", "8", "13", "21", "?", "break"],
       text: "Story point of task",
     },
   ],
@@ -57,7 +57,7 @@ const groomingMode = {
       name: "storyPoint",
       displayName: "Story Point",
       weight: 0,
-      points: ["0.5", "1", "2", "3", "5", "8", "13", "21", "?"],
+      points: ["1", "2", "3", "5", "8", "13", "21", "?"],
       text: "Story point of task",
     },
   ],
@@ -401,6 +401,10 @@ const checkRoomExistance = (roomId) => {
 };
 
 function findClosestFibonacci(number) {
+  if(isNaN(number)){
+    return 0;
+  }
+
   if (number <= 0) {
     return 0;
   }
