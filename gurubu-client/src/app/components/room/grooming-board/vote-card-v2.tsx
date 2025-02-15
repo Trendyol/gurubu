@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
+import { IconCoffee } from "@tabler/icons-react";
 
 interface IProps {
   point: string;
@@ -46,9 +47,15 @@ const VoteCardV2 = ({ point, name }: IProps) => {
     >
       <div className="card-inner">
         <div className="card-front">
-          <div className="card-value card-value-top-left">{point}</div>
-          <div className="card-value card-value-center">{point}</div>
-          <div className="card-value card-value-bottom-right">{point}</div>
+          <div className="card-value card-value-top-left">
+            {point === "break" ? <IconCoffee size={14}/> : point}
+          </div>
+          <div className="card-value card-value-center">
+            {point === "break" ? <IconCoffee size={32}/> : point}
+          </div>
+          <div className="card-value card-value-bottom-right">
+            {point === "break" ? <IconCoffee size={14}/> : point}
+          </div>
         </div>
         <div className="card-back">
           <div className="card-back-design">🃏</div>

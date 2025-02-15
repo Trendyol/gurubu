@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { GroomingMode, PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconCoffee } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -116,7 +116,7 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
                   </div>
                 )}
               </div>
-              {isResultShown && <p>{participantVote}</p>}
+              {isResultShown && <p>{participantVote === "break" ? <IconCoffee /> : participantVote}</p>}
             </div>
           );
         })}
