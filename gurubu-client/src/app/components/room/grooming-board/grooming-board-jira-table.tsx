@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
 import { JiraService } from "@/services/jiraService";
@@ -29,6 +29,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   const socket = useSocket();
   const { setShowLoader } = useLoader();
   const { showSuccessToast } = useToast();
+  const [formattedDescription, setFormattedDescription] = useState<string>("");
 
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
   const customFieldName =
@@ -56,12 +57,25 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
     }">${text}</a>`;
   };
 
-  const formattedDescription = marked.parse(
-    convertJiraToMarkdown(
-      groomingInfo.issues?.[selectedIssueIndex]?.description
-    ),
-    { renderer }
-  );
+  useEffect(() => {
+    const formatDescription = async () => {
+      try {
+        const selectedIssue = groomingInfo.issues.find((issue) => issue.selected);
+        if (selectedIssue?.description) {
+          const formatted = await convertJiraToMarkdown(selectedIssue.description);
+          const parsedContent = await Promise.resolve(marked.parse(formatted, { renderer }));
+          setFormattedDescription(parsedContent);
+        } else {
+          setFormattedDescription("");
+        }
+      } catch (error) {
+        console.error('Error formatting description:', error);
+        setFormattedDescription("");
+      }
+    };
+
+    formatDescription();
+  }, [groomingInfo.issues]);
 
   const [customVote, setCustomVote] = React.useState<string>("");
   const [testEstimate, setTestEstimate] = React.useState<string>("");

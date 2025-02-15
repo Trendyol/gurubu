@@ -89,6 +89,53 @@ export const convertJiraToMarkdown = (jiraText: string) => {
     return line;
   }).join('\\n');
 
+  // Convert panels
+  const panelRegex = /\{panel:([^}]*)\}([\s\S]*?)\{panel\}/g;
+  converted = converted.replace(panelRegex, (match, attributes, content) => {
+    // Parse panel attributes
+    const attrs: { [key: string]: string } = {};
+    attributes.split('|').forEach((attr: string) => {
+      const [key, value] = attr.split('=');
+      if (key && value) {
+        attrs[key.trim()] = value.trim();
+      }
+    });
+
+    // Build inline styles
+    const styles = [
+      attrs.borderStyle ? `border-style: ${attrs.borderStyle}` : 'border-style: solid',
+      attrs.borderColor ? `border-color: ${attrs.borderColor}` : 'border-color: #b0bec5',
+      attrs.bgColor ? `background-color: ${attrs.bgColor}` : 'background-color: #ffffff',
+      'border-width: 1px',
+      'border-radius: 3px',
+      'margin: 10px 0',
+      'padding: 0',
+      'overflow: hidden'
+    ].join(';');
+
+    // Build title styles
+    const titleStyles = [
+      attrs.titleBGColor ? `background-color: ${attrs.titleBGColor}` : 'background-color: #f4f5f7',
+      'padding: 7px 12px',
+      'margin: 0',
+      'font-size: 14px',
+      'font-weight: 600'
+    ].join(';');
+
+    // Build content styles
+    const contentStyles = [
+      'padding: 10px 12px',
+      'margin: 0'
+    ].join(';');
+
+    return `
+      <div class="jira-panel" style="${styles}">
+        ${attrs.title ? `<div class="jira-panel-title" style="${titleStyles}">${attrs.title}</div>` : ''}
+        <div class="jira-panel-content" style="${contentStyles}">${content.trim()}</div>
+      </div>
+    `;
+  });
+
   // Convert links
   converted = converted.replace(
     /\[(https?:\/\/[^\]]+)\]/g,
@@ -239,6 +286,27 @@ export const jiraDescriptionStyles = `
     padding: 7px 10px;
     border: 1px solid #DFE1E6;
     vertical-align: top;
+  }
+
+  .jira-panel {
+    margin: 10px 0;
+    padding: 0;
+    border: 1px solid #b0bec5;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .jira-panel-title {
+    background-color: #f4f5f7;
+    padding: 7px 12px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .jira-panel-content {
+    padding: 10px 12px;
+    margin: 0;
   }
 
   br {
