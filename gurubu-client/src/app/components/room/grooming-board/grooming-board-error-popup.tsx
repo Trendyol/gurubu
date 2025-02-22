@@ -24,6 +24,7 @@ const GroomingBoardErrorPopup = ({ title, roomId }: IProps) => {
   };
 
   const handleClick = () => {
+    setShowErrorPopup(false);
     if(encounteredError.id === ENCOUTERED_ERROR_TYPE.CREDENTIALS_ERROR){
       handleRemoveUser();
       handleRoomJoin(userInfo.nickname, true, roomId, userInfo.lobby.isAdmin)
@@ -36,7 +37,6 @@ const GroomingBoardErrorPopup = ({ title, roomId }: IProps) => {
       roomID: roomId,
       lobby,
     });
-    setShowErrorPopup(false);
   };
 
   if (!showErrorPopup) {
