@@ -2,6 +2,8 @@ import classNames from "classnames";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
 import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
+import { ENCOUTERED_ERROR_TYPE } from "@/shared/enums";
+import { handleRoomJoin } from "@/shared/helpers/roomJoin";
 
 interface IProps {
   title: string;
@@ -9,8 +11,24 @@ interface IProps {
 }
 const GroomingBoardErrorPopup = ({ title, roomId }: IProps) => {
   const socket = useSocket();
-  const { showErrorPopup, setShowErrorPopup } = useGroomingRoom();
+  const { showErrorPopup, setShowErrorPopup, encounteredError, userInfo } = useGroomingRoom();
+
+  const handleRemoveUser = () => {
+    localStorage.removeItem("lobby");
+    socket.emit(
+      "removeUser",
+      roomId,
+      userInfo.lobby.userID,
+      userInfo.lobby.credentials
+    );
+  };
+
   const handleClick = () => {
+    if(encounteredError.id === ENCOUTERED_ERROR_TYPE.CREDENTIALS_ERROR){
+      handleRemoveUser();
+      handleRoomJoin(userInfo.nickname, true, roomId, userInfo.lobby.isAdmin)
+      return;
+    }
     const nickname = localStorage.getItem("nickname");
     const lobby = getCurrentLobby(roomId);
     socket.emit("joinRoom", {

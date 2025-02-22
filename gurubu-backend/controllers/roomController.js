@@ -24,8 +24,9 @@ exports.createRoom = async (req, res) => {
 exports.joinRoom = async (req, res) => {
   const roomID = req.params.roomId;
   const nickName = req.body.nickName;
+  const isAdmin = req.body.isAdmin;
 
-  const result = handleJoinRoom(nickName, roomID);
+  const result = handleJoinRoom(nickName, roomID, isAdmin);
 
   if(!result){
     return res.status(404).json({ message: "Room not found" });
