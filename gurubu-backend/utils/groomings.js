@@ -112,7 +112,6 @@ const generateNewRoom = (nickName, groomingType) => {
   const { credentials, ...userWithoutCredentials } = user;
 
   groomings[roomID] = {
-    totalParticipants: 1,
     mode: groomingType,
     participants: { [user.userID]: userWithoutCredentials },
     metrics: groomingMode[groomingType],
@@ -148,11 +147,6 @@ const handleJoinRoom = (nickName, roomID, isAdmin) => {
   if(isAdmin){
     user.isAdmin = isAdmin
   }
-
-  groomings[roomID] = {
-    ...groomings[roomID],
-    totalParticipants: Object.keys(groomings[roomID].participants).length + 1,
-  };
 
   const { credentials, ...userWithoutCredentials } = user;
 
@@ -200,7 +194,6 @@ const removeUserFromOngoingGrooming = (roomID, userID) => {
   }
 
   delete groomings[roomID].participants[userID];
-  groomings[roomID].totalParticipants = groomings[roomID].totalParticipants - 1;
 };
 
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
