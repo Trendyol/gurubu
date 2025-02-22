@@ -6,6 +6,7 @@ export enum HTTP_STATUS {
 export enum ENCOUTERED_ERROR_TYPE {
   ROOM_EXPIRED = 1,
   CONNECTION_ERROR = 2,
+  CREDENTIALS_ERROR = 3
 }
 
 export enum GroomingType {

@@ -30,40 +30,72 @@ module.exports = (io) => {
 
     socket.on("userVote", (data, roomID, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit("voteSent", updateParticipantsVote(data, credentials, roomID, socket));
+      const result = updateParticipantsVote(data, credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("voteSent", result);
     });
 
     socket.on("showResults", (roomID, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit("showResults", getResults(credentials, roomID, socket));
+      const result = getResults(credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("showResults", result);
     });
 
     socket.on("resetVotes", (roomID, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit("resetVotes", resetVotes(credentials, roomID, socket));
+      const result = resetVotes(credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("resetVotes", result);
     });
 
     socket.on("updateNickName", (roomID, newNickName, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit(
-        "updateNickName",
-        updateNickName(credentials, newNickName, roomID, socket)
-      );
+      const result = updateNickName(credentials, newNickName, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("updateNickName", result);
     });
 
     socket.on("setIssues", (roomID, data, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit("setIssues", setIssues(data, credentials, roomID, socket));
+      const result = setIssues(data, credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("setIssues", result);
     });
 
     socket.on("updateTimer", (roomID, data, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit("updateTimer", updateTimer(data, credentials, roomID, socket));
+      const result = updateTimer(data, credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("updateTimer", result);
     });
 
     socket.on("updateAvatar", (roomID, data, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      io.to(roomID).emit("updateAvatar", updateAvatar(data, credentials, roomID, socket));
+      const result = updateAvatar(data, credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("updateAvatar", result);
     });
 
     socket.on("disconnect", (reason) => {

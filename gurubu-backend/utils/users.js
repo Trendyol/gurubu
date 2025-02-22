@@ -1,7 +1,7 @@
 const uuid = require("uuid");
 const { tokenizeNickname } = require("../utils/tokenizeNickname");
 
-const users = [];
+let users = [];
 
 // Join user to grooming room
 function userJoin(nickname, roomID) {
@@ -39,8 +39,20 @@ function updateUserSocket(credentials, socketID) {
 }
 
 // Get current user
-function getCurrentUser(credentials) {
-  return users.find((user) => user.credentials === credentials);
+function getCurrentUser(credentials, socket) {
+  let user = users.find((user) => user.credentials === credentials);
+  if (user) {
+    return user;
+  }
+  console.log("This user could not found with credentials", credentials, users);
+  if (socket) {
+    user = getCurrentUserWithSocket(socket.id);
+    if(user){
+      console.log("This user found with socket id.", user);
+    }
+    return user;
+  }
+  return undefined;
 }
 
 function getCurrentUserWithSocket(socketID) {
@@ -72,18 +84,13 @@ function getRoomUsers(roomID) {
 }
 
 function clearUser(roomId) {
-  users.forEach(() => {
-    const indexToRemove = users.findIndex(
-      (indexToRemoveUser) => indexToRemoveUser.roomID === roomId
-    );
-    users.splice(indexToRemove, 1);
-  });
+  users = users.filter(user => user.roomID !== roomId);
 }
 
 function logUsers() {
   setInterval(() => {
     console.log(users);
-  }, 3000);
+  }, 10000);
 }
 
 module.exports = {

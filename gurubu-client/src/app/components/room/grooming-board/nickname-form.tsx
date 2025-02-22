@@ -5,6 +5,7 @@ import { RoomService } from "@/services/roomService";
 import Image from "next/image";
 import classNames from "classnames";
 import { GroomingType } from "@/shared/enums";
+import { handleRoomJoin } from "@/shared/helpers/roomJoin";
 
 interface IProps {
   roomId?: string;
@@ -81,75 +82,15 @@ const NicknameForm = ({ roomId }: IProps) => {
 
   const handleJoinRoomButtonClick = async () => {
     setLoading(true);
-    const trimmedNickName = nickname.trim();
-    if (trimmedNickName === "" || !roomId) {
-      return;
-    }
-    localStorage.setItem("nickname", trimmedNickName);
-    const payload = { nickName: trimmedNickName };
-    const response = await roomService.join(roomId, payload);
-
-    if (!response) {
-      return;
-    }
-
-    let lobby = JSON.parse(localStorage.getItem("lobby") || "{}");
-
-    if (!Object.keys(lobby).length) {
-      const lobbyContent = {
-        state: {
-          rooms: {
-            [response.roomID]: response,
-          },
-        },
-      };
-      lobby = lobbyContent;
-      localStorage.setItem("lobby", JSON.stringify(lobbyContent));
-    }
-
-    lobby.state.rooms[response.roomID] = response;
-    localStorage.setItem("lobby", JSON.stringify(lobby));
-
-    window.location.assign(`/room/${response.roomID}`);
+    await handleRoomJoin(nickname, false, roomId);
   };
 
   const handleFastJoin = async () => {
-    if (!roomId) {
-      return;
-    }
-    if (!defaultNickname()) {
+    if (!roomId || !defaultNickname()) {
       return;
     }
     setLoading(true);
-    const trimmedNickName = nickname.trim();
-    if (trimmedNickName === "" || !roomId) {
-      return;
-    }
-    const payload = { nickName: trimmedNickName };
-    const response = await roomService.join(roomId, payload);
-
-    if (!response) {
-      return;
-    }
-
-    let lobby = JSON.parse(localStorage.getItem("lobby") || "{}");
-
-    if (!Object.keys(lobby).length) {
-      const lobbyContent = {
-        state: {
-          rooms: {
-            [response.roomID]: response,
-          },
-        },
-      };
-      lobby = lobbyContent;
-      localStorage.setItem("lobby", JSON.stringify(lobbyContent));
-    }
-
-    lobby.state.rooms[response.roomID] = response;
-    localStorage.setItem("lobby", JSON.stringify(lobby));
-
-    window.location.assign(`/room/${response.roomID}?isFastJoin=true`);
+    await handleRoomJoin(nickname, true, roomId); 
   };
 
   const connectionButtonText = () => {

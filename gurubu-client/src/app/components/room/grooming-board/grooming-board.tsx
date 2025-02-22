@@ -76,6 +76,9 @@ const GroomingBoard = ({
       if (data.id === ENCOUTERED_ERROR_TYPE.CONNECTION_ERROR) {
         setShowErrorPopup(true);
       }
+      if (data.id === ENCOUTERED_ERROR_TYPE.CREDENTIALS_ERROR) {
+        setShowErrorPopup(true);
+      }
       setEncounteredError(data);
     };
 

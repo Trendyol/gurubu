@@ -63,7 +63,7 @@ const groomingMode = {
   ],
 };
 
-const rooms = [];
+let rooms = [];
 const groomings = {};
 
 const handleErrors = (errorFunctionName, roomID, socket) => {
@@ -72,25 +72,30 @@ const handleErrors = (errorFunctionName, roomID, socket) => {
     return null;
   }
   if (rooms && !rooms.some(room => room.roomID === roomID)) {
-    console.log("Room is deleted, error shown to the user.", errorFunctionName, roomID, rooms);
-    return socket.emit("encounteredError", {
+    console.log("Room is deleted, info shown to the user.", errorFunctionName, roomID);
+    socket.emit("encounteredError", {
       id: 1,
       message:
-        "Room is not exist. Rooms are available for only 6 hours after they are created. You can continue by creating new one.",
+        "Room is expired, if you think this is an error, please contact Armağan Dalkıran.",
     });
+    return {
+      isSuccess: false,
+      message: "Room is expired, if you think this is an error, please contact Armağan Dalkıran."
+    };
   }
 
-  console.log("User lost connection but popup shown.", errorFunctionName, roomID, rooms);
+  console.log("Something unexpected happen!");
 
-  return socket.emit("encounteredError", {
-    id: 2,
-    message: "Your connection is lost. Connect again",
-  });
+  return {
+    id: 3,
+    isSuccess: false,
+    message: "Your connection is lost. Connect again"
+  }
 };
 
 const generateNewRoom = (nickName, groomingType) => {
   const currentTime = new Date().getTime();
-  const expireTime = currentTime + 6 * 60 * 60 * 1000;
+  const expireTime = currentTime + 12 * 60 * 60 * 1000; // 12 hours
   const roomID = uuid.v4();
 
   const user = userJoin(nickName, roomID);
@@ -131,7 +136,7 @@ const generateNewRoom = (nickName, groomingType) => {
   };
 };
 
-const handleJoinRoom = (nickName, roomID) => {
+const handleJoinRoom = (nickName, roomID, isAdmin) => {
   const user = userJoin(nickName, roomID);
   if (!user) {
     return handleErrors("handleJoinRoom", roomID);
@@ -140,9 +145,13 @@ const handleJoinRoom = (nickName, roomID) => {
   user.isAdmin = false;
   user.connected = true;
 
+  if(isAdmin){
+    user.isAdmin = isAdmin
+  }
+
   groomings[roomID] = {
     ...groomings[roomID],
-    totalParticipants: user.userID + 1,
+    totalParticipants: Object.keys(groomings[roomID].participants).length + 1,
   };
 
   const { credentials, ...userWithoutCredentials } = user;
@@ -191,11 +200,11 @@ const removeUserFromOngoingGrooming = (roomID, userID) => {
   }
 
   delete groomings[roomID].participants[userID];
-  groomings[roomID].totalParticipants--;
+  groomings[roomID].totalParticipants = groomings[roomID].totalParticipants - 1;
 };
 
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("updateParticipantsVote", roomID, socket);
   }
@@ -322,7 +331,7 @@ const calculateScore = (mode, participants, roomID) => {
 };
 
 const getResults = (credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("getResults", roomID, socket);
   }
@@ -334,7 +343,7 @@ const getResults = (credentials, roomID, socket) => {
 
 
 const setIssues = (data, credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("setIssues", roomID, socket);
   }
@@ -345,7 +354,7 @@ const setIssues = (data, credentials, roomID, socket) => {
 };
 
 const updateTimer = (data, credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("updateTimer", roomID, socket);
   }
@@ -356,7 +365,7 @@ const updateTimer = (data, credentials, roomID, socket) => {
 };
 
 const updateAvatar = (data, credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("updateAvatar", roomID, socket);
   }
@@ -374,7 +383,7 @@ const updateAvatar = (data, credentials, roomID, socket) => {
 };
 
 const resetVotes = (credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("resetVotes", roomID, socket);
   }
@@ -395,6 +404,12 @@ const resetVotes = (credentials, roomID, socket) => {
 const getRooms = () => {
   return rooms;
 };
+
+const logRooms = () => {
+  setInterval(() => {
+    console.log(rooms);
+  }, 10000);
+}
 
 const checkRoomExistance = (roomId) => {
   return rooms.some((room) => room.roomID === roomId);
@@ -431,22 +446,24 @@ function findClosestFibonacci(number) {
 
 const cleanRoomsAndUsers = () => {
   setInterval(() => {
-    const currentTime = new Date().getTime();
-    rooms.forEach((room) => {
-      if (room.expiredAt < currentTime) {
-        const indexToRemove = rooms.findIndex(
-          (indexToRemoveRoom) => indexToRemoveRoom.roomID === room.roomID
-        );
-        rooms.splice(indexToRemove, 1);
-        delete groomings[room.roomID];
-        clearUser(room.roomID);
-      }
-    });
-  }, 60000 * 60 * 3); // work every 3 hours
+    const currentTime = Date.now();
+
+    // Get expired room IDs before modifying arrays
+    const expiredRoomIDs = rooms.filter(room => room.expiredAt < currentTime).map(room => room.roomID);
+
+    // Remove expired rooms safely
+    rooms = rooms.filter(room => room.expiredAt >= currentTime);
+
+    // Remove expired rooms from `groomings`
+    expiredRoomIDs.forEach(roomID => delete groomings[roomID]);
+
+    // Remove users in expired rooms
+    expiredRoomIDs.forEach(clearUser);
+  }, 60000 * 60 * 12); // work every 12 hours
 };
 
 const updateNickName = (credentials, newNickName, roomID, socket) => {
-  const user = getCurrentUser(credentials);
+  const user = getCurrentUser(credentials, socket);
   if (!user) {
     return handleErrors("updateNickName", roomID, socket);
   }
@@ -465,6 +482,7 @@ module.exports = {
   checkRoomExistance,
   generateNewRoom,
   getRooms,
+  logRooms,
   handleJoinRoom,
   getGrooming,
   leaveUserFromGrooming,
