@@ -459,7 +459,8 @@ const cleanRoomsAndUsers = () => {
 
     // Remove users in expired rooms
     expiredRoomIDs.forEach(clearUser);
-  }, 60000 * 60 * 12); // work every 12 hours
+    console.log("Rooms and users cleaned!");
+  }, 1000 * 60 * 60 * 12); // work every 12 hours
 };
 
 const updateNickName = (credentials, newNickName, roomID, socket) => {
