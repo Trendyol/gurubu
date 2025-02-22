@@ -26,7 +26,7 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
         <>
           <ul className="grooming-board__metrics">
             <div className="grooming-board__participants-text">
-              <span>Participants ({groomingInfo.totalParticipants || "0"})</span>
+              <span>Participants ({Object.keys(groomingInfo?.participants || {}).length || "0"})</span>
             </div>
             {groomingInfo.metrics?.map((metric) => (
               <li
