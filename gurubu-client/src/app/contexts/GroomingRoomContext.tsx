@@ -20,6 +20,8 @@ interface GroomingContextValues {
   setEditVoteClicked: Function;
   currentJiraIssueIndex: number;
   setCurrentJiraIssueIndex: (value: number) => void;
+  jiraSidebarExpanded: boolean;
+  setJiraSidebarExpanded: (value: boolean) => void;
 }
 
 const GroomingRoomContext = createContext({} as GroomingContextValues);
@@ -37,6 +39,7 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [editVoteClicked, setEditVoteClicked] = useState(false);
   const [currentJiraIssueIndex, setCurrentJiraIssueIndex] = useState(0);
+  const [jiraSidebarExpanded, setJiraSidebarExpanded] = useState(false);
 
   useEffect(() => {
     const nickname = localStorage.getItem("nickname");
@@ -69,7 +72,9 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       editVoteClicked,
       setEditVoteClicked,
       currentJiraIssueIndex,
-      setCurrentJiraIssueIndex
+      setCurrentJiraIssueIndex,
+      jiraSidebarExpanded,
+      setJiraSidebarExpanded
     }),
     [
       roomStatus,
@@ -87,7 +92,9 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       editVoteClicked,
       setEditVoteClicked,
       currentJiraIssueIndex,
-      setCurrentJiraIssueIndex
+      setCurrentJiraIssueIndex,
+      jiraSidebarExpanded,
+      setJiraSidebarExpanded
     ]
   );
   return <GroomingRoomContext.Provider value={values}>{children}</GroomingRoomContext.Provider>;

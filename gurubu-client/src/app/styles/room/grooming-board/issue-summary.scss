@@ -1,0 +1,50 @@
+.grooming-board {
+  &__issue-summary {
+    background-color: #f9f5ff;
+    border-radius: $radius-large;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    box-shadow: $shadow-sm;
+    cursor: pointer;
+  }
+
+  &__issue-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  &__show-details-button {
+    background-color: $primary-700;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-3;
+    font-weight: $medium;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $primary-600;
+    }
+  }
+
+  &__issue-summary-title {
+    color: $gray-600;
+    font-size: $font-size-paragraph-3;
+    font-weight: $medium;
+  }
+
+  &__issue-summary-text {
+    color: $gray-900;
+    font-size: $font-size-paragraph-2;
+    line-height: $line-height-paragraph-2;
+    font-weight: $semibold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}

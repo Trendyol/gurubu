@@ -6,6 +6,16 @@
   justify-content: center;
   border-top: 1px solid #eaecf0;
   position: relative;
+  background-color: #ffffff;
+  margin-top: 10px;
+  &.jira-sidebar-expanded{
+    margin-inline: 0;
+    justify-content: start;
+    .grooming-footer__content{
+      padding-inline: 0;
+      margin-left: 16px;
+    }
+  }
   &__content {
     padding: 12px 48px 12px 48px;
     @media (max-width: 850px) {

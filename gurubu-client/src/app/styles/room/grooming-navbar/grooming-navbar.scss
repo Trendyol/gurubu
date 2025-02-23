@@ -9,6 +9,10 @@
     width: 80%;
     margin: 0 auto;
     padding: $space-xlarge $space-xxxlarge;
+    &.jira-sidebar-expanded{
+      margin-inline: 16px;
+      padding-inline: 0;
+    }
     @media (max-width: 850px) {
       padding: $space-xlarge 12px;
       margin: 0 12px;

@@ -12,8 +12,8 @@
   &__vote-cards {
     display: flex;
     align-items: center;
-    justify-content: space-around;
     border-radius: $radius-large;
+    gap: 8px;
     width: 100%;
     @media (max-width: 850px) {
       flex-wrap: wrap;

@@ -1,5 +1,6 @@
 .grooming-board-live-chart {
   margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #eaecf0;
+  &.jira-sidebar-expanded{
+    width: 300px;
+  }
 }
