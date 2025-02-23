@@ -10,6 +10,7 @@ import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
 import { GroomingMode } from "@/shared/enums";
 import { AnnouncementTooltip } from "./announcement-tooltip";
+import AnnouncementBanner from "./announcement-banner";
 import classNames from "classnames";
 
 interface Props {
@@ -63,47 +64,50 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   };
 
   return (
-    <nav className="grooming-navbar">
-      <div className={classNames("grooming-navbar__content", { "jira-sidebar-expanded": jiraSidebarExpanded })}>
-        <Logo />
-        <div className="grooming-navbar__content-right">
-          <div className="grooming-navbar__content-actions">
-            {userInfo.lobby?.isAdmin &&
-              groomingInfo?.mode === GroomingMode.PlanningPoker && (
-                <div>
-                  <button
-                    className="grooming-navbar__content-import-jira-issues"
-                    onClick={() => openModal("importJiraIssues")}
-                  >
-                    <IconFileImport size={20} />
-                    Import Jira Issues
-                  </button>
-                </div>
-              )}
-            <button
-              className="grooming-navbar__content-copy-link"
-              onClick={handleCopyGroomingLinkClick}
-            >
-              {isGroomingLinkCopied ? (
-                <IconClipboardCheck size={20} />
-              ) : (
-                <IconCopy size={20} />
-              )}
-              Link
-            </button>
+    <>
+      <AnnouncementBanner />
+      <nav className={classNames("grooming-navbar", { "grooming-navbar--nickname-form": showNickNameForm })}>
+        <div className={classNames("grooming-navbar__content", { "jira-sidebar-expanded": jiraSidebarExpanded })}>
+          <Logo />
+          <div className="grooming-navbar__content-right">
+            <div className="grooming-navbar__content-actions">
+              {userInfo.lobby?.isAdmin &&
+                groomingInfo?.mode === GroomingMode.PlanningPoker && (
+                  <div>
+                    <button
+                      className="grooming-navbar__content-import-jira-issues"
+                      onClick={() => openModal("importJiraIssues")}
+                    >
+                      <IconFileImport size={20} />
+                      Import Jira Issues
+                    </button>
+                  </div>
+                )}
+              <button
+                className="grooming-navbar__content-copy-link"
+                onClick={handleCopyGroomingLinkClick}
+              >
+                {isGroomingLinkCopied ? (
+                  <IconClipboardCheck size={20} />
+                ) : (
+                  <IconCopy size={20} />
+                )}
+                Link
+              </button>
+            </div>
+            <div className="grooming-navbar__content-user-section">
+              <Timer roomId={roomId} />
+              <ThemeSelector />
+              <AnnouncementTooltip />
+              <GroomingBoardProfile roomId={roomId} />
+            </div>
           </div>
-          <div className="grooming-navbar__content-user-section">
-            <Timer roomId={roomId} />
-            <ThemeSelector />
-            <AnnouncementTooltip />
-            <GroomingBoardProfile roomId={roomId} />
-          </div>
+          <Modal isOpen={modalOpen} onClose={closeModal}>
+            <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
+          </Modal>
         </div>
-        <Modal isOpen={modalOpen} onClose={closeModal}>
-          <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
-        </Modal>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };
 

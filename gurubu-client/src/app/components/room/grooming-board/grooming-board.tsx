@@ -50,7 +50,7 @@ const GroomingBoard = ({
     editVoteClicked,
     setEditVoteClicked,
     jiraSidebarExpanded,
-    setJiraSidebarExpanded,
+    isAnnouncementBannerVisible
   } = useGroomingRoom();
 
   const { showLoader } = useLoader();
@@ -154,7 +154,7 @@ const GroomingBoard = ({
   }
 
   return (
-    <div className={classNames("grooming-board", {jiraSidebarExpanded: jiraSidebarExpanded})}>
+    <div className={classNames("grooming-board", {jiraSidebarExpanded: jiraSidebarExpanded, announcementBannerActive: isAnnouncementBannerVisible})}>
       {showLoader && <Loading />}
       <section
         className={classNames("grooming-board__playground", {
