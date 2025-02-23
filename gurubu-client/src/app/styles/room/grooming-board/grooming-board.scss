@@ -14,6 +14,9 @@
     padding-inline: 0;
     margin-inline: 16px;
   }
+  &.announcementBannerActive{
+    height: calc(100vh - 225px);
+  }
   &__playground {
     width: 60%;
     display: flex;

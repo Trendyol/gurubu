@@ -22,6 +22,8 @@ interface GroomingContextValues {
   setCurrentJiraIssueIndex: (value: number) => void;
   jiraSidebarExpanded: boolean;
   setJiraSidebarExpanded: (value: boolean) => void;
+  isAnnouncementBannerVisible: boolean;
+  setIsAnnouncementBannerVisible: (value: boolean) => void;
 }
 
 const GroomingRoomContext = createContext({} as GroomingContextValues);
@@ -40,6 +42,7 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
   const [editVoteClicked, setEditVoteClicked] = useState(false);
   const [currentJiraIssueIndex, setCurrentJiraIssueIndex] = useState(0);
   const [jiraSidebarExpanded, setJiraSidebarExpanded] = useState(false);
+  const [isAnnouncementBannerVisible, setIsAnnouncementBannerVisible] = useState(true);
 
   useEffect(() => {
     const nickname = localStorage.getItem("nickname");
@@ -74,7 +77,9 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       currentJiraIssueIndex,
       setCurrentJiraIssueIndex,
       jiraSidebarExpanded,
-      setJiraSidebarExpanded
+      setJiraSidebarExpanded,
+      isAnnouncementBannerVisible,
+      setIsAnnouncementBannerVisible
     }),
     [
       roomStatus,
@@ -94,7 +99,9 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       currentJiraIssueIndex,
       setCurrentJiraIssueIndex,
       jiraSidebarExpanded,
-      setJiraSidebarExpanded
+      setJiraSidebarExpanded,
+      isAnnouncementBannerVisible,
+      setIsAnnouncementBannerVisible
     ]
   );
   return <GroomingRoomContext.Provider value={values}>{children}</GroomingRoomContext.Provider>;

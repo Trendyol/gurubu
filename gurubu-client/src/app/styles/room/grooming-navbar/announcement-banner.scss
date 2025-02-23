@@ -1,0 +1,113 @@
+.announcement-banner {
+  background: linear-gradient(90deg, $primary-600 0%, $primary-700 100%);
+  padding: 10px 0;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 24px;
+    position: relative;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: rgba($white, 0.8);
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 6px;
+    cursor: pointer;
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: $white;
+    }
+  }
+
+  &__icon {
+    font-size: 14px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    transform-origin: center;
+
+    &.animate-out {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+
+    &:not(.animate-out) {
+      animation: slideIn 0.5s ease;
+    }
+  }
+
+  &__text {
+    color: $white;
+    font-size: $font-size-paragraph-4;
+    font-weight: $medium;
+    letter-spacing: 0.2px;
+    margin: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    transform-origin: center;
+
+    &.animate-out {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+
+    &:not(.animate-out) {
+      animation: slideIn 0.5s ease;
+    }
+  }
+
+  &__button {
+    background-color: $white;
+    color: $primary-700;
+    border: none;
+    padding: 4px 10px;
+    border-radius: $radius-medium;
+    font-size: $font-size-paragraph-5;
+    font-weight: $semibold;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.5s ease, opacity 0.5s ease, background-color 0.2s ease;
+    transform-origin: center;
+
+    &.animate-out {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+
+    &:not(.animate-out) {
+      animation: slideIn 0.5s ease;
+    }
+
+    &:hover {
+      background-color: rgba($white, 0.9);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
