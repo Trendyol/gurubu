@@ -3,6 +3,7 @@ import VotingStick from "./voting-stick";
 import MetricAverages from "./metric-averages";
 import GroomingBoardErrorPopup from "./grooming-board-error-popup";
 import GroomingBoardResult from "./grooming-board-result";
+import IssueSummary from "./issue-summary";
 import GroomingBoardLogs from "./grooming-board-logs";
 import GroomingBoardActions from "./grooming-board-actions";
 import Loading from "../loading";
@@ -48,6 +49,8 @@ const GroomingBoard = ({
     setShowErrorPopup,
     editVoteClicked,
     setEditVoteClicked,
+    jiraSidebarExpanded,
+    setJiraSidebarExpanded,
   } = useGroomingRoom();
 
   const { showLoader } = useLoader();
@@ -60,6 +63,10 @@ const GroomingBoard = ({
     isGroomingInfoLoaded;
   const isScoreGrooming = groomingInfo.mode === GroomingMode.ScoreGrooming;
   const isPlanningPoker = groomingInfo.mode === GroomingMode.PlanningPoker;
+
+  const selectedIssueIndex = groomingInfo.issues?.findIndex(
+    (issue) => issue.selected
+  );
 
   useEffect(() => {
     const handleInitialize = (data: GroomingInfo) => {
@@ -147,7 +154,7 @@ const GroomingBoard = ({
   }
 
   return (
-    <div className="grooming-board">
+    <div className={classNames("grooming-board", {jiraSidebarExpanded: jiraSidebarExpanded})}>
       {showLoader && <Loading />}
       <section
         className={classNames("grooming-board__playground", {
@@ -155,6 +162,9 @@ const GroomingBoard = ({
         })}
       >
         {!editVoteClicked && isScoreGrooming && <GroomingBoardResult />}
+        {isPlanningPoker && (
+          <IssueSummary issueSummary={groomingInfo.issues?.[selectedIssueIndex]?.summary} />
+        )}
         {showVotingStick && isScoreGrooming && (
           <div className="grooming-board__voting-sticks">
             {groomingInfo.metrics?.map((metric) => (
@@ -178,7 +188,13 @@ const GroomingBoard = ({
             ))}
           </div>
         )}
-        <GroomingBoardLiveChart />
+        {!jiraSidebarExpanded && <GroomingBoardLiveChart />}
+        {jiraSidebarExpanded && (
+          <div className="grooming-board__logs-chart">
+            <GroomingBoardLogs roomId={roomId} />
+            <GroomingBoardLiveChart />
+          </div>
+        )}
         {!editVoteClicked && <MetricAverages />}
         {groomingInfo.isResultShown && isScoreGrooming && (
           <div className="grooming-board__toggle-button-wrapper">

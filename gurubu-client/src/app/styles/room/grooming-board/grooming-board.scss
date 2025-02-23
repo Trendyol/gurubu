@@ -10,6 +10,10 @@
     padding: 12px;
     flex-direction: column;
   }
+  &.jiraSidebarExpanded{
+    padding-inline: 0;
+    margin-inline: 16px;
+  }
   &__playground {
     width: 60%;
     display: flex;
@@ -21,6 +25,12 @@
         width: 100%;
       }
     }
+  }
+  &__logs-chart{
+    display: flex;
+    gap: 16px;
+    overflow-y: auto;
+    overflow-anchor: none;
   }
   &__toggle-button-wrapper {
     width: 100%;
@@ -134,6 +144,7 @@
     border: 1px solid $gray-20;
     padding: 0 12px 12px 12px;
     max-height: max-content;
+    width: 300px;
   }
   &__metrics {
     display: flex;

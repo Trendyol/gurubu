@@ -10,6 +10,7 @@ import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
 import { GroomingMode } from "@/shared/enums";
 import { AnnouncementTooltip } from "./announcement-tooltip";
+import classNames from "classnames";
 
 interface Props {
   showNickNameForm: boolean;
@@ -31,7 +32,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
     setModalOpen(false);
   };
 
-  const { groomingInfo, roomStatus, userInfo } = useGroomingRoom();
+  const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
   if (roomStatus !== ROOM_STATUS.FOUND || showNickNameForm) {
@@ -63,7 +64,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
 
   return (
     <nav className="grooming-navbar">
-      <div className="grooming-navbar__content">
+      <div className={classNames("grooming-navbar__content", { "jira-sidebar-expanded": jiraSidebarExpanded })}>
         <Logo />
         <div className="grooming-navbar__content-right">
           <div className="grooming-navbar__content-actions">

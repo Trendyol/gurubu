@@ -6,10 +6,11 @@ import { calculateVotesOptimized } from "@/shared/helpers/calculateVotesCount";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { GroomingMode } from "@/shared/enums";
 import { useTheme } from "@/contexts/ThemeContext";
+import classNames from "classnames";
 
 const GroomingBoardLiveChart = () => {
   const chartRef = useRef<ReactECharts>(null);
-  const { groomingInfo } = useGroomingRoom();
+  const { groomingInfo, jiraSidebarExpanded } = useGroomingRoom();
   const { currentTheme } = useTheme();
   
   const calculatedVotes = calculateVotesOptimized(
@@ -94,7 +95,7 @@ const GroomingBoardLiveChart = () => {
   }
 
   return (
-    <div className="grooming-board-live-chart">
+    <div className={classNames("grooming-board-live-chart", {"jira-sidebar-expanded": jiraSidebarExpanded})}>
       <ReactECharts
         ref={chartRef}
         option={getOption()}
