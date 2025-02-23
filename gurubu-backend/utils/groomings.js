@@ -66,13 +66,13 @@ const groomingMode = {
 let rooms = [];
 const groomings = {};
 
-const handleErrors = (errorFunctionName, roomID, socket) => {
+const handleErrors = (errorFunctionName, roomID, socket, isRoomExpired) => {
   if(!socket){
     console.log("Socket not found on handle join.", errorFunctionName, roomID, rooms);
     return null;
   }
-  if (rooms && !rooms.some(room => room.roomID === roomID)) {
-    console.log("Room is deleted, info shown to the user.", errorFunctionName, roomID);
+  if ((rooms && !rooms.some(room => room.roomID === roomID)) || isRoomExpired) {
+    console.log("Room is expired or deleted, info shown to the user.", errorFunctionName, roomID);
     socket.emit("encounteredError", {
       id: 1,
       message:
@@ -196,10 +196,17 @@ const removeUserFromOngoingGrooming = (roomID, userID) => {
   delete groomings[roomID].participants[userID];
 };
 
+const checkIsRoomExpired = (roomID) => {
+  const currentTime = new Date().getTime();
+  const expiredRoomIDs = rooms.filter(room => room.expiredAt < currentTime).map(room => room.roomID);
+  return expiredRoomIDs.includes(roomID);
+}
+
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("updateParticipantsVote", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("updateParticipantsVote", roomID, socket, isRoomExpired);
   }
 
   const userLobbyData = groomings[user.roomID].participants[user.userID];
@@ -325,8 +332,9 @@ const calculateScore = (mode, participants, roomID) => {
 
 const getResults = (credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("getResults", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("getResults", roomID, socket, isRoomExpired);
   }
 
   groomings[user.roomID].isResultShown = true;
@@ -337,8 +345,9 @@ const getResults = (credentials, roomID, socket) => {
 
 const setIssues = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("setIssues", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("setIssues", roomID, socket, isRoomExpired);
   }
 
   groomings[user.roomID].issues = data;
@@ -348,8 +357,9 @@ const setIssues = (data, credentials, roomID, socket) => {
 
 const updateTimer = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("updateTimer", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("updateTimer", roomID, socket, isRoomExpired);
   }
 
   groomings[user.roomID].timer = data;
@@ -359,8 +369,9 @@ const updateTimer = (data, credentials, roomID, socket) => {
 
 const updateAvatar = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("updateAvatar", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("updateAvatar", roomID, socket, isRoomExpired);
   }
   if (!groomings[user.roomID]) {
     return;
@@ -377,8 +388,9 @@ const updateAvatar = (data, credentials, roomID, socket) => {
 
 const resetVotes = (credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("resetVotes", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("resetVotes", roomID, socket, isRoomExpired);
   }
 
   groomings[user.roomID].isResultShown = false;
@@ -405,6 +417,10 @@ const logRooms = () => {
 }
 
 const checkRoomExistance = (roomId) => {
+  const isRoomExpired = checkIsRoomExpired(roomId);
+  if (isRoomExpired) {
+    return false;
+  }
   return rooms.some((room) => room.roomID === roomId);
 };
 
@@ -458,8 +474,9 @@ const cleanRoomsAndUsers = () => {
 
 const updateNickName = (credentials, newNickName, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
-  if (!user) {
-    return handleErrors("updateNickName", roomID, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("updateNickName", roomID, socket, isRoomExpired);
   }
 
   user.nickname = newNickName;

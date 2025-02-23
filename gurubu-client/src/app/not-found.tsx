@@ -6,10 +6,10 @@ export default function NotFound() {
   return (
     <main className="not-found-page">
       <h1 className="not-found-page__title">404 error</h1>
-      <h2 className="not-found-page__subtitle">We lost this page</h2>
+      <h2 className="not-found-page__subtitle">Probably room is expired</h2>
       <p className="not-found-page__description">
         We searched high and low, but couldn’t find what you’re looking for.
-        Let’s find a better place for you to go.
+        Rooms are automatically deleted after 12 hours.
       </p>
       <div className="not-found-page__navigation">
         <GoBackButton />
