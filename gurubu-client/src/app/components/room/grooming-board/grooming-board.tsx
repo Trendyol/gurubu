@@ -215,7 +215,7 @@ const GroomingBoard = ({
         )}
         {isScoreGrooming && <GroomingBoardActions roomId={roomId} />}
       </section>
-      <GroomingBoardLogs roomId={roomId} />
+      {!jiraSidebarExpanded && <GroomingBoardLogs roomId={roomId} />}
       <GroomingBoardErrorPopup title="Connection lost !" roomId={roomId} />
     </div>
   );
