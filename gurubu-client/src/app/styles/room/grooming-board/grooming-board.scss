@@ -148,6 +148,10 @@
     padding: 0 12px 12px 12px;
     max-height: max-content;
     width: 300px;
+    &.score-grooming{
+      min-width: 300px;
+      width: auto;
+    }
   }
   &__metrics {
     display: flex;

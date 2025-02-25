@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import GroomingBoardParticipants from "./grooming-board-participants";
 import GroomingBoardResultV2 from "./grooming-board-result-v2";
 import GroomingBoardActions from "./grooming-board-actions";
+import ConsensusBanner from "./consensus-banner";
+import classNames from "classnames";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { MetricToggleTooltip } from "./metricToggleTooltip";
 import { GroomingMode } from "@/shared/enums";
-import ConsensusBanner from "./consensus-banner";
 
 interface Props {
   roomId: string;
@@ -16,12 +17,14 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
   const { groomingInfo } = useGroomingRoom();
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
+  const isScoreGrooming = groomingInfo?.mode === GroomingMode.ScoreGrooming;
+
   const toggleTooltipHover = (metricId?: number | null) => {
     setHoveredMetric(metricId ?? null);
   };
 
   return (
-    <section className="grooming-board__logs-section">
+    <section className={classNames("grooming-board__logs-section", {"score-grooming": isScoreGrooming})}>
       {isGroomingInfoLoaded && (
         <>
           <ul className="grooming-board__metrics">
