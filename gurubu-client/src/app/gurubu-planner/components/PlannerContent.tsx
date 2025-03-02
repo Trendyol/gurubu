@@ -20,7 +20,6 @@ interface PlannerContentProps {
   hasTeamSelected: boolean;
   loading: boolean;
   setLoading: (value: boolean) => void;
-  handleTeamSelectionName: (name: string) => void;
 }
 
 export const PlannerContent: React.FC<PlannerContentProps> = ({ 
@@ -35,8 +34,7 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
   handleTeamSelectClick,
   hasTeamSelected,
   loading,
-  setLoading,
-  handleTeamSelectionName
+  setLoading
 }) => {
   return (
     <div className="gurubu-planner-content">
@@ -46,7 +44,6 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
           handleRefresh={handleRefresh} 
           closeModal={handleCloseTeamSelect}
           setLoading={setLoading}
-          handleTeamSelectionName={handleTeamSelectionName}
         />
       </Modal>
 

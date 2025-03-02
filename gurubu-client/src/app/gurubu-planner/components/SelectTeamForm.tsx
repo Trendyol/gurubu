@@ -14,7 +14,6 @@ type Props = {
   closeModal?: () => void;
   setSprints: (sprint: Sprint[]) => void;
   setLoading: (value: boolean) => void;
-  handleTeamSelectionName: (name: string) => void;
 };
 
 export interface SprintResponse {
@@ -24,7 +23,7 @@ export interface SprintResponse {
   values: Sprint[];
 }
 
-export const SelectTeamForm = ({ handleRefresh, closeModal, setSprints, setLoading, handleTeamSelectionName }: Props) => {
+export const SelectTeamForm = ({ handleRefresh, closeModal, setSprints, setLoading }: Props) => {
   const [teamSearch, setTeamSearch] = useState<string>("");
   const [teams, setTeams] = useState<string[]>([]);
   const [assignees, setAssignees] = useState<Record<string, Assignee>>({});
@@ -70,7 +69,6 @@ export const SelectTeamForm = ({ handleRefresh, closeModal, setSprints, setLoadi
   const handleTeamSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setSelectedTeam(value);
-    handleTeamSelectionName(value);
     if (!value) return;
 
     setShowLoader(true);

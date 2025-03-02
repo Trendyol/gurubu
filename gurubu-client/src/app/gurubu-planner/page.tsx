@@ -23,17 +23,11 @@ export default function GurubuPlanner() {
   const [autoRefreshEnabled, setAutoRefreshEnabled] = React.useState(false);
   const [showTeamSelect, setShowTeamSelect] = React.useState(false);
   const [hasTeamSelected, setHasTeamSelected] = React.useState(false);
-  const [selectedTeam, setSelectedTeam] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
   const handleLoading = ( isLoading:boolean ) => {
     setLoading(isLoading);
   }
-
-  const handleTeamSelectionName = ( teamName:boolean ) => {
-    setHasTeamSelected(teamName);
-  }
-
 
   const handleSetSprints = (sprint: Sprint[]) => {
     setSprints(sprint)
@@ -112,9 +106,6 @@ export default function GurubuPlanner() {
       <ToastProvider>
         <PlannerNavbar />
         <main className="gurubu-planner-container">
-          {hasTeamSelected && selectedTeam && 
-          <h1>{`Selected Team: ${selectedTeam}`}</h1>
-          }
           <div className="gurubu-planner-content">
             <div className="gurubu-planner-card">
               {hasTeamSelected && (
@@ -168,7 +159,6 @@ export default function GurubuPlanner() {
                 hasTeamSelected={hasTeamSelected}
                 loading={loading}
                 setLoading={handleLoading}
-                handleTeamSelectionName={handleTeamSelectionName}
               />
               <div className="gurubu-planner-footer">
                 Developed with ❤️ by GuruBu Developers
