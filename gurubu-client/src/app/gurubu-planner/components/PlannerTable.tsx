@@ -114,8 +114,6 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
         }
 
         const assignees = JSON.parse(assigneesData);
-        console.log('Sending assignees data:', assignees);
-
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/jira/${selectedSprintId}/statistics`,
           { 

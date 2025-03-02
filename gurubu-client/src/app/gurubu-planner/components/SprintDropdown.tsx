@@ -62,7 +62,6 @@ const SprintDropdown: React.FC<SprintDropdownProps> = ({ selectedSprint, onSprin
 
   useEffect(() => {
     if (sprints.length) {
-      console.log("SAAA");
       onSprintSelect(sprints[0]);
     }
   },[sprints])
