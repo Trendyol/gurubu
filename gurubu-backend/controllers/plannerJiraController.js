@@ -5,7 +5,7 @@ dotenv.config();
 
 exports.getFutureSprints = async (req, res) => {
   try {
-    const boardId = process.env.JIRA_DEFAULT_BOARD_ID;
+    const boardId = parseInt(req.params.boardId);
     const sprints = await jiraService.getFutureSprints(boardId);
     res.json(sprints);
   } catch (error) {
@@ -39,16 +39,27 @@ exports.getSprintIssues = async (req, res) => {
 exports.getSprintStatistics = async (req, res) => {
   try {
     const sprintId = parseInt(req.params.sprintId);
+    const { assignees } = req.body;
 
     if (isNaN(sprintId)) {
       return res.status(400).json({ error: "Invalid sprint ID" });
     }
 
-    const statistics = await jiraService.getSprintStatistics(sprintId);
+    if (!assignees) {
+      return res.status(400).json({ error: "Assignees data is required" });
+    }
+
+    const issues = await jiraService.getSprintIssues(sprintId);
+    const statistics = jiraService.calculateSprintStatistics(sprintId, issues.issues, assignees);
     res.json(statistics);
   } catch (error) {
-    console.error("Error getting sprint statistics:", error);
-    res.status(500).json({ error: "Failed to get sprint statistics" });
+    console.error("Error getting sprint statistics:", {
+      error: error.message,
+      stack: error.stack,
+      sprintId: req.params.sprintId,
+      assignees: req.body.assignees
+    });
+    res.status(500).json({ error: error.message || "Failed to get sprint statistics" });
   }
 };
 

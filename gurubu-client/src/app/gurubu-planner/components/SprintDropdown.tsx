@@ -22,21 +22,24 @@ export interface SprintResponse {
 }
 
 interface SprintDropdownProps {
+  sprints: Sprint[];
+  setSprints: (sprints: Sprint[]) => void;
   selectedSprint: Sprint | null;
   onSprintSelect: (sprint: Sprint | null) => void;
 }
 
-const SprintDropdown: React.FC<SprintDropdownProps> = ({ selectedSprint, onSprintSelect }) => {
-  const [sprints, setSprints] = useState<Sprint[]>([]);
+const SprintDropdown: React.FC<SprintDropdownProps> = ({ selectedSprint, onSprintSelect, sprints, setSprints }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const boardId = localStorage.getItem('JIRA_BOARD');
+
     const fetchSprints = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jira/future`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`);
         if (!response.ok) {
           throw new Error('Failed to fetch sprints');
         }
@@ -56,6 +59,12 @@ const SprintDropdown: React.FC<SprintDropdownProps> = ({ selectedSprint, onSprin
 
     fetchSprints();
   }, []); // Remove selectedSprint from dependencies
+
+  useEffect(() => {
+    if (sprints.length) {
+      onSprintSelect(sprints[0]);
+    }
+  },[sprints])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

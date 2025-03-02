@@ -103,4 +103,5 @@ export interface Issue {
 export interface ServiceResponse<T> {
   isSuccess: boolean;
   data?: T;
+  error?: string;
 }
