@@ -64,17 +64,13 @@ class JiraService {
     };
   }
 
-  calculateSprintStatistics(sprintId, issues) {
+  calculateSprintStatistics(sprintId, issues, assigneesData) {
     let parsedAssignees = {};
 
     try {
-        const assignees = process.env.JIRA_DEFAULT_ASSIGNEES 
-            ? Buffer.from(process.env.JIRA_DEFAULT_ASSIGNEES, 'base64').toString('utf-8')
-            : "{}"; // Default to an empty JSON string
-
-        parsedAssignees = JSON.parse(assignees); // Convert string to object
+        parsedAssignees = assigneesData || {};
     } catch (error) {
-        console.error("Failed to parse JIRA_DEFAULT_ASSIGNEES:", error);
+        console.error("Failed to parse assignees data:", error);
     }
     // Initialize statistics for all assignees
     const statisticsMap = new Map();
@@ -222,7 +218,8 @@ class JiraService {
   async getSprintStatistics(sprintId) {
     try {
       const issues = await this.getSprintIssues(sprintId);
-      return this.calculateSprintStatistics(sprintId, issues.issues);
+      const assigneesData = req.body.assignees;
+      return this.calculateSprintStatistics(sprintId, issues.issues, assigneesData);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error details:", {

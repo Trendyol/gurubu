@@ -35,7 +35,8 @@ interface SprintStatisticsResponse {
 interface PlannerTableProps {
   selectedSprintId: number | null;
   refreshTrigger: number;
-  onLoadingChange?: (isLoading: boolean) => void;
+  setLoading: (isLoading: boolean) => void;
+  loading: boolean;
 }
 
 const LoadingSkeleton = () => {
@@ -79,10 +80,10 @@ const LoadingSkeleton = () => {
 const PlannerTable: React.FC<PlannerTableProps> = ({ 
   selectedSprintId, 
   refreshTrigger,
-  onLoadingChange 
+  setLoading,
+  loading
 }) => {
   const [statistics, setStatistics] = React.useState<SprintStatisticsResponse | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   const fetchControllerRef = React.useRef<AbortController | null>(null);
@@ -103,34 +104,46 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
       const controller = new AbortController();
       fetchControllerRef.current = controller;
 
-      setIsLoading(true);
-      onLoadingChange?.(true);
+      setLoading(true);
       setError(null);
 
       try {
+        const assigneesData = localStorage.getItem('JIRA_DEFAULT_ASSIGNEES');
+        if (!assigneesData) {
+          throw new Error('No team selected');
+        }
+
+        const assignees = JSON.parse(assigneesData);
+        console.log('Sending assignees data:', assignees);
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/jira/${selectedSprintId}/statistics`,
           { 
+            method: 'POST',
             signal: controller.signal,
             headers: {
               'Cache-Control': 'no-cache',
-              'Pragma': 'no-cache'
-            }
+              'Pragma': 'no-cache',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ assignees })
           }
         );
         if (!response.ok) {
-          throw new Error('Failed to fetch sprint statistics');
+          const errorData = await response.json();
+          console.error('Sprint statistics error:', errorData);
+          throw new Error(errorData.error || 'Failed to fetch sprint statistics');
         }
         const data: SprintStatisticsResponse = await response.json();
         setStatistics(data);
+        setLoading(false);
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           return;
         }
+        setLoading(false);
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
-        setIsLoading(false);
-        onLoadingChange?.(false);
         if (controller === fetchControllerRef.current) {
           fetchControllerRef.current = null;
         }
@@ -149,7 +162,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
 
   return (
     <div className="gurubu-planner-table">
-      {isLoading ? (
+      {loading ? (
         <LoadingSkeleton />
       ) : error ? (
         <div className="gurubu-planner-table-error">
@@ -170,7 +183,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
                 <div className="body-cell">
                   <div className="assignee-info">
                     <IconUserFilled size={24} className="assignee-avatar" />
-                    <span>{stat.assignee.name}</span>
+                    <span>{stat.assignee.displayName}</span>
                   </div>
                 </div>
                 <div className="body-cell">{stat.assignedTasks.length || stat.testTasks.length }</div>

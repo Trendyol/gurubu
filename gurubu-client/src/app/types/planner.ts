@@ -1,6 +1,6 @@
 export interface Assignee {
-    id: string;
     name: string;
-    email: string;
     displayName: string;
+    id?: string;
+    email?: string;
 }
