@@ -16,7 +16,7 @@ const ConsensusBanner = () => {
 
     const votes = Object.values(groomingInfo.participants)
       .map((p) => p.votes?.storyPoint)
-      .filter((vote) => vote !== undefined && vote !== "?" && vote !== "");
+      .filter((vote) => vote !== undefined && vote !== "?" && vote !== "break" && vote !== "");
 
     if (votes.length < 2) return false;
 
