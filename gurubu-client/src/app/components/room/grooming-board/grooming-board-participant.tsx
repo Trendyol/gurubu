@@ -22,9 +22,6 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
     [createAvatarSvg, serializedAvatar]
   );
 
-  if (!participant) {
-    return null;
-  }
   const { isAdmin, sockets, votes = {}, nickname } = participant;
   const hasSockets = sockets.length > 0;
   const hasMaxVotes =
@@ -45,12 +42,7 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
   const noVote = isResultShown && vote === 0;
 
   return (
-    <motion.li
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+    <li
       key={participantKey}
       className={classNames({
         "vote-above-average": isVoteAboveAverage,
@@ -121,7 +113,7 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
           );
         })}
       </div>
-    </motion.li>
+    </li>
   );
 };
 

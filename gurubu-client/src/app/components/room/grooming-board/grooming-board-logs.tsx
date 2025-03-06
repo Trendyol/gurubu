@@ -25,8 +25,6 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
 
   return (
     <section className={classNames("grooming-board__logs-section", {"score-grooming": isScoreGrooming})}>
-      {isGroomingInfoLoaded && (
-        <>
           <ul className="grooming-board__metrics">
             <div className="grooming-board__participants-text">
               <span>Participants ({Object.keys(groomingInfo?.participants || {}).length || "0"})</span>
@@ -55,8 +53,6 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
                 roomId={roomId}
               />
             )}
-        </>
-      )}
     </section>
   );
 };

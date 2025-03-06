@@ -97,7 +97,6 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
           [`${currentTheme}-active`]: isThemeActive,
         })}
       >
-        <ConnectingInfo roomId={params.id} />
         <GroomingNavbar
           showNickNameForm={showNickNameForm}
           roomId={params.id}
