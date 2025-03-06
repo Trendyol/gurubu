@@ -34,8 +34,73 @@ export function useGroomingRoom() {
 
 export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderProps) {
   const [roomStatus, setRoomStatus] = useState(ROOM_STATUS.CHECKING);
-  const [userInfo, setUserinfo] = useState({} as UserInfo);
-  const [groomingInfo, setGroomingInfo] = useState({} as GroomingInfo);
+  const [userInfo, setUserinfo] = useState({lobby: {isAdmin: true },nickname: "Armagan"} as any);
+  const [groomingInfo, setGroomingInfo] = useState({
+    "mode": "0",
+    "participants": {
+      "0": {
+        "userID": 0,
+        "nickname": "Armagan",
+        "roomID": "e44fabf2-fe3f-4115-885e-117d7d6355bf",
+        "sockets": [
+          "ZvbLDqyZZdoZ47lqAAAH"
+        ],
+        "isAdmin": true,
+        "connected": true,
+        "avatar": {
+          "seed": "xie3wsmnu9",
+          "scale": 150
+        },
+        "votes": {
+          "storyPoint": "2"
+        }
+      },
+      "1": {
+        "userID": 1,
+        "nickname": "HelloFigma",
+        "roomID": "e44fabf2-fe3f-4115-885e-117d7d6355bf",
+        "sockets": [
+          "NcA0GdSQRLhyWPbKAAAF"
+        ],
+        "isAdmin": false,
+        "connected": true,
+        "avatar": {
+          "seed": "yzrl7syjjdc"
+        },
+        "votes": {
+          "storyPoint": "3"
+        }
+      }
+    },
+    "metrics": [
+      {
+        "id": 1,
+        "name": "storyPoint",
+        "displayName": "Story Point",
+        "points": [
+          "0.5",
+          "1",
+          "2",
+          "3",
+          "5",
+          "8",
+          "13",
+          "21",
+          "?",
+          "break"
+        ],
+        "text": "Story point of task"
+      }
+    ],
+    "score": "3.00",
+    "status": "ongoing",
+    "isResultShown": true,
+    "issues": [],
+    "timer": {
+      "timeLeft": 0,
+      "isRunning": false
+    }
+  } as any);
   const [userVote, setUserVote] = useState({} as UserVote);
   const [encounteredError, setEncounteredError] = useState({} as EncounteredError);
   const [showErrorPopup, setShowErrorPopup] = useState(false);

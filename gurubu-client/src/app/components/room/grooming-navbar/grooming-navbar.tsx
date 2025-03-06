@@ -36,10 +36,6 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
-  if (roomStatus !== ROOM_STATUS.FOUND || showNickNameForm) {
-    return null;
-  }
-
   const getGroomingLink = () => {
     let currentUrl: string = "";
     if (typeof window !== "undefined") {

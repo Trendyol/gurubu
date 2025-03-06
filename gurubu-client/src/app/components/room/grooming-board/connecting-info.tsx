@@ -23,18 +23,6 @@ const ConnectingInfo = ({ roomId }: IProps) => {
     setRoomStatus(ROOM_STATUS.FOUND);
   };
 
-  useEffect(() => {
-    fetchRoomId();
-  }, []);
-
-  if (roomStatus === ROOM_STATUS.NOT_FOUND) {
-    notFound();
-  }
-
-  if (roomStatus === ROOM_STATUS.FOUND) {
-    return null;
-  }
-
   return (
     <div className="connecting-info">
       <p className="connecting-info__message">Connecting to the room...</p>

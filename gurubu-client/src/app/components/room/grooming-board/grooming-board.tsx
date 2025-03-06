@@ -141,18 +141,6 @@ const GroomingBoard = ({
     setEditVoteClicked(!editVoteClicked);
   };
 
-  if (showNickNameForm) {
-    return null;
-  }
-
-  if (encounteredError.id === ENCOUTERED_ERROR_TYPE.ROOM_EXPIRED) {
-    notFound();
-  }
-
-  if (!isGroomingInfoLoaded && roomStatus !== ROOM_STATUS.CHECKING) {
-    return <Loading />;
-  }
-
   return (
     <div className={classNames("grooming-board", {jiraSidebarExpanded: jiraSidebarExpanded, announcementBannerActive: isAnnouncementBannerVisible})}>
       {showLoader && <Loading />}
