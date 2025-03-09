@@ -343,7 +343,7 @@ const getResults = (credentials, roomID, socket) => {
 };
 
 
-const setIssues = (data, credentials, roomID, socket) => {
+const setIssues = (data, credentials, roomID, socket, selectedBoard) => {
   const user = getCurrentUser(credentials, socket);
   const isRoomExpired = checkIsRoomExpired(roomID);
   if (!user || isRoomExpired) {
@@ -351,7 +351,9 @@ const setIssues = (data, credentials, roomID, socket) => {
   }
 
   groomings[user.roomID].issues = data;
-
+  if(selectedBoard){
+    groomings[user.roomID].selectedBoard = selectedBoard;
+  }
   return groomings[user.roomID];
 };
 

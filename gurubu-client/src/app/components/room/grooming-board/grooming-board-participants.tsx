@@ -2,6 +2,7 @@ import GroomingBoardParticipant from "./grooming-board-participant";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import GurubuAIParticipant from "./gurubu-ai/gurubu-ai-participant";
 
 const GroomingBoardParticipants = () => {
   const { groomingInfo } = useGroomingRoom();
@@ -31,6 +32,7 @@ const GroomingBoardParticipants = () => {
     <>
       <ul className="grooming-board-participants">
         <AnimatePresence>
+          <GurubuAIParticipant sortedParticipants={sortedParticipants} />
           {sortedParticipants.map((participantKey) => (
             <GroomingBoardParticipant
               key={participantKey}

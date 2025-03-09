@@ -68,9 +68,9 @@ module.exports = (io) => {
       io.to(roomID).emit("updateNickName", result);
     });
 
-    socket.on("setIssues", (roomID, data, credentials) => {
+    socket.on("setIssues", (roomID, data, credentials, selectedBoard) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      const result = setIssues(data, credentials, roomID, socket);
+      const result = setIssues(data, credentials, roomID, socket, selectedBoard);
       if(result?.isSuccess === false){
         io.to(socket.id).emit("encounteredError", result);
         return;

@@ -61,13 +61,6 @@ const AnnouncementBanner = () => {
         >
           {currentAnnouncement.buttonText}
         </button>
-        <button
-          className="announcement-banner__close"
-          onClick={() => setIsAnnouncementBannerVisible(false)}
-          aria-label="Close announcement"
-        >
-          ×
-        </button>
       </div>
     </div>
   );

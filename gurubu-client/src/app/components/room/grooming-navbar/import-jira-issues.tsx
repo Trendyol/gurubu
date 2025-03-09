@@ -148,11 +148,15 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       if(response.data[currentJiraIssueIndex]){
         response.data[currentJiraIssueIndex].selected = true;
       }
+
+      const selectedBoardName = boards.find(board => board.id === Number(selectedBoard) as any)?.name || "";
+      
       socket.emit(
         "setIssues",
         roomId,
         response.data,
-        userInfo.lobby.credentials
+        userInfo.lobby.credentials,
+        selectedBoardName
       );
       closeModal();
     } else {
