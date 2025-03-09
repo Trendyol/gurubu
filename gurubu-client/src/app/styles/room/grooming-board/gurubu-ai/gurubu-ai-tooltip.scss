@@ -1,0 +1,66 @@
+.gurubu-ai-tooltip {
+  position: fixed;
+  background-color: #333333;
+  padding: 16px 20px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: max-content;
+  color: white;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  pointer-events: all;
+  
+  .close-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+  
+  &.right-arrow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -8px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 8px solid #333333;
+  }
+
+  &.left-arrow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #333333;
+  }
+
+  .tooltip-content {
+    white-space: pre-wrap;
+    padding-right: 20px;
+  }
+} 

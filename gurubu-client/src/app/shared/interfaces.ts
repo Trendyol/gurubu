@@ -37,6 +37,7 @@ export interface MetricAverages {
 export interface GroomingInfo {
   mode: string;
   participants: Participants;
+  selectedBoard: string;
   metrics: Metric[];
   score: number;
   metricAverages: MetricAverages;

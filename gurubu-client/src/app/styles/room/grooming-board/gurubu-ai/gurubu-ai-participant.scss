@@ -1,0 +1,45 @@
+.gurubu-ai-participant {
+  display: flex;
+  align-items: center;
+  background-color: #cefedf;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-top: none !important;
+  position: relative;
+
+  .profile-container {
+    display: flex;
+    min-width: 140px;
+    padding: 10px 0 10px 14px;
+    align-items: center;
+    gap: 0 8px;
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+
+      img {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+      }
+    }
+    .name {
+      font-size: 14px;
+      flex: 1;
+      font-weight: 400;
+      color: #1a8236;
+    }
+  }
+
+  .score {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a8236;
+    display: flex;
+    gap: 0 16px;
+    width: 100%;
+    justify-content: space-around;
+  }
+}
