@@ -2,7 +2,7 @@ const openaiService = require("../services/openaiService");
 
 exports.askAssistant = async (req, res) => {
   try {
-    const { boardName, issueSummary, issueDescription } = req.body;
+    const { boardName, issueSummary, issueDescription, threadId } = req.body;
 
     if(!boardName) {
       return res.status(400).json({ error: "Board name is required" });     
@@ -17,9 +17,10 @@ exports.askAssistant = async (req, res) => {
     }
     
     const assistantId = process.env.OPENAI_ASSISTANT_ID;
-    const message = `Board: ${boardName}\nIssue Summary: ${issueSummary}\nIssue Description: ${issueDescription}`;
+    
+    const message = createStoryPointPrompt(issueSummary, issueDescription);
 
-    const response = await openaiService.askAssistant(assistantId, message);
+    const response = await openaiService.askAssistant(assistantId, message, threadId);
 
     res.json(response);
   } catch (error) {
@@ -27,4 +28,16 @@ exports.askAssistant = async (req, res) => {
     res.status(500).json({ error: error.message || "Failed to get response from assistant" });
   }
 };
+
+function createStoryPointPrompt(issueSummary, issueDescription, maxSp = 13) {
+  return `Lütfen aşağıdaki issue için sadece bir storypoint değeri döndür.
+Cevabında kesinlikle başka hiçbir açıklama, metin veya karakter olmasın, sadece rakam olsun.
+Sadece sayısal değeri döndür. Örneğin: 5
+
+Bir işe verilebilecek minimum SP değeri 1, maksimum SP değeri ${maxSp}.
+Fibonacci serisine göre SP değerleri: 1, 2, 3, 5, 8, 13 ... ... ... olabilir.
+
+Issue Summary: ${issueSummary}
+Issue Description: ${issueDescription}`;
+}
 

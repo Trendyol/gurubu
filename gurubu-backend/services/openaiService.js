@@ -11,21 +11,28 @@ class OpenAIService {
   }
 
 
-  async askAssistant(assistantId, message) {
+  async askAssistant(assistantId, message, threadId = null) {
     try {
-      const thread = await this.openai.beta.threads.create();
+      
+      let thread;
+      if (!threadId) {
+        thread = await this.openai.beta.threads.create();
+        threadId = thread.id;
+      } else {
+        threadId = threadId;
+      }
 
-      await this.openai.beta.threads.messages.create(thread.id, {
+      await this.openai.beta.threads.messages.create(threadId, {
         role: "user",
         content: message,
       });
 
-      const run = await this.openai.beta.threads.runs.create(thread.id, {
+      const run = await this.openai.beta.threads.runs.create(threadId, {
         assistant_id: assistantId,
       });
 
       let runStatus = await this.openai.beta.threads.runs.retrieve(
-        thread.id,
+        threadId,
         run.id
       );
 
@@ -40,12 +47,12 @@ class OpenAIService {
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
         runStatus = await this.openai.beta.threads.runs.retrieve(
-          thread.id,
+          threadId,
           run.id
         );
       }
 
-      const messages = await this.openai.beta.threads.messages.list(thread.id);
+      const messages = await this.openai.beta.threads.messages.list(threadId);
 
       const assistantMessages = messages.data.filter(
         (msg) => msg.role === "assistant"
@@ -62,7 +69,7 @@ class OpenAIService {
         .map((content) => content.text.value)
         .join("\n");
 
-      return { response: textContent, threadId: thread.id };
+      return { response: textContent, threadId: threadId };
     } catch (error) {
       console.error("Error in askAssistant:", error);
       throw new Error(`Failed to get response from assistant: ${error.message}`);
