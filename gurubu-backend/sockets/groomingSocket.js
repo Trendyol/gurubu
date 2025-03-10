@@ -9,7 +9,8 @@ const {
   removeUserFromOngoingGrooming,
   setIssues,
   updateTimer,
-  updateAvatar
+  updateAvatar,
+  setGurubuAI
 } = require("../utils/groomings");
 
 module.exports = (io) => {
@@ -68,14 +69,24 @@ module.exports = (io) => {
       io.to(roomID).emit("updateNickName", result);
     });
 
-    socket.on("setIssues", (roomID, data, credentials, selectedBoard) => {
+    socket.on("setIssues", (roomID, data, credentials) => {
       joinRoomMiddleware(socket, roomID, credentials);
-      const result = setIssues(data, credentials, roomID, socket, selectedBoard);
+      const result = setIssues(data, credentials, roomID, socket);
       if(result?.isSuccess === false){
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
       io.to(roomID).emit("setIssues", result);
+    });
+
+    socket.on("setGurubuAI", (roomID, data, credentials) => {
+      joinRoomMiddleware(socket, roomID, credentials);
+      const result = setGurubuAI(data, credentials, roomID, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(roomID).emit("setGurubuAI", result);
     });
 
     socket.on("updateTimer", (roomID, data, credentials) => {

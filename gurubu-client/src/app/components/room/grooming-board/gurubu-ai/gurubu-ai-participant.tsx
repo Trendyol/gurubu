@@ -3,83 +3,135 @@ import Image from "next/image";
 import GurubuAITooltip from "./gurubu-ai-tooltip";
 import { motion } from "framer-motion";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { storyPointService } from "@/services/storyPointService";
+import { useSocket } from "@/contexts/SocketContext";
 
-interface GurubuAIParticipantProps {
-  sortedParticipants: string[];
+interface Props {
+  roomId: string;
 }
 
-const GurubuAIParticipant = ({
-  sortedParticipants,
-}: GurubuAIParticipantProps) => {
-  const { groomingInfo } = useGroomingRoom();
-  const [aiMessage, setAiMessage] = useState<string>("");
+const GurubuAIParticipant = ({ roomId }: Props) => {
+  const socket = useSocket();
+  const { groomingInfo, userInfo } = useGroomingRoom();
   const [showTooltip, setShowTooltip] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const participantRef = useRef<HTMLLIElement>(null);
-
-  const isSFWCBoard = groomingInfo?.selectedBoard?.includes("SFWC");
+  const isSFWCBoard =
+    groomingInfo?.gurubuAI?.selectedBoardName?.includes("SFWC");
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
+  const selectedIssueIndex = groomingInfo.issues?.findIndex(
+    (issue) => issue.selected
+  );
+  const isIssueIndexChanged =
+    selectedIssueIndex !== groomingInfo?.gurubuAI?.selectedIssueIndex;
+  const selectedBoardName = groomingInfo?.gurubuAI?.selectedBoardName;
+  const threadId = groomingInfo?.gurubuAI?.threadId;
+  const isAnalyzing = groomingInfo?.gurubuAI?.isAnalyzing;
+  const isResultShown = groomingInfo?.isResultShown;
+  const aiMessage = groomingInfo?.gurubuAI?.aiMessage;
+  const isAdmin = userInfo?.lobby?.isAdmin;
+  const credentials = userInfo?.lobby?.credentials;
+  const currentIssue = groomingInfo?.issues?.[selectedIssueIndex];
 
-  const getAllParticipantsVotes = () => {
-    const allParticipantsVotes: { storyPoint: string; nickname: string }[] = [];
-    sortedParticipants?.forEach((participantKey) => {
-      const participant = groomingInfo?.participants[participantKey];
-      allParticipantsVotes.push({
-        storyPoint: participant?.votes?.["storyPoint"],
-        nickname: participant?.nickname,
-      });
-    });
-    return allParticipantsVotes;
+  const generateAIAnalysis = async () => {
+    try {
+      abortControllerRef.current = new AbortController();
+
+      const response = await storyPointService.estimateStoryPoint(
+        {
+          boardName: selectedBoardName || "",
+          issueSummary: currentIssue?.summary || "",
+          issueDescription: currentIssue?.description || "",
+          threadId: threadId || undefined,
+        },
+        abortControllerRef.current.signal
+      );
+
+      return { threadId: response.threadId, message: response.response };
+    } catch (error: any) {
+      if (error.message === "Request was cancelled") {
+        return "";
+      }
+      console.error("Error getting AI analysis:", error);
+      return "I encountered an error while analyzing the task. Please try again.";
+    }
   };
 
-  const generateAIAnalysis = (
-    votes: { storyPoint: string; nickname: string }[]
-  ) => {
-    const validVotes = votes.filter(
-      (vote) =>
-        vote.storyPoint &&
-        vote.storyPoint !== "?" &&
-        vote.storyPoint !== "break"
-    );
-    if (validVotes.length === 0) return "";
+  useEffect(() => {
+    const fetchAIAnalysis = async () => {
+      if (isAnalyzing) {
+        abortControllerRef.current?.abort();
+      }
 
-    return `Based on the analysis of the tasks we previously scored, I believe the score for this task should be ${Number(
-      groomingInfo?.score
-    )?.toFixed(
-      0
-    )}. The acceptance criteria are as follows. Our team is experienced in this area, and my suggestion is as follows.`;
-  };
+      if (isGroomingInfoLoaded && isResultShown && isSFWCBoard) {
+        socket.emit(
+          "setGurubuAI",
+          roomId,
+          { ...groomingInfo.gurubuAI, isAnalyzing: true },
+          credentials
+        );
+        const analysis = await generateAIAnalysis();
+        if (analysis) {
+          socket.emit(
+            "setGurubuAI",
+            roomId,
+            {
+              ...groomingInfo.gurubuAI,
+              aiMessage:
+                typeof analysis === "string" ? analysis : analysis.message,
+              selectedIssueIndex,
+              threadId:
+                typeof analysis === "string" ? undefined : analysis.threadId,
+              isAnalyzing: false,
+            },
+            credentials
+          );
+        } else {
+          socket.emit(
+            "setGurubuAI",
+            roomId,
+            { ...groomingInfo.gurubuAI, isAnalyzing: false },
+            credentials
+          );
+        }
+      } else {
+        setShowTooltip(false);
+      }
+    };
+
+    if (isAdmin && isIssueIndexChanged) {
+      fetchAIAnalysis();
+    }
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [isResultShown, isGroomingInfoLoaded, selectedIssueIndex]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    if (isGroomingInfoLoaded && groomingInfo?.isResultShown && isSFWCBoard) {
-      // example result of allParticipantsVotes: { storyPoint: "1", nickname: "John Doe" }
-      const allParticipantsVotes = getAllParticipantsVotes();
-      const analysis = generateAIAnalysis(allParticipantsVotes);
-      setAiMessage(analysis);
-
-      // Delay showing the tooltip to ensure proper positioning
+    if (isResultShown && !isAnalyzing) {
       timeoutId = setTimeout(() => {
         setShowTooltip(true);
       }, 300);
     } else {
       setShowTooltip(false);
     }
-
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
     };
-
-    // add sortedParticipants dependency if you want to trigger the tooltip when the votes change
-  }, [groomingInfo.isResultShown, isGroomingInfoLoaded]);
+  }, [aiMessage, isResultShown, isAnalyzing]);
 
   const handleCloseTooltip = () => {
     setShowTooltip(false);
   };
 
-  if (!groomingInfo.selectedBoard || !isSFWCBoard) {
+  if (!selectedBoardName || !isSFWCBoard) {
     return null;
   }
 
@@ -102,13 +154,18 @@ const GurubuAIParticipant = ({
       />
       <div className="profile-container">
         <div className="avatar">
-          <Image src="https://cdn.dsmcdn.com/web/develop/gurubu-ai.svg" alt="GuruBu AI" width={32} height={32} />
+          <Image
+            src="https://cdn.dsmcdn.com/web/develop/gurubu-ai.svg"
+            alt="GuruBu AI"
+            width={32}
+            height={32}
+          />
         </div>
         <div className="name">GuruBu AI</div>
       </div>
       <div className="score">
-        {groomingInfo.isResultShown
-          ? Number(groomingInfo?.score)?.toFixed(0)
+        {isResultShown && aiMessage && !isAnalyzing
+          ? Number(aiMessage)?.toFixed(0)
           : "Thinking..."}
       </div>
     </motion.li>

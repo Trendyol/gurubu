@@ -343,7 +343,7 @@ const getResults = (credentials, roomID, socket) => {
 };
 
 
-const setIssues = (data, credentials, roomID, socket, selectedBoard) => {
+const setIssues = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
   const isRoomExpired = checkIsRoomExpired(roomID);
   if (!user || isRoomExpired) {
@@ -351,9 +351,17 @@ const setIssues = (data, credentials, roomID, socket, selectedBoard) => {
   }
 
   groomings[user.roomID].issues = data;
-  if(selectedBoard){
-    groomings[user.roomID].selectedBoard = selectedBoard;
+  return groomings[user.roomID];
+};
+
+const setGurubuAI = (data, credentials, roomID, socket) => {
+  const user = getCurrentUser(credentials, socket);
+  const isRoomExpired = checkIsRoomExpired(roomID);
+  if (!user || isRoomExpired) {
+    return handleErrors("setGurubuAI", roomID, socket, isRoomExpired);
   }
+
+  groomings[user.roomID].gurubuAI = data;
   return groomings[user.roomID];
 };
 
@@ -507,5 +515,6 @@ module.exports = {
   removeUserFromOngoingGrooming,
   setIssues,
   updateTimer,
-  updateAvatar
+  updateAvatar,
+  setGurubuAI
 };

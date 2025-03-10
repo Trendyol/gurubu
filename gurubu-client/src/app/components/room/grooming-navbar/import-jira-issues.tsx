@@ -155,8 +155,13 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
         "setIssues",
         roomId,
         response.data,
-        userInfo.lobby.credentials,
-        selectedBoardName
+        userInfo.lobby.credentials
+      );
+      socket.emit(
+        "setGurubuAI",
+        roomId,
+        { selectedBoardName },
+        userInfo.lobby.credentials
       );
       closeModal();
     } else {

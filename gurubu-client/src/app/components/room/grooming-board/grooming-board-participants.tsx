@@ -1,10 +1,14 @@
-import GroomingBoardParticipant from "./grooming-board-participant";
-import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import GroomingBoardParticipant from "./grooming-board-participant";
 import GurubuAIParticipant from "./gurubu-ai/gurubu-ai-participant";
+import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
+import { AnimatePresence } from "framer-motion";
 
-const GroomingBoardParticipants = () => {
+interface Props {
+  roomId: string;
+}
+
+const GroomingBoardParticipants = ({roomId}: Props) => {
   const { groomingInfo } = useGroomingRoom();
   const groomingInfoParticipants = Object.keys(groomingInfo.participants || {});
   const [sortedParticipants, setSortedParticipants] = useState<string[]>([]);
@@ -32,7 +36,7 @@ const GroomingBoardParticipants = () => {
     <>
       <ul className="grooming-board-participants">
         <AnimatePresence>
-          <GurubuAIParticipant sortedParticipants={sortedParticipants} />
+          <GurubuAIParticipant roomId={roomId} />
           {sortedParticipants.map((participantKey) => (
             <GroomingBoardParticipant
               key={participantKey}

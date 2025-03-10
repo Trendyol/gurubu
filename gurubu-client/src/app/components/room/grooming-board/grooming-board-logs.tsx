@@ -44,7 +44,7 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
               </li>
             ))}
           </ul>
-          <GroomingBoardParticipants />
+          <GroomingBoardParticipants roomId={roomId} />
           {groomingInfo.mode === GroomingMode.PlanningPoker && (
             <GroomingBoardResultV2 />
           )}
