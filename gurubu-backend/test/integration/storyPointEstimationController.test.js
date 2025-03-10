@@ -1,21 +1,32 @@
 const request = require('supertest');
 const express = require('express');
-const openaiController = require('../../controllers/openaiController');
-
 const app = express();
-app.use(express.json());
-app.post('/openai/ask', openaiController.askAssistant);
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-jest.setTimeout(60000);
+require('dotenv').config();
 
-describe('OpenAI Controller Testleri', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+app.use(bodyParser.json());
+app.use(cors());
 
+const storyPointRoutes = require('../../routes/storyPointRoutes');
+app.use('/storypoint', storyPointRoutes);
 
-  test('askAssistant integration test - yeni thread oluşturma', async () => {
+describe('Story Point Estimation Controller', () => {
+  jest.setTimeout(60000); // 60 saniye timeout
+  
+  // OpenAI API'ye erişim için gerekli ortam değişkenlerini kontrol et
+  beforeAll(() => {
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn('OPENAI_API_KEY ortam değişkeni ayarlanmamış. Test başarısız olabilir.');
+    }
     
+    if (!process.env.OPENAI_ASSISTANT_ID) {
+      console.warn('OPENAI_ASSISTANT_ID ortam değişkeni ayarlanmamış. Test başarısız olabilir.');
+    }
+  });
+  
+  test('Bir issue için story point tahmini yapabilmeli', async () => {
     const testData = {
       boardName: 'Test board',
       issueSummary: 'Kullanıcı girişi sayfası oluşturulmalı',
@@ -23,7 +34,7 @@ describe('OpenAI Controller Testleri', () => {
     };
     
     const response = await request(app)
-      .post('/openai/ask')
+      .post('/storypoint/estimate')
       .send(testData);
     
     expect(response.status).toBe(200);
@@ -35,7 +46,6 @@ describe('OpenAI Controller Testleri', () => {
     const responseStr = response.body.response.trim();
     const isNumeric = /^\d+$/.test(responseStr);
     expect(isNumeric).toBe(true);
-    
 
     const validSPValues = [1, 2, 3, 5, 8, 13];
     const responseNum = parseInt(responseStr, 10);
@@ -55,7 +65,7 @@ describe('OpenAI Controller Testleri', () => {
       };
       
       const followUpResponse = await request(app)
-        .post('/openai/ask')
+        .post('/storypoint/estimate')
         .send(followUpData);
       
       expect(followUpResponse.status).toBe(200);
@@ -68,7 +78,6 @@ describe('OpenAI Controller Testleri', () => {
       const followUpResponseStr = followUpResponse.body.response.trim();
       const isFollowUpNumeric = /^\d+$/.test(followUpResponseStr);
       expect(isFollowUpNumeric).toBe(true);
-      
 
       const validSPValues = [1, 2, 3, 5, 8, 13];
       const followUpResponseNum = parseInt(followUpResponseStr, 10);

@@ -1,6 +1,6 @@
 const openaiService = require("../services/openaiService");
 
-exports.askAssistant = async (req, res) => {
+exports.estimateStoryPoint = async (req, res) => {
   try {
     const { boardName, issueSummary, issueDescription, threadId } = req.body;
 
@@ -24,8 +24,8 @@ exports.askAssistant = async (req, res) => {
 
     res.json(response);
   } catch (error) {
-    console.error("Error asking assistant:", error);
-    res.status(500).json({ error: error.message || "Failed to get response from assistant" });
+    console.error("Error estimating story point:", error);
+    res.status(500).json({ error: error.message || "Failed to estimate story point" });
   }
 };
 
@@ -40,4 +40,3 @@ Fibonacci serisine göre SP değerleri: 1, 2, 3, 5, 8, 13 ... ... ... olabilir.
 Issue Summary: ${issueSummary}
 Issue Description: ${issueDescription}`;
 }
-

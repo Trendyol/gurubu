@@ -19,13 +19,13 @@ const roomRoutes = require("./routes/roomRoutes");
 const healthCheckRoute = require("./routes/healthCheckRoute");
 const jiraRoutes = require("./routes/jiraRoutes");
 const pRoutes = require("./routes/pRoutes");
-const openaiRoutes = require("./routes/openaiRoutes");
+const storyPointRoutes = require("./routes/storyPointRoutes");
 
 app.use("/room", cors(corsOptions), roomRoutes);
 app.use("/healthcheck", cors(corsOptions), healthCheckRoute);
 app.use("/jira", cors(corsOptions), jiraRoutes);
 app.use("/p", cors(corsOptions), pRoutes);
-app.use("/openai", cors(corsOptions), openaiRoutes);
+app.use("/storypoint", cors(corsOptions), storyPointRoutes);
 
 const PORT = process.env.PORT || 5001;
 const server = app.listen(PORT, () => {
