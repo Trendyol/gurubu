@@ -34,10 +34,18 @@ export interface MetricAverages {
   };
 }
 
+export interface GurubuAI {
+  selectedBoardName: string;
+  aiMessage: string;
+  selectedIssueIndex: number;
+  threadId: string | null;
+  isAnalyzing: boolean;
+}
+
 export interface GroomingInfo {
   mode: string;
   participants: Participants;
-  selectedBoard: string;
+  gurubuAI: GurubuAI;
   metrics: Metric[];
   score: number;
   metricAverages: MetricAverages;

@@ -35,6 +35,10 @@ export function SocketProvider({ children }: SocketProviderProps) {
       setGroomingInfo(data);
     };
 
+    const setGurubuAI = (data: GroomingInfo) => {
+      setGroomingInfo(data);
+    };
+
     const updateTimer = (data: GroomingInfo) => {
       setGroomingInfo(data);
     }
@@ -55,6 +59,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
     socket.on("showResults", handleShowResults);
     socket.on("resetVotes", handleResetVotes);
     socket.on("setIssues", setIssues);
+    socket.on("setGurubuAI", setGurubuAI);
     socket.on("updateTimer", updateTimer);
     socket.on("updateAvatar", updateAvatar);
 
@@ -63,6 +68,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
       socket.off("showResults", handleShowResults);
       socket.off("resetVotes", handleResetVotes);
       socket.off("setIssues", setIssues);
+      socket.off("setGurubuAI", setGurubuAI);
       socket.off("updateTimer", updateTimer);
       socket.off("updateAvatar", updateAvatar);
     };
