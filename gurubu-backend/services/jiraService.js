@@ -268,6 +268,126 @@ class JiraService {
       throw error;
     }
   }
+
+  async getAllBoardIssuesWithInitialStoryPoints(boardId) {
+    try {
+      let allIssues = [];
+      let startAt = 0;
+      const maxResults = 100;
+      let total = null;
+
+      do {
+        console.log(`Fetching issues ${startAt} to ${startAt + maxResults}...`);
+        const response = await axios.get(
+          `${this.baseUrl}/rest/agile/1.0/board/${boardId}/issue`,
+          {
+            params: {
+              expand: 'changelog',
+              startAt: startAt,
+              maxResults: maxResults,
+              fields: 'key,assignee,changelog,customfield_10002,summary,description,' +
+                (process.env.JIRA_PROJECT_KEY_ONE ? process.env.JIRA_PROJECT_KEY_ONE + ',' : '') +
+                (process.env.JIRA_PROJECT_KEY_TWO ? process.env.JIRA_PROJECT_KEY_TWO + ',' : '') +
+                (process.env.JIRA_PROJECT_KEY_THREE ? process.env.JIRA_PROJECT_KEY_THREE + ',' : '') +
+                (process.env.JIRA_PROJECT_KEY_FOUR ? process.env.JIRA_PROJECT_KEY_FOUR : '')
+            },
+            auth: this.auth,
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (total === null) {
+          total = response.data.total;
+        }
+
+        const processedIssues = response.data.issues.map(issue => {
+          let initialStoryPoint = null;
+          const currentStoryPoint = issue.fields[process.env.JIRA_PROJECT_KEY_FOUR] || 
+                                  issue.fields.customfield_10002;
+
+          let sortedHistories = [];
+          let firstStoryPointHistory = null;
+
+          if (issue.changelog && issue.changelog.histories) {
+            sortedHistories = issue.changelog.histories.sort(
+              (a, b) => new Date(a.created) - new Date(b.created)
+            );
+
+            for (const history of sortedHistories) {
+              for (const item of history.items) {
+                if (
+                  item.field === process.env.JIRA_PROJECT_KEY_FOUR ||
+                  item.field === "Story Points"
+                ) {
+                  
+                  if (item.fromString && !isNaN(parseFloat(item.fromString))) {
+                    initialStoryPoint = parseFloat(item.fromString);
+                    firstStoryPointHistory = history;
+                    break;
+                  }
+                  else if (!firstStoryPointHistory && item.toString && !isNaN(parseFloat(item.toString))) {
+                    initialStoryPoint = parseFloat(item.toString);
+                    firstStoryPointHistory = history;
+                    break;
+                  }
+                }
+              }
+              if (firstStoryPointHistory) break;
+            }
+          }
+
+          if (initialStoryPoint === null && currentStoryPoint) {
+            initialStoryPoint = currentStoryPoint;
+          }
+
+          return {
+            key: issue.key,
+            summary: issue.fields.summary || null,
+            description: issue.fields.description || null,
+            initialStoryPoint,
+            currentStoryPoint
+          };
+        })
+        .filter(issue => {
+          if (issue.summary === "Sprint Leftover") {
+            return false;
+          }
+          
+          if (!issue.initialStoryPoint || !issue.currentStoryPoint || 
+              isNaN(issue.initialStoryPoint) || isNaN(issue.currentStoryPoint)) {
+            return false;
+          }
+          
+          return true;
+        });
+
+        allIssues = [...allIssues, ...processedIssues];
+
+        startAt += maxResults;
+
+        console.log(`Processed ${allIssues.length} of ${total} issues...`);
+
+      } while (startAt < total);
+
+      return {
+        maxResults: maxResults,
+        startAt: 0,
+        total: total,
+        issues: allIssues
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+      }
+      throw error;
+    }
+  }
 }
 
 module.exports = new JiraService();

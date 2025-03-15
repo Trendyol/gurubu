@@ -20,10 +20,12 @@ const healthCheckRoute = require("./routes/healthCheckRoute");
 const jiraRoutes = require("./routes/jiraRoutes");
 const pRoutes = require("./routes/pRoutes");
 const storyPointRoutes = require("./routes/storyPointRoutes");
+const jiraPdfCreatorRoutes = require("./routes/jiraPdfCreatorRoutes");
 
 app.use("/room", cors(corsOptions), roomRoutes);
 app.use("/healthcheck", cors(corsOptions), healthCheckRoute);
 app.use("/jira", cors(corsOptions), jiraRoutes);
+app.use("/jira-pdf-creator", cors(corsOptions), jiraPdfCreatorRoutes);
 app.use("/p", cors(corsOptions), pRoutes);
 app.use("/storypoint", cors(corsOptions), storyPointRoutes);
 
