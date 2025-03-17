@@ -1,0 +1,647 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.initial-story-points {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background, $gray-50);
+  min-height: calc(100vh - 64px);
+
+  .page-header-card {
+    background-color: white;
+    border-radius: $radius-large;
+    box-shadow: $shadow-sm;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+
+    h1 {
+      font-size: $font-size-header-4;
+      font-weight: $semibold;
+      color: $purple-700;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $gray-500;
+      font-size: $font-size-paragraph-3;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .card {
+    background-color: white;
+    border-radius: $radius-large;
+    box-shadow: $shadow-sm;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid $gray-100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h2 {
+        margin: 0;
+        font-size: $font-size-paragraph-2;
+        font-weight: $semibold;
+        color: $gray-900;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+
+        @media (max-width: 800) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+        }
+      }
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+  }
+
+  .control-card {
+    @extend .card;
+
+    .control-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      @media (min-width: 800) {
+        flex-direction: row;
+        align-items: flex-end;
+      }
+
+      .board-selector {
+        flex: 1;
+
+        .search-container {
+          display: flex;
+          gap: 0.5rem;
+
+          input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid $gray-300;
+            border-radius: $radius-large;
+            font-size: $font-size-paragraph-3;
+
+            &:focus {
+              outline: none;
+              border-color: $purple-700;
+            }
+          }
+
+          button {
+            padding: 0.75rem 1.5rem;
+            background-color: $purple-700;
+            color: white;
+            border: none;
+            border-radius: $radius-large;
+            font-size: $font-size-paragraph-3;
+            font-weight: $semibold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            svg {
+              margin-right: 0.25rem;
+            }
+
+            &:disabled {
+              background-color: $gray-300;
+              cursor: not-allowed;
+            }
+
+            &:hover:not(:disabled) {
+              background-color: $purple-600;
+            }
+          }
+        }
+
+        .error-message {
+          color: $red-600;
+          margin-top: 0.5rem;
+          font-size: $font-size-paragraph-4;
+        }
+
+        .boards-list {
+          margin-top: 1rem;
+
+          p {
+            margin-bottom: 0.5rem;
+            font-weight: $medium;
+            color: $gray-700;
+            font-size: $font-size-paragraph-4;
+          }
+
+          .boards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+
+            .board-item {
+              padding: 0.75rem;
+              border: 1px solid $gray-200;
+              border-radius: $radius-medium;
+              cursor: pointer;
+              transition: all 0.2s;
+              font-size: $font-size-paragraph-4;
+
+              &:hover {
+                background-color: $purple-50;
+                border-color: $purple-700;
+                color: $purple-700;
+              }
+              
+              &.selected {
+                background-color: $purple-50;
+                border-color: $purple-700;
+                color: $purple-700;
+                font-weight: $semibold;
+              }
+            }
+          }
+        }
+      }
+
+      .fetch-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background-color: $purple-700;
+        color: white;
+        border: none;
+        border-radius: $radius-large;
+        font-size: $font-size-paragraph-3;
+        font-weight: $semibold;
+        cursor: pointer;
+        white-space: nowrap;
+
+        @media (max-width: 800) {
+          width: 100%;
+          justify-content: center;
+        }
+
+        &:disabled {
+          background-color: $gray-300;
+          cursor: not-allowed;
+        }
+
+        &:hover:not(:disabled) {
+          background-color: $purple-600;
+        }
+      }
+    }
+  }
+
+  .progress-card {
+    @extend .card;
+
+    &.status-completed {
+      border-left: 4px solid $success-500;
+    }
+
+    &.status-error {
+      border-left: 4px solid $red-600;
+    }
+
+    .progress-container {
+      margin-bottom: 0;
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .progress-status-indicator {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          .progress-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid $gray-300;
+            border-top-color: $purple-700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+
+          .progress-icon {
+            &.completed {
+              color: $success-500;
+            }
+
+            &.error {
+              color: $red-600;
+            }
+          }
+
+          .progress-status-text {
+            font-weight: $medium;
+            font-size: $font-size-paragraph-4;
+          }
+        }
+
+        .progress-detail {
+          color: $gray-500;
+          font-size: $font-size-paragraph-4;
+        }
+
+        .progress-percentage {
+          font-size: $font-size-paragraph-2;
+          font-weight: $semibold;
+          color: $purple-700;
+        }
+      }
+
+      .progress-bar-outer {
+        height: 0.5rem;
+        background-color: $gray-100;
+        border-radius: 9999px;
+        overflow: hidden;
+
+        .progress-bar-inner {
+          height: 100%;
+          background-color: $purple-700;
+          border-radius: 9999px;
+          transition: width 0.5s ease;
+
+          .status-completed & {
+            background-color: $success-500;
+          }
+
+          .status-error & {
+            background-color: $red-600;
+          }
+        }
+      }
+    }
+  }
+
+  .results-card {
+    @extend .card;
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 0.75rem;
+      border: 1px solid $gray-300;
+      border-radius: $radius-large;
+      background-color: white;
+      height: 40px;
+
+      @media (max-width: 800) {
+        width: 100%;
+      }
+
+      svg {
+        color: $gray-400;
+        min-width: 20px;
+        height: 20px;
+        margin-top: 1px;
+      }
+
+      input {
+        padding: 0.5rem 0;
+        border: none;
+        font-size: $font-size-paragraph-4;
+        min-width: 200px;
+        height: 100%;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .export-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: white;
+      color: $purple-700;
+      border: 1px solid $purple-700;
+      border-radius: $radius-large;
+      font-size: $font-size-paragraph-4;
+      font-weight: $medium;
+      cursor: pointer;
+
+      @media (max-width: 800) {
+        width: 100%;
+        justify-content: center;
+      }
+
+      &:hover {
+        background-color: $purple-50;
+      }
+    }
+
+    .results-content {
+      padding: 0;
+    }
+  }
+
+  .initial-story-points-table-container {
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background-color: $gray-50;
+      border-bottom: 1px solid $gray-100;
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        background-color: white;
+        border-radius: $radius-large;
+        border: 1px solid $gray-100;
+        text-align: center;
+
+        .stat-value {
+          font-size: $font-size-header-5;
+          font-weight: $bold;
+          margin-bottom: 0.25rem;
+          color: $purple-700;
+        }
+
+        .stat-label {
+          font-size: $font-size-paragraph-5;
+          color: $gray-500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+
+    .table-scroll-container {
+      overflow-x: auto;
+    }
+
+    .initial-story-points-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid $gray-100;
+      }
+
+      th {
+        font-weight: $semibold;
+        background-color: $gray-50;
+        color: $gray-500;
+        position: sticky;
+        top: 0;
+        font-size: $font-size-paragraph-5;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        
+        &.expand-column {
+          width: 40px;
+          padding-left: 1rem;
+          padding-right: 0;
+        }
+      }
+
+      tbody tr {
+        cursor: pointer;
+        transition: background-color 0.2s, border-left-color 0.2s;
+        font-size: $font-size-paragraph-4;
+        border-left: 3px solid transparent;
+
+        &:hover {
+          background-color: $purple-50;
+        }
+
+        &.selected {
+          background-color: $purple-50;
+          border-left-color: $purple-700;
+        }
+        
+        &.expanded {
+          background-color: rgba($purple-100, 0.5);
+          border-left-color: $purple-700;
+          
+          .expand-cell {
+            color: $purple-700;
+          }
+        }
+        
+        &.description-row {
+          background-color: rgba($purple-50, 0.5);
+          cursor: default;
+          border-left: 3px solid $purple-700;
+          border-bottom: 1px solid rgba($purple-200, 0.5);
+          
+          &:hover {
+            background-color: rgba($purple-50, 0.5);
+          }
+          
+          td {
+            padding: 0;
+          }
+          
+          .row-description {
+            padding: 1rem 2rem 1.5rem;
+            
+            h4 {
+              font-size: $font-size-paragraph-3;
+              font-weight: $semibold;
+              margin-top: 0;
+              margin-bottom: 0.5rem;
+              color: $gray-900;
+            }
+            
+            .description-content {
+              padding: 1rem;
+              background-color: rgba(white, 0.8);
+              border-radius: $radius-medium;
+              max-height: 200px;
+              overflow-y: auto;
+              font-size: $font-size-paragraph-4;
+              border: 1px solid $gray-100;
+              
+              .no-description {
+                color: $gray-500;
+                text-align: center;
+                padding: 0.5rem;
+                font-style: italic;
+              }
+            }
+          }
+        }
+      }
+      
+      .expand-cell {
+        width: 40px;
+        padding-right: 0;
+        color: $gray-500;
+      }
+
+      .summary-cell {
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .point-cell {
+        text-align: center;
+      }
+
+      .change-cell {
+        text-align: center;
+
+        .change-indicator {
+          font-weight: $bold;
+
+          &.increased {
+            color: $success-500;
+          }
+
+          &.decreased {
+            color: $red-600;
+          }
+
+          &.unchanged {
+            color: $gray-400;
+          }
+        }
+      }
+
+      .empty-message {
+        text-align: center;
+        padding: 2rem;
+        color: $gray-500;
+      }
+    }
+
+    .issue-details {
+      padding: 1.5rem;
+      border-top: 1px solid $gray-100;
+
+      h3 {
+        font-size: $font-size-paragraph-2;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: $purple-700;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid $gray-100;
+      }
+
+      .points-comparison {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+
+        @media (max-width: 800) {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .point-box {
+          flex: 1;
+          max-width: 180px;
+          text-align: center;
+          padding: 1.25rem;
+          border-radius: $radius-large;
+          background-color: $gray-50;
+
+          @media (max-width: 800) {
+            max-width: 100%;
+            width: 100%;
+          }
+
+          .point-label {
+            font-size: $font-size-paragraph-5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: $gray-500;
+            margin-bottom: 0.5rem;
+          }
+
+          .point-value {
+            font-size: $font-size-header-4;
+            font-weight: $bold;
+            color: $purple-700;
+          }
+        }
+
+        .change-arrow {
+          font-size: 2rem;
+
+          .change-indicator {
+            &.increased {
+              color: $success-500;
+            }
+
+            &.decreased {
+              color: $red-600;
+            }
+
+            &.unchanged {
+              color: $gray-400;
+            }
+          }
+        }
+      }
+
+      .description-container {
+        h4 {
+          font-size: $font-size-paragraph-3;
+          font-weight: $semibold;
+          margin-top: 0;
+          margin-bottom: 0.5rem;
+          color: $gray-900;
+        }
+
+        .description-content {
+          padding: 1rem;
+          background-color: $gray-50;
+          border-radius: $radius-large;
+          max-height: 300px;
+          overflow-y: auto;
+          font-size: $font-size-paragraph-4;
+
+          .no-description {
+            color: $gray-500;
+            text-align: center;
+            padding: 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
