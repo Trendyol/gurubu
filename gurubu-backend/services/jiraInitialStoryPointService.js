@@ -91,7 +91,7 @@ class JiraInitialStoryPointService {
         issueResponse.data.changelog = changelogResponse.data;
         return issueResponse.data;
       } catch (retryError) {
-        console.error(`Failed to get changelog for issue ${issueKey} using both methods`, retryError);
+        console.error(`Failed to get changelog for an issue using both methods`, retryError);
         return {
           key: issueKey,
           fields: {},
@@ -198,7 +198,7 @@ class JiraInitialStoryPointService {
               batchProcessedIssues = [];
             }
           } catch (error) {
-            console.error(`Error processing issue ${issue.key}:`, error);
+            console.error(`Error processing an issue:`, error);
             const errorIssue = {
               key: issue.key,
               summary: issue.fields?.summary || "Unknown",

@@ -3,6 +3,7 @@
 import React from 'react';
 import { InitialStoryPointResponse } from '../../services/initialStoryPointService';
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import DOMPurify from 'dompurify';
 
 interface InitialStoryPointsTableProps {
   data: InitialStoryPointResponse;
@@ -67,6 +68,10 @@ export default function InitialStoryPointsTable({ data }: InitialStoryPointsTabl
     } else {
       return <span className="change-indicator unchanged">→</span>;
     }
+  };
+  
+  const sanitizeHTML = (html: string) => {
+    return DOMPurify.sanitize(html);
   };
   
   return (
@@ -137,7 +142,7 @@ export default function InitialStoryPointsTable({ data }: InitialStoryPointsTabl
                           <h4>Description</h4>
                           <div className="description-content">
                             {issue.description ? (
-                              <div dangerouslySetInnerHTML={{ __html: issue.description }} />
+                              <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(issue.description) }} />
                             ) : (
                               <p className="no-description">No description available</p>
                             )}
@@ -174,7 +179,7 @@ export default function InitialStoryPointsTable({ data }: InitialStoryPointsTabl
             <h4>Description</h4>
             <div className="description-content">
               {selectedIssueData.description ? (
-                <div dangerouslySetInnerHTML={{ __html: selectedIssueData.description }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(selectedIssueData.description) }} />
               ) : (
                 <p className="no-description">No description available</p>
               )}
