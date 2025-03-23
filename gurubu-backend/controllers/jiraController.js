@@ -115,6 +115,33 @@ exports.fetchPut = async (req, res) => {
     if (error.response && error.response.status === 401) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    res.status(400).json({ message: "Error put operation from JIRA API" });
+    
+    try {
+      const { fields } = req.body || {};
+      const jiraProjectKeyFour = process.env.JIRA_PROJECT_KEY_FOUR;
+
+      if(!fields?.[jiraProjectKeyFour] ){
+        return res.status(400).json({ message: "Vote set failed on retry." });
+      }
+      
+      const modifiedBody = { 
+        fields: { 
+          customfield_14209: fields?.[jiraProjectKeyFour] 
+        } 
+      };
+      
+      const retryResponse = await axios.put(apiUrl, modifiedBody, options);
+      if (retryResponse.status === 201) {
+        return res.status(retryResponse.status).send();
+      } else {
+        return res.status(retryResponse.status).json({ message: "Failed to put data from JIRA API even after retry" });
+      }
+    } catch (retryError) {
+      return res.status(400).json({ 
+        message: "Error in put operation from JIRA API after retry", 
+        originalError: error.message,
+        retryError: retryError.message
+      });
+    }
   }
 };
