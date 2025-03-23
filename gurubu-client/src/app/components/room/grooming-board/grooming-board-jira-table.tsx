@@ -6,17 +6,21 @@ import { convertJiraToMarkdown } from "@/shared/helpers/convertJiraMarkdown";
 import {
   IconChevronLeft,
   IconChevronRight,
-  IconRefresh,
-  IconCheck,
-  IconX,
+  IconRefresh
 } from "@tabler/icons-react";
 import { marked } from "marked";
 import { useLoader } from "@/contexts/LoaderContext";
 import { useToast } from "@/contexts/ToastContext";
 import { EstimateInput } from "./estimate-input";
+import { FilterableSelect, SelectOption } from "./filterable-select";
+import { SingleValue } from 'react-select';
 
 interface IProps {
   roomId: string;
+}
+
+interface IssueOption extends SelectOption {
+  value: number;
 }
 
 const GroomingBoardJiraTable = ({ roomId }: IProps) => {
@@ -40,6 +44,13 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
   const selectedIssueIndex = groomingInfo.issues?.findIndex(
     (issue) => issue.selected
   );
+
+  const totalStoryPoints = groomingInfo.issues?.reduce((acc, issue) => acc + parseFloat(issue.point || "0"), 0);
+  const totalTestStoryPoints = groomingInfo.issues?.reduce((acc, issue) => acc + parseFloat(issue.testPoint || "0"), 0);
+
+  const formattedTotalStoryPoints = isNaN(totalStoryPoints) ? 0 : totalStoryPoints.toFixed(1);
+  const formattedTotalTestStoryPoints = isNaN(totalTestStoryPoints) ? 0 : totalTestStoryPoints.toFixed(1);
+  const totalIssuesCount = groomingInfo.issues?.length || 0;
 
   const renderer = new marked.Renderer();
   renderer.link = ({
@@ -178,15 +189,26 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
     }
   };
 
-  const handleSelectIssue = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSelectedIssueIndex = parseInt(event.target.value);
-    setCurrentJiraIssueIndex(newSelectedIssueIndex);
-    const updatedIssues = groomingInfo.issues.map((issue, index) => ({
-      ...issue,
-      selected: index === newSelectedIssueIndex,
-    }));
-    socket.emit("setIssues", roomId, updatedIssues, userInfo.lobby?.credentials);
-    socket.emit("resetVotes", roomId, userInfo.lobby?.credentials);
+  const issueOptions = groomingInfo.issues?.map((issue, index) => ({
+    value: index,
+    label: `${issue.key} - ${issue.summary}`
+  })) || [];
+
+  const selectedOption = selectedIssueIndex !== undefined && selectedIssueIndex >= 0 
+    ? issueOptions[selectedIssueIndex] 
+    : null;
+
+  const handleSelectIssue = (selectedOption: SingleValue<IssueOption>) => {
+    if (selectedOption) {
+      const newSelectedIssueIndex = selectedOption.value;
+      setCurrentJiraIssueIndex(newSelectedIssueIndex);
+      const updatedIssues = groomingInfo.issues.map((issue, index) => ({
+        ...issue,
+        selected: index === newSelectedIssueIndex,
+      }));
+      socket.emit("setIssues", roomId, updatedIssues, userInfo.lobby?.credentials);
+      socket.emit("resetVotes", roomId, userInfo.lobby?.credentials);
+    }
   };
 
   const handleSyncJiraIssue = async () => {
@@ -250,18 +272,15 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
         </div>
 
         <div className="grooming-board-jira-navigation">
-          <select
-            className="issue-select"
-            value={selectedIssueIndex}
-            onChange={(e) => handleSelectIssue(e)}
-            disabled={!userInfo?.lobby?.isAdmin}
-          >
-            {groomingInfo.issues?.map((issue, index) => (
-              <option key={issue.id} value={index}>
-                {issue.key} - {issue.summary}
-              </option>
-            ))}
-          </select>
+          <FilterableSelect<IssueOption>
+            options={issueOptions}
+            value={selectedOption}
+            onChange={handleSelectIssue}
+            isDisabled={!userInfo?.lobby?.isAdmin}
+            placeholder="Search or select Issue..."
+            noOptionsMessage="No matching issues found"
+            ariaLabel="Issue search and selection dropdown"
+          />
 
         {userInfo?.lobby?.isAdmin && (    
           <div className="navigation-buttons">
@@ -301,28 +320,24 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
           onCancel={() => setTestEstimate("")}
           defaultValue={groomingInfo.issues?.[selectedIssueIndex]?.testPoint?.toString()}
         />
+
+        <div className="total-story-points-container">
+          <div className="total-points-item">
+            <span className="total-points-label">Total Issues:</span>
+            <span className="total-points-value">{totalIssuesCount}</span>
+          </div>
+          <div className="total-points-item">
+            <span className="total-points-label">Total Story Points:</span>
+            <span className="total-points-value">{formattedTotalStoryPoints}</span>
+          </div>
+          <div className="total-points-item">
+            <span className="total-points-label">Total Test Points:</span>
+            <span className="total-points-value">{formattedTotalTestStoryPoints}</span>
+          </div>
+        </div>
       </div>
 
       <div className="grooming-board-jira-content">
-        {userInfo.lobby?.isAdmin && (
-          <div className="issue-navigation">
-            <select
-              id="board issue"
-              name="board issue"
-              className="issue-select"
-              onChange={handleSelectIssue}
-              value={groomingInfo.issues[currentJiraIssueIndex]?.key}
-              disabled={!groomingInfo.issues?.length}
-            >
-              {groomingInfo.issues.map((issue) => (
-                <option key={issue.key} value={issue.key}>
-                  {issue.key} {issue.summary}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
         <div className="issue-details">
           {groomingInfo.issues.map(
             (issue) =>
