@@ -191,14 +191,10 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
 
   const handleSyncJiraIssue = async () => {
     setShowLoader(true);
-    const customFieldName = localStorage.getItem(
-      "story_points_custom_field_name"
-    );
     const selectedSprint = localStorage.getItem("selectedSprint");
     if (selectedSprint) {
       var response = await jiraService.getSprintIssues(
         selectedSprint,
-        customFieldName!
       );
       if (response.isSuccess && response.data) {
         showSuccessToast(

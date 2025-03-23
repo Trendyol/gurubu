@@ -132,12 +132,8 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       return;
     }
     setShowLoader(true);
-    const customFieldName = localStorage.getItem(
-      "story_points_custom_field_name"
-    );
     var response = await jiraService.getSprintIssues(
       selectedSprint,
-      customFieldName!
     );
     if (response.isSuccess && response.data) {
       showSuccessToast(

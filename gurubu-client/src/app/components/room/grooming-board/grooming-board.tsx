@@ -163,7 +163,7 @@ const GroomingBoard = ({
       >
         {!editVoteClicked && isScoreGrooming && <GroomingBoardResult />}
         {isPlanningPoker && (
-          <IssueSummary issueSummary={groomingInfo.issues?.[selectedIssueIndex]?.summary} />
+          <IssueSummary issueSummary={groomingInfo.issues?.[selectedIssueIndex]?.summary} issueKey={groomingInfo.issues?.[selectedIssueIndex]?.key} />
         )}
         {showVotingStick && isScoreGrooming && (
           <div className="grooming-board__voting-sticks">
