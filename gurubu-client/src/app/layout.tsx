@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import classNames from "classnames";
 import "@/styles/globals.scss";
@@ -9,11 +8,6 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-space-grotesk",
 });
-
-export const metadata: Metadata = {
-  title: "Gurubu | Simple, fast and practical grooming",
-  description: "Simple, fast and practical grooming.",
-};
 
 export default function RootLayout({
   children,
