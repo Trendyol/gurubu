@@ -61,7 +61,8 @@ export class JiraService {
         summary: issue.fields.summary,
         point: issue.fields[process.env.NEXT_PUBLIC_STORY_POINT_CUSTOM_FIELD ?? ''] ?? issue.fields['customfield_14209'],
         testPoint: issue.fields[process.env.NEXT_PUBLIC_TEST_STORY_POINT_CUSTOM_FIELD ?? ''] ?? '',
-        description: issue.fields.description
+        description: issue.fields.description,
+        reporter: issue.fields.creator
       }));
       return { isSuccess: true, data: sprintIssues };
     } catch (error) {
