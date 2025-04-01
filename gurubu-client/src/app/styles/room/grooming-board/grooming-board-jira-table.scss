@@ -70,6 +70,31 @@
       }
     }
 
+    .grooming-board-jira-estimate-container{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: space-between
+    }
+
+    .grooming-board-jira-reporter-container{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      .grooming-board-jira-reporter-label{
+        color: #42526E;
+        font-size: 14px;
+        font-weight: 500;
+        min-width: 140px;
+      }
+      .grooming-board-jira-reporter-name{
+        color: #172B4D;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+
     .grooming-board-jira-navigation {
       display: flex;
       align-items: center;

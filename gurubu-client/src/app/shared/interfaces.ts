@@ -107,6 +107,9 @@ export interface Issue {
   point: string;
   testPoint: string;
   selected: boolean;
+  reporter: {
+    displayName: string;
+  };
 }
 
 export interface ServiceResponse<T> {

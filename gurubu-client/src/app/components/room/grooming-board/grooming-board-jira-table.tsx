@@ -13,7 +13,7 @@ import { useLoader } from "@/contexts/LoaderContext";
 import { useToast } from "@/contexts/ToastContext";
 import { EstimateInput } from "./estimate-input";
 import { FilterableSelect, SelectOption } from "./filterable-select";
-import { SingleValue } from 'react-select';
+import { SingleValue } from "react-select";
 
 interface IProps {
   roomId: string;
@@ -320,7 +320,10 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
           onCancel={() => setTestEstimate("")}
           defaultValue={groomingInfo.issues?.[selectedIssueIndex]?.testPoint?.toString()}
         />
-
+        <div className="grooming-board-jira-reporter-container">
+          <p className="grooming-board-jira-reporter-label">Reporter:</p>
+          <p className="grooming-board-jira-reporter-name">{groomingInfo?.issues?.[selectedIssueIndex]?.reporter?.displayName}</p>
+        </div>
         <div className="total-story-points-container">
           <div className="total-points-item">
             <span className="total-points-label">Total Issues:</span>
