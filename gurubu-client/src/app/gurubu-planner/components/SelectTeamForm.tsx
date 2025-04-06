@@ -6,8 +6,8 @@ import { PService } from "@/services/pService";
 import { JiraService } from "@/services/jiraService";
 import { Board } from "@/shared/interfaces";
 import { Sprint } from "../components/SprintDropdown";
-import { Assignee } from "types/planner";
 import { Dropdown, DropdownOption } from "../../../ui-kit/dropdown";
+import { Assignee } from "types/pandora";
 
 type Props = {
   handleRefresh: () => void;
@@ -30,7 +30,7 @@ export const SelectTeamForm = ({
   setLoading,
 }: Props) => {
   const [teams, setTeams] = useState<string[]>([]);
-  const [assignees, setAssignees] = useState<Record<string, Assignee>>({});
+  const [assignees, setAssignees] = useState<string[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>("");
   const [boards, setBoards] = useState<Board[]>([]);
   const [selectedJiraBoardId, setSelectedJiraBoardId] = useState<string>("");
@@ -44,18 +44,27 @@ export const SelectTeamForm = ({
   }, []);
 
   const handleTeamSelect = async (option: DropdownOption) => {
+    if (!option?.value) return;
     setSelectedTeam(option.value);
-    const response = await pService.getJiraProjectByOrganization(option.value);
+    setShowLoader(true);
 
-    if (response.isSuccess && response.data) {
+    const organisationResponse = await pService.getOrganization(option.value);
+
+    if (organisationResponse.isSuccess && organisationResponse.data) {
+      const { developer, qa } = organisationResponse.data.metadata;
+
+      setAssignees([...developer, ...qa]);
+
       const boardsResponse = await jiraService.getBoardsByProjectKey(
-        response.data
+        organisationResponse.data.metadata["jira-projects"][0].key
       );
 
       if (boardsResponse.isSuccess && boardsResponse.data) {
         setBoards(boardsResponse.data);
       }
     }
+
+    setShowLoader(false);
   };
 
   const fetchTeams = async () => {

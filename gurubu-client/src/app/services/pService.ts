@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ServiceResponse } from "@/shared/interfaces";
-import { Assignee } from "types/planner";
+import { PandoraOrganization } from "types/pandora";
 
 export class PService {
   private baseUrl: string;
@@ -46,9 +46,9 @@ export class PService {
     }
   }
 
-  async getOrganizationDetails(
+  async getOrganization(
     name: string
-  ): Promise<ServiceResponse<Record<string, Assignee>>> {
+  ): Promise<ServiceResponse<PandoraOrganization>> {
     try {
       const response = await axios.get(
         `${this.baseUrl}/p/organization/${name}`
@@ -63,27 +63,6 @@ export class PService {
       return {
         isSuccess: false,
         error: "Failed to get organization details",
-      };
-    }
-  }
-
-  async getJiraProjectByOrganization(
-    name: string
-  ): Promise<ServiceResponse<string>> {
-    try {
-      const response = await axios.get(
-        `${this.baseUrl}/p/organization/${name}/jira-projects`
-      );
-
-      return {
-        isSuccess: true,
-        data: response.data.key,
-      };
-    } catch (error) {
-      console.error("Error getting boards by organization:", error);
-      return {
-        isSuccess: false,
-        error: "Failed to get boards by organization",
       };
     }
   }
