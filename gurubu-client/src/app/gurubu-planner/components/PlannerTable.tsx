@@ -1,18 +1,17 @@
 "use client";
 
 import React from "react";
-import { Assignee } from "../../types/planner";
 import { IconUserFilled } from "@tabler/icons-react";
 
 interface AssigneeStatistics {
-  assignee: Assignee;
+  assignee: string;
   totalStoryPoints: number;
   totalPairStoryPoints: number;
   totalTestStoryPoints: number;
   pairedTasks: Array<{
     key: string;
     storyPoint: number;
-    mainAssignee: Assignee;
+    mainAssignee: string;
   }>;
   testTasks: Array<{
     key: string;

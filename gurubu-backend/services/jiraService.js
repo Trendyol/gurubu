@@ -65,20 +65,12 @@ class JiraService {
     };
   }
 
-  calculateSprintStatistics(sprintId, issues, assigneesData) {
-    let parsedAssignees = {};
-
-    try {
-      parsedAssignees = assigneesData || {};
-    } catch (error) {
-      console.error("Failed to parse assignees data:", error);
-    }
-    // Initialize statistics for all assignees
+  calculateSprintStatistics(sprintId, issues, assignees) {
     const statisticsMap = new Map();
 
     // Initialize statistics for all known assignees
-    Object.values(parsedAssignees).forEach((assignee) => {
-      statisticsMap.set(assignee.name, {
+    assignees.forEach((assignee) => {
+      statisticsMap.set(assignee, {
         assignee,
         totalStoryPoints: 0,
         totalPairStoryPoints: 0,

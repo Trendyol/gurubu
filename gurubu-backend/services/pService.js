@@ -1,7 +1,6 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
 
-// Ensure dotenv is configured
 dotenv.config();
 
 class PService {
@@ -37,7 +36,6 @@ class PService {
         }
       );
 
-      // Extract team names from the response data
       const teamNames = response.data
         ? response.data.map((item) => item.metadata.name)
         : [];
@@ -49,28 +47,7 @@ class PService {
     }
   }
 
-  async getJiraProjectsByOrganization(name) {
-    try {
-      const response = await axios.get(
-        `${this.baseUrl}/api/organization/search`,
-        {
-          params: {
-            name,
-          },
-        }
-      );
-
-      const teamData = response.data[0];
-
-      if (!teamData) return [];
-      return teamData.metadata?.["jira-projects"] ?? [];
-    } catch (error) {
-      console.error("Error getting organization details:", error);
-      throw error;
-    }
-  }
-
-  async getOrganizationDetails(name) {
+  async getOrganization(name) {
     try {
       const response = await axios.get(
         `${this.baseUrl}/api/organization/search`,
@@ -86,22 +63,7 @@ class PService {
         return {};
       }
 
-      const developers = teamData.metadata.developer || [];
-      const qaMembers = teamData.metadata.qa || [];
-      const allMembers = [...developers, ...qaMembers];
-
-      const result = allMembers.reduce((acc, member) => {
-        acc[member] = {
-          name: member,
-          displayName: member
-            .split(".")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" "),
-        };
-        return acc;
-      }, {});
-
-      return result;
+      return teamData;
     } catch (error) {
       console.error("Error getting organization details:", error);
       throw error;

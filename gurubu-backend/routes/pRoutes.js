@@ -4,9 +4,6 @@ const pController = require("../controllers/pController");
 
 router.get("/organizations", pController.getOrganizations);
 router.get("/organizations/search", pController.searchOrganizations);
-router.get("/organization/:name", pController.getOrganizationDetails);
-router.get(
-  "/organization/:name/jira-projects",
-  pController.getJiraProjectByOrganization
-);
+router.get("/organization/:name", pController.getOrganization);
+
 module.exports = router;

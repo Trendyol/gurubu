@@ -26,7 +26,7 @@ exports.searchOrganizations = async (req, res) => {
   }
 };
 
-exports.getOrganizationDetails = async (req, res) => {
+exports.getOrganization = async (req, res) => {
   try {
     const { name } = req.params;
 
@@ -34,21 +34,10 @@ exports.getOrganizationDetails = async (req, res) => {
       return res.status(400).json({ error: "Organization name is required" });
     }
 
-    const results = await pService.getOrganizationDetails(name);
+    const results = await pService.getOrganization(name);
     res.json(results);
   } catch (error) {
-    console.error("Error in getOrganizationDetails controller:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-exports.getJiraProjectByOrganization = async (req, res) => {
-  try {
-    const { name } = req.params;
-    const results = await pService.getJiraProjectsByOrganization(name);
-    res.json(results[0]);
-  } catch (error) {
-    console.error("Error in getJiraProjectsByOrganization controller:", error);
+    console.error("Error in getOrganization controller:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
