@@ -27,40 +27,41 @@ class JiraService {
       startAt: response.startAt,
       total: response.total,
       issues: response.issues.map((issue) => {
-        if (process.env.JIRA_PROJECT_KEY_ONE){
+        if (process.env.JIRA_PROJECT_KEY_ONE) {
           pairAssignee = issue.fields[process.env.JIRA_PROJECT_KEY_ONE];
         }
-    
-        if(process.env.JIRA_PROJECT_KEY_TWO){
+
+        if (process.env.JIRA_PROJECT_KEY_TWO) {
           testAssignee = issue.fields[process.env.JIRA_PROJECT_KEY_TWO];
         }
-    
-        if(process.env.JIRA_PROJECT_KEY_THREE){
+
+        if (process.env.JIRA_PROJECT_KEY_THREE) {
           testStoryPoint = issue.fields[process.env.JIRA_PROJECT_KEY_THREE];
         }
-    
-        if(process.env.JIRA_PROJECT_KEY_FOUR){
+
+        if (process.env.JIRA_PROJECT_KEY_FOUR) {
           storyPoint = issue.fields[process.env.JIRA_PROJECT_KEY_FOUR];
         }
 
-        return ({
-        key: issue.key,
-        assignee: issue.fields.assignee
-          ? {
-              self: `${this.baseUrl}/rest/api/2/user?username=${issue.fields.assignee.name}`,
-              name: issue.fields.assignee.name,
-              key: `JIRAUSER_${issue.fields.assignee.name}`,
-              emailAddress: issue.fields.assignee.emailAddress,
-              displayName: issue.fields.assignee.displayName,
-              active: true,
-              timeZone: "Europe/Istanbul",
-            }
-          : null,
-        pairAssignee,
-        testAssignee,
-        testStoryPoint,
-        storyPoint,
-      })}),
+        return {
+          key: issue.key,
+          assignee: issue.fields.assignee
+            ? {
+                self: `${this.baseUrl}/rest/api/2/user?username=${issue.fields.assignee.name}`,
+                name: issue.fields.assignee.name,
+                key: `JIRAUSER_${issue.fields.assignee.name}`,
+                emailAddress: issue.fields.assignee.emailAddress,
+                displayName: issue.fields.assignee.displayName,
+                active: true,
+                timeZone: "Europe/Istanbul",
+              }
+            : null,
+          pairAssignee,
+          testAssignee,
+          testStoryPoint,
+          storyPoint,
+        };
+      }),
     };
   }
 
@@ -68,9 +69,9 @@ class JiraService {
     let parsedAssignees = {};
 
     try {
-        parsedAssignees = assigneesData || {};
+      parsedAssignees = assigneesData || {};
     } catch (error) {
-        console.error("Failed to parse assignees data:", error);
+      console.error("Failed to parse assignees data:", error);
     }
     // Initialize statistics for all assignees
     const statisticsMap = new Map();
@@ -158,7 +159,7 @@ class JiraService {
       statistics,
       totalStoryPoints,
       totalTestStoryPoints,
-      totalAssignedStoryPoints
+      totalAssignedStoryPoints,
     };
   }
 
@@ -219,7 +220,11 @@ class JiraService {
     try {
       const issues = await this.getSprintIssues(sprintId);
       const assigneesData = req.body.assignees;
-      return this.calculateSprintStatistics(sprintId, issues.issues, assigneesData);
+      return this.calculateSprintStatistics(
+        sprintId,
+        issues.issues,
+        assigneesData
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error details:", {
@@ -266,6 +271,25 @@ class JiraService {
         throw new Error(`Failed to fetch board: ${error.message}`);
       }
       throw error;
+    }
+  }
+
+  async getBoardsByProjectKey(projectKey) {
+    try {
+      const response = await axios.get(`${this.baseUrl}/rest/agile/1.0/board`, {
+        params: {
+          projectKeyOrId: projectKey,
+          type: "scrum",
+        },
+        auth: this.auth,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(`Failed to fetch board: ${error.message}`);
     }
   }
 }

@@ -6,41 +6,80 @@ dotenv.config();
 
 class PService {
   constructor() {
-    this.baseUrl = process.env.P_GATEWAY_URL
+    this.baseUrl = process.env.P_GATEWAY_URL;
+  }
+
+  async getOrganizations() {
+    try {
+      const response = await axios.get(
+        `${this.baseUrl}/api/organization/names`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error getting organizations:", error);
+      throw error;
+    }
   }
 
   async searchOrganizations(searchQuery, page = 1, size = 10) {
     try {
-      const response = await axios.get(`${this.baseUrl}/api/organization/list`, {
-        params: {
-          autocomplete: searchQuery,
-          fields: 'metadata.name,metadata.description',
-          order: 'asc',
-          page,
-          size,
-          tab: 'all'
+      const response = await axios.get(
+        `${this.baseUrl}/api/organization/list`,
+        {
+          params: {
+            autocomplete: searchQuery,
+            fields: "metadata.name,metadata.description",
+            order: "asc",
+            page,
+            size,
+            tab: "all",
+          },
         }
-      });
+      );
 
       // Extract team names from the response data
       const teamNames = response.data
-        ? response.data.map(item => item.metadata.name)
+        ? response.data.map((item) => item.metadata.name)
         : [];
 
       return teamNames;
     } catch (error) {
-      console.error('Error searching organizations:', error);
+      console.error("Error searching organizations:", error);
+      throw error;
+    }
+  }
+
+  async getJiraProjectsByOrganization(name) {
+    try {
+      const response = await axios.get(
+        `${this.baseUrl}/api/organization/search`,
+        {
+          params: {
+            name,
+          },
+        }
+      );
+
+      const teamData = response.data[0];
+
+      if (!teamData) return [];
+      return teamData.metadata?.["jira-projects"] ?? [];
+    } catch (error) {
+      console.error("Error getting organization details:", error);
       throw error;
     }
   }
 
   async getOrganizationDetails(name) {
     try {
-      const response = await axios.get(`${this.baseUrl}/api/organization/search`, {
-        params: {
-          name
+      const response = await axios.get(
+        `${this.baseUrl}/api/organization/search`,
+        {
+          params: {
+            name,
+          },
         }
-      });
+      );
 
       const teamData = response.data[0];
       if (!teamData) {
@@ -54,16 +93,17 @@ class PService {
       const result = allMembers.reduce((acc, member) => {
         acc[member] = {
           name: member,
-          displayName: member.split('.').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1)
-          ).join(' ')
+          displayName: member
+            .split(".")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" "),
         };
         return acc;
       }, {});
 
       return result;
     } catch (error) {
-      console.error('Error getting organization details:', error);
+      console.error("Error getting organization details:", error);
       throw error;
     }
   }

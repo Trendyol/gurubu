@@ -2,55 +2,32 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 16px;
   width: 100%;
   max-width: 600px;
   background: white;
   border-radius: 8px;
   align-items: center;
 
-  &__section {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 1rem;
-
-    h4 {
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
-      color: var(--color-text-primary);
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+  &__title {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 28px;
+    margin-bottom: 8px;
   }
 
-
-  &__row {
-    width: 100%;
+  &__items {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
 
-    input,
-    select {
-      height: 37px;
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #d0d5dd;
-      border-radius: 8px;
+  &__actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
 
-      &:disabled {
-        color: light-dark(graytext, rgb(170, 170, 170));
-        background-color: #f5f5f5;
-        cursor: not-allowed;
-      }
-    }
-
-    &>button {
+    button {
       font-family: var(--font-inter);
       width: 100%;
       background: $primary-600;
@@ -58,13 +35,15 @@
       font-weight: $semibold;
       font-size: $font-size-paragraph-3;
       line-height: $line-height-paragraph-4;
-      padding: 10px 18px;
+      padding: 6px 0;
       border: 1px solid $primary-600;
       border-radius: $radius-large;
       cursor: pointer;
+
       &:hover{
         background-color: $purple-500;
       }
+
       &:nth-child(2){
         background-color: $white;
         border: 1px solid #cdd1d4;

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
-import PlannerTable from './PlannerTable';
-import { SelectTeamForm } from './SelectTeamForm';
-import { Sprint } from '../components/SprintDropdown';
-import { Modal } from '@/components/common/modal';
-import { IconUsers } from '@tabler/icons-react';
+import React from "react";
+import PlannerTable from "./PlannerTable";
+import { SelectTeamForm } from "./SelectTeamForm";
+import { Sprint } from "../components/SprintDropdown";
+import { Modal } from "@/components/common/modal";
+import { IconUsers } from "@tabler/icons-react";
 
 interface PlannerContentProps {
   setSprints: (sprint: Sprint[]) => void;
@@ -22,26 +22,24 @@ interface PlannerContentProps {
   setLoading: (value: boolean) => void;
 }
 
-export const PlannerContent: React.FC<PlannerContentProps> = ({ 
+export const PlannerContent: React.FC<PlannerContentProps> = ({
   setSprints,
-  selectedSprintId, 
-  refreshTrigger, 
+  selectedSprintId,
+  refreshTrigger,
   handleRefresh,
-  selectedSprint,
-  onSprintSelect,
   showTeamSelect,
   handleCloseTeamSelect,
   handleTeamSelectClick,
   hasTeamSelected,
   loading,
-  setLoading
+  setLoading,
 }) => {
   return (
     <div className="gurubu-planner-content">
       <Modal isOpen={showTeamSelect} onClose={handleCloseTeamSelect}>
-        <SelectTeamForm 
+        <SelectTeamForm
           setSprints={setSprints}
-          handleRefresh={handleRefresh} 
+          handleRefresh={handleRefresh}
           closeModal={handleCloseTeamSelect}
           setLoading={setLoading}
         />
@@ -55,7 +53,7 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
           <button onClick={handleTeamSelectClick}>Select Team</button>
         </div>
       ) : (
-        <PlannerTable 
+        <PlannerTable
           selectedSprintId={selectedSprintId}
           refreshTrigger={refreshTrigger}
           loading={loading}
