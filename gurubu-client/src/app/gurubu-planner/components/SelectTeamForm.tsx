@@ -64,7 +64,6 @@ export const SelectTeamForm = ({
   };
 
   const handleBoardSelect = async (option: DropdownOption) => {
-    console.log("optionoptionoption", option);
     setSelectedJiraBoardId(option.value);
   };
 
