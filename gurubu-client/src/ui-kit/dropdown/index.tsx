@@ -10,6 +10,7 @@ import Input from "../input";
 import { IconChevronDown } from "@tabler/icons-react";
 import { DropdownOption, DropdownProps } from "./type";
 import "./style.scss";
+import { normalize } from "@/shared/helpers/normalize";
 
 export const Dropdown: React.FC<DropdownProps> = ({
   id,
@@ -46,9 +47,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
   }, [isOpen]);
 
   useEffect(() => {
+    const normalizedSearch = normalize(searchValue);
+
     setFilteredOptions(
-      options.filter((option) =>
-        option.label.toLowerCase().includes(searchValue.toLowerCase())
+      options.filter(
+        (option) =>
+          !searchValue || normalize(option.label).includes(normalizedSearch)
       )
     );
   }, [searchValue, options]);
