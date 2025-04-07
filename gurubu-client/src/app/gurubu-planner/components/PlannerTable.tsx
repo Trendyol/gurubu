@@ -135,8 +135,6 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
           );
         }
         const data: SprintStatisticsResponse = await response.json();
-        console.log("datadatadatadata", data);
-
         setStatistics(data);
         setLoading(false);
       } catch (err) {
