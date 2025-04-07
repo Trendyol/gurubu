@@ -78,7 +78,6 @@ export const SelectTeamForm = ({
 
   const handleClearForm = () => {
     setSelectedTeam("");
-    setTeams([]);
     setSelectedJiraBoardId("");
     setBoards([]);
   };
