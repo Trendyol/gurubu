@@ -1,20 +1,22 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import "@/styles/gurubu-planner/style.scss";
-import PlannerNavbar from './components/PlannerNavbar';
-import SprintDropdown from './components/SprintDropdown';
-import { IconRefresh } from '@tabler/icons-react';
-import { Sprint } from './components/SprintDropdown';
-import { PlannerContent } from './components/PlannerContent'
-import { LoaderProvider } from '@/contexts/LoaderContext';
-import { ToastProvider } from '@/contexts/ToastContext';
-import { IconUsers } from '@tabler/icons-react';
+import PlannerNavbar from "./components/PlannerNavbar";
+import SprintDropdown from "./components/SprintDropdown";
+import { IconRefresh } from "@tabler/icons-react";
+import { Sprint } from "./components/SprintDropdown";
+import { PlannerContent } from "./components/PlannerContent";
+import { LoaderProvider } from "@/contexts/LoaderContext";
+import { ToastProvider } from "@/contexts/ToastContext";
+import { IconUsers } from "@tabler/icons-react";
 
 const AUTO_REFRESH_INTERVAL = 15; // seconds
 
 export default function GurubuPlanner() {
-  const [selectedSprint, setSelectedSprint] = React.useState<Sprint | null>(null);
+  const [selectedSprint, setSelectedSprint] = React.useState<Sprint | null>(
+    null
+  );
   const [refreshTrigger, setRefreshTrigger] = React.useState(0);
   const [lastUpdate, setLastUpdate] = React.useState<Date | null>(null);
   const [nextUpdateIn, setNextUpdateIn] = React.useState(AUTO_REFRESH_INTERVAL);
@@ -25,16 +27,16 @@ export default function GurubuPlanner() {
   const [hasTeamSelected, setHasTeamSelected] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const handleLoading = ( isLoading:boolean ) => {
+  const handleLoading = (isLoading: boolean) => {
     setLoading(isLoading);
-  }
+  };
 
   const handleSetSprints = (sprint: Sprint[]) => {
-    setSprints(sprint)
-  }
+    setSprints(sprint);
+  };
 
   const handleRefresh = () => {
-    setRefreshTrigger(prev => prev + 1);
+    setRefreshTrigger((prev) => prev + 1);
     setLastUpdate(new Date());
     setNextUpdateIn(AUTO_REFRESH_INTERVAL);
   };
@@ -49,17 +51,16 @@ export default function GurubuPlanner() {
 
   React.useEffect(() => {
     const updateHasTeamSelected = () => {
-      setHasTeamSelected(!!localStorage.getItem('JIRA_DEFAULT_ASSIGNEES'));
+      setHasTeamSelected(!!localStorage.getItem("JIRA_DEFAULT_ASSIGNEES"));
     };
-  
+
     updateHasTeamSelected(); // Run initially
-  
-    window.addEventListener('storage', updateHasTeamSelected);
+
+    window.addEventListener("storage", updateHasTeamSelected);
     return () => {
-      window.removeEventListener('storage', updateHasTeamSelected);
+      window.removeEventListener("storage", updateHasTeamSelected);
     };
   }, [showTeamSelect]); // Also trigger update when `showTeamSelect` is modified
-  
 
   const handleTeamSelectClick = () => {
     setShowTeamSelect(true);
@@ -85,18 +86,20 @@ export default function GurubuPlanner() {
     }
 
     const timerId = setInterval(() => {
-      setNextUpdateIn(prev => Math.max(0, prev - 1));
+      setNextUpdateIn((prev) => Math.max(0, prev - 1));
     }, 1000);
 
     return () => clearInterval(timerId);
   }, [autoRefreshEnabled]);
 
   const formatUpdateInfo = () => {
-    if (!lastUpdate) return '';
-    
-    const minutesAgo = Math.floor((new Date().getTime() - lastUpdate.getTime()) / 1000 / 60);
+    if (!lastUpdate) return "";
+
+    const minutesAgo = Math.floor(
+      (new Date().getTime() - lastUpdate.getTime()) / 1000 / 60
+    );
     if (minutesAgo < 1) {
-      return 'Updated just now';
+      return "Updated just now";
     }
     return `Updated ${minutesAgo}m ago`;
   };
@@ -121,21 +124,29 @@ export default function GurubuPlanner() {
                     onClick={handleTeamSelectClick}
                   >
                     <IconUsers size={20} />
-                    {hasTeamSelected ? 'Change Team' : 'Select Team'}
+                    {hasTeamSelected ? "Change Team" : "Select Team"}
                   </button>
                   <div className="gurubu-planner-controls-right">
                     <div className="update-info">
                       <span className="last-update">{formatUpdateInfo()}</span>
-                      {autoRefreshEnabled && <span className="next-update">Next update in {nextUpdateIn}s</span>}
+                      {autoRefreshEnabled && (
+                        <span className="next-update">
+                          Next update in {nextUpdateIn}s
+                        </span>
+                      )}
                     </div>
                     <button
                       className="auto-refresh-toggle"
                       onClick={handleAutoRefreshToggle}
                     >
-                      {autoRefreshEnabled ? "Stop Auto Refresh" : "Enable Auto Refresh"}
+                      {autoRefreshEnabled
+                        ? "Stop Auto Refresh"
+                        : "Enable Auto Refresh"}
                     </button>
                     <button
-                      className={`gurubu-planner-sync-button ${isRefreshing ? 'is-refreshing' : ''}`}
+                      className={`gurubu-planner-sync-button ${
+                        isRefreshing ? "is-refreshing" : ""
+                      }`}
                       onClick={handleRefresh}
                       title="Sync data"
                       disabled={isRefreshing}

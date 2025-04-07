@@ -1,0 +1,45 @@
+.input-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  
+  &--full-width {
+    width: 100%;
+  }
+  
+  &__label {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  &__input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    
+    &--error {
+      border-color: #ef4444;
+    }
+    
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+  
+  &__error {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+} 

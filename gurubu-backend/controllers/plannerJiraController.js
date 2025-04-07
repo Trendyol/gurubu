@@ -50,16 +50,22 @@ exports.getSprintStatistics = async (req, res) => {
     }
 
     const issues = await jiraService.getSprintIssues(sprintId);
-    const statistics = jiraService.calculateSprintStatistics(sprintId, issues.issues, assignees);
+    const statistics = jiraService.calculateSprintStatistics(
+      sprintId,
+      issues.issues,
+      assignees
+    );
     res.json(statistics);
   } catch (error) {
     console.error("Error getting sprint statistics:", {
       error: error.message,
       stack: error.stack,
       sprintId: req.params.sprintId,
-      assignees: req.body.assignees
+      assignees: req.body.assignees,
     });
-    res.status(500).json({ error: error.message || "Failed to get sprint statistics" });
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to get sprint statistics" });
   }
 };
 
@@ -80,5 +86,17 @@ exports.getBoardByName = async (req, res) => {
     } else {
       res.status(500).json({ error: "Failed to get board" });
     }
+  }
+};
+
+exports.getBoardsByProjectKey = async (req, res) => {
+  try {
+    const { projectKey } = req.params;
+    const response = await jiraService.getBoardsByProjectKey(projectKey);
+    const boards = response?.values || [];
+    res.json(boards);
+  } catch (error) {
+    console.error("Error getting board:", error);
+    res.status(500).json({ error: error.message || "Failed to get board" });
   }
 };
