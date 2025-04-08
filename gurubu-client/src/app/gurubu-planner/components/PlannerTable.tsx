@@ -36,6 +36,7 @@ interface PlannerTableProps {
   refreshTrigger: number;
   setLoading: (isLoading: boolean) => void;
   loading: boolean;
+  onEmptyTeam: (isEmpty: boolean) => void;
 }
 
 const LoadingSkeleton = () => {
@@ -81,6 +82,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
   refreshTrigger,
   setLoading,
   loading,
+  onEmptyTeam
 }) => {
   const [statistics, setStatistics] =
     React.useState<SprintStatisticsResponse | null>(null);
@@ -135,7 +137,14 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
           );
         }
         const data: SprintStatisticsResponse = await response.json();
-        setStatistics(data);
+        
+        if (data.statistics.length === 0) {
+          onEmptyTeam(true);
+        } else {
+          onEmptyTeam(false);
+          setStatistics(data);
+        }
+        
         setLoading(false);
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {

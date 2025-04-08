@@ -10,19 +10,19 @@ import { PlannerContent } from "./components/PlannerContent";
 import { LoaderProvider } from "@/contexts/LoaderContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { IconUsers } from "@tabler/icons-react";
+import { useSearchParams } from "next/navigation";
 
 const AUTO_REFRESH_INTERVAL = 15; // seconds
 
 export default function GurubuPlanner() {
-  const [selectedSprint, setSelectedSprint] = React.useState<Sprint | null>(
-    null
-  );
+  const searchParams = useSearchParams();
+  const [selectedSprint, setSelectedSprint] = React.useState<Sprint | null>(null);
   const [refreshTrigger, setRefreshTrigger] = React.useState(0);
   const [lastUpdate, setLastUpdate] = React.useState<Date | null>(null);
   const [nextUpdateIn, setNextUpdateIn] = React.useState(AUTO_REFRESH_INTERVAL);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [sprints, setSprints] = React.useState<Sprint[]>([]);
-  const [autoRefreshEnabled, setAutoRefreshEnabled] = React.useState(false);
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = React.useState(true);
   const [showTeamSelect, setShowTeamSelect] = React.useState(false);
   const [hasTeamSelected, setHasTeamSelected] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -51,17 +51,17 @@ export default function GurubuPlanner() {
 
   React.useEffect(() => {
     const updateHasTeamSelected = () => {
-      setHasTeamSelected(!!localStorage.getItem("JIRA_DEFAULT_ASSIGNEES"));
+      const hasLocalStorageTeam = !!localStorage.getItem('JIRA_DEFAULT_ASSIGNEES');
+      const hasUrlTeam = !!searchParams.get('team');
+      setHasTeamSelected(hasLocalStorageTeam || hasUrlTeam);
     };
-
-    updateHasTeamSelected(); // Run initially
-
-    window.addEventListener("storage", updateHasTeamSelected);
+  
+    updateHasTeamSelected();
+    window.addEventListener('storage', updateHasTeamSelected);
     return () => {
       window.removeEventListener("storage", updateHasTeamSelected);
     };
-  }, [showTeamSelect]); // Also trigger update when `showTeamSelect` is modified
-
+  }, [showTeamSelect, searchParams]);
   const handleTeamSelectClick = () => {
     setShowTeamSelect(true);
   };
@@ -69,6 +69,13 @@ export default function GurubuPlanner() {
   const handleCloseTeamSelect = () => {
     setShowTeamSelect(false);
   };
+
+  React.useEffect(() => {
+    if (hasTeamSelected) {
+      handleRefresh();
+    }
+  }, [hasTeamSelected]);
+
   React.useEffect(() => {
     if (!autoRefreshEnabled) return;
 
@@ -113,6 +120,7 @@ export default function GurubuPlanner() {
             <div className="gurubu-planner-card">
               {hasTeamSelected && (
                 <div className="gurubu-planner-controls">
+                  <div className="gurubu-planner-controls-left">
                   <SprintDropdown
                     sprints={sprints}
                     setSprints={handleSetSprints}
@@ -124,8 +132,9 @@ export default function GurubuPlanner() {
                     onClick={handleTeamSelectClick}
                   >
                     <IconUsers size={20} />
-                    {hasTeamSelected ? "Change Team" : "Select Team"}
-                  </button>
+                      {hasTeamSelected ? 'Change Team' : 'Select Team'}
+                    </button>
+                  </div>
                   <div className="gurubu-planner-controls-right">
                     <div className="update-info">
                       <span className="last-update">{formatUpdateInfo()}</span>
@@ -170,6 +179,7 @@ export default function GurubuPlanner() {
                 hasTeamSelected={hasTeamSelected}
                 loading={loading}
                 setLoading={handleLoading}
+                selectedTeam={searchParams.get('team') || localStorage.getItem('JIRA_DEFAULT_ASSIGNEES')}
               />
               <div className="gurubu-planner-footer">
                 Developed with ❤️ by GuruBu Developers
