@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PlannerTable from './PlannerTable';
 import { SelectTeamForm } from './SelectTeamForm';
 import { Sprint } from '../components/SprintDropdown';
 import { Modal } from '@/components/common/modal';
 import { IconUsers } from '@tabler/icons-react';
-
+import { useSearchParams } from 'next/navigation';
 interface PlannerContentProps {
   setSprints: (sprint: Sprint[]) => void;
   selectedSprintId: number | null;
@@ -20,7 +20,6 @@ interface PlannerContentProps {
   hasTeamSelected: boolean;
   loading: boolean;
   setLoading: (value: boolean) => void;
-  selectedTeam: string | null;
 }
 
 export const PlannerContent: React.FC<PlannerContentProps> = ({
@@ -33,15 +32,27 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
   handleTeamSelectClick,
   hasTeamSelected,
   loading,
-  setLoading,
-  selectedTeam
+  setLoading
 }) => {
+  const searchParams = useSearchParams();
   const [hasEmptyTeam, setHasEmptyTeam] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+
+  useEffect(() => {
+    const teamFromUrl = searchParams.get('team');
+    const storedTeam = localStorage.getItem('JIRA_TEAM_NAME');
+    
+    // Önce URL'den takım bilgisini kontrol et, yoksa localStorage'dan al
+    const effectiveTeam = teamFromUrl || storedTeam;
+    setSelectedTeam(effectiveTeam);
+    
+    console.log("Setting selectedTeam from", teamFromUrl ? "URL" : "localStorage", ":", effectiveTeam);
+  }, [searchParams]);
 
   const handleEmptyTeam = (isEmpty: boolean) => {
     setHasEmptyTeam(isEmpty);
   };
-
+  console.log("hasTeamSelected", hasTeamSelected, "selectedTeam", selectedTeam);
   return (
     <div className="gurubu-planner-content">
       {selectedTeam && (

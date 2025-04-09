@@ -112,10 +112,31 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
       try {
         const assigneesData = localStorage.getItem("JIRA_DEFAULT_ASSIGNEES");
         if (!assigneesData) {
-          throw new Error("No team selected");
+          // Return early or signal empty team to parent
+          onEmptyTeam(true);
+          return null;
         }
 
         const assignees: string[] = JSON.parse(assigneesData);
+        
+        // Dizinin boş olup olmadığını kontrol et
+        // URL ilk yüklemesinde boş dizi kullanılıyor olabilir
+        if (assignees.length === 0) {
+          console.log("Empty assignees array, trying with teamFromUrl");
+          const teamFromUrl = new URL(window.location.href).searchParams.get('team');
+          
+          // URL'de takım varsa, henüz veriler yükleniyor olabilir
+          // Kullanıcıya "Loading team data..." benzeri bir durum gösterilebilir
+          if (teamFromUrl) {
+            // API çağrısı yapmak yerine sadece ekranı güncelle
+            setLoading(true);
+            return null;
+          } else {
+            onEmptyTeam(true);
+            return null;
+          }
+        }
+        
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/jira/${selectedSprintId}/statistics`,
           {

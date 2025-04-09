@@ -52,8 +52,31 @@ export default function GurubuPlanner() {
   React.useEffect(() => {
     const updateHasTeamSelected = () => {
       const hasLocalStorageTeam = !!localStorage.getItem('JIRA_DEFAULT_ASSIGNEES');
-      const hasUrlTeam = !!searchParams.get('team');
-      setHasTeamSelected(hasLocalStorageTeam || hasUrlTeam);
+      const teamFromUrl = searchParams.get('team');
+      const boardFromUrl = searchParams.get('board');
+      
+      // URL'den gelen takım ve board varsa, hemen geçerli takım seçilmiş gibi davran
+      // Bu ilk yüklemede takım seçili görünmesini sağlar
+      if (teamFromUrl && boardFromUrl) {
+        setHasTeamSelected(true);
+        return;
+      }
+      
+      // URL'den gelen takım bilgisi varsa, sadece assignees listesi varsa geçerli kabul et
+      let hasValidTeam = hasLocalStorageTeam;
+      
+      // Geçerli URL takımı kontrolü - hem URL'de takım olacak hem de localStorage'da ilgili veriler bulunacak
+      if (teamFromUrl) {
+        const storedTeamName = localStorage.getItem('JIRA_TEAM_NAME');
+        
+        // Takım adı URL ile localStorage'da aynı mı kontrol et
+        if (storedTeamName === teamFromUrl && hasLocalStorageTeam) {
+          hasValidTeam = true;
+        }
+      }
+      
+      console.log("hasValidTeam:", hasValidTeam, "teamFromUrl:", teamFromUrl, "hasLocalStorageTeam:", hasLocalStorageTeam);
+      setHasTeamSelected(hasValidTeam);
     };
   
     updateHasTeamSelected();
@@ -62,6 +85,7 @@ export default function GurubuPlanner() {
       window.removeEventListener("storage", updateHasTeamSelected);
     };
   }, [showTeamSelect, searchParams]);
+
   const handleTeamSelectClick = () => {
     setShowTeamSelect(true);
   };
@@ -179,7 +203,6 @@ export default function GurubuPlanner() {
                 hasTeamSelected={hasTeamSelected}
                 loading={loading}
                 setLoading={handleLoading}
-                selectedTeam={searchParams.get('team') || localStorage.getItem('JIRA_DEFAULT_ASSIGNEES')}
               />
               <div className="gurubu-planner-footer">
                 Developed with ❤️ by GuruBu Developers
