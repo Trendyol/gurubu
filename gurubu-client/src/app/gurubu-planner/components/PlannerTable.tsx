@@ -2,6 +2,7 @@
 
 import React from "react";
 import { IconUserFilled } from "@tabler/icons-react";
+import { usePlanner } from "@/contexts/PlannerContext";
 
 interface AssigneeStatistics {
   assignee: string;
@@ -33,10 +34,6 @@ interface SprintStatisticsResponse {
 
 interface PlannerTableProps {
   selectedSprintId: number | null;
-  refreshTrigger: number;
-  setLoading: (isLoading: boolean) => void;
-  loading: boolean;
-  onEmptyTeam: (isEmpty: boolean) => void;
 }
 
 const LoadingSkeleton = () => {
@@ -77,15 +74,15 @@ const LoadingSkeleton = () => {
   );
 };
 
-const PlannerTable: React.FC<PlannerTableProps> = ({
-  selectedSprintId,
-  refreshTrigger,
-  setLoading,
-  loading,
-  onEmptyTeam
-}) => {
-  const [statistics, setStatistics] =
-    React.useState<SprintStatisticsResponse | null>(null);
+const PlannerTable: React.FC<PlannerTableProps> = ({ selectedSprintId }) => {
+  const { 
+    refreshTrigger, 
+    setLoading, 
+    loading, 
+    setHasEmptyTeam 
+  } = usePlanner();
+  
+  const [statistics, setStatistics] = React.useState<SprintStatisticsResponse | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
   const fetchControllerRef = React.useRef<AbortController | null>(null);
@@ -112,28 +109,22 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
       try {
         const assigneesData = localStorage.getItem("JIRA_DEFAULT_ASSIGNEES");
         if (!assigneesData) {
-          // Return early or signal empty team to parent
-          onEmptyTeam(true);
-          return null;
+          setHasEmptyTeam(true);
+          setLoading(false);
+          return;
         }
 
         const assignees: string[] = JSON.parse(assigneesData);
         
-        // Dizinin boş olup olmadığını kontrol et
-        // URL ilk yüklemesinde boş dizi kullanılıyor olabilir
         if (assignees.length === 0) {
-          console.log("Empty assignees array, trying with teamFromUrl");
           const teamFromUrl = new URL(window.location.href).searchParams.get('team');
           
-          // URL'de takım varsa, henüz veriler yükleniyor olabilir
-          // Kullanıcıya "Loading team data..." benzeri bir durum gösterilebilir
           if (teamFromUrl) {
-            // API çağrısı yapmak yerine sadece ekranı güncelle
-            setLoading(true);
-            return null;
+            return;
           } else {
-            onEmptyTeam(true);
-            return null;
+            setHasEmptyTeam(true);
+            setLoading(false);
+            return;
           }
         }
         
@@ -150,6 +141,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
             body: JSON.stringify({ assignees }),
           }
         );
+        
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Sprint statistics error:", errorData);
@@ -157,24 +149,23 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
             errorData.error || "Failed to fetch sprint statistics"
           );
         }
+        
         const data: SprintStatisticsResponse = await response.json();
         
         if (data.statistics.length === 0) {
-          onEmptyTeam(true);
+          setHasEmptyTeam(true);
         } else {
-          onEmptyTeam(false);
+          setHasEmptyTeam(false);
           setStatistics(data);
         }
-        
-        setLoading(false);
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           return;
         }
-        setLoading(false);
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        if (controller === fetchControllerRef.current) {
+        setLoading(false);
+        if (fetchControllerRef.current === controller) {
           fetchControllerRef.current = null;
         }
       }
@@ -188,7 +179,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
         fetchControllerRef.current = null;
       }
     };
-  }, [selectedSprintId, refreshTrigger]);
+  }, [selectedSprintId, refreshTrigger, setLoading, setHasEmptyTeam]);
 
   return (
     <div className="gurubu-planner-table">

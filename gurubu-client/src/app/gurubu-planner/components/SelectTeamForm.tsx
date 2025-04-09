@@ -1,36 +1,28 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLoader } from "@/contexts/LoaderContext";
 import { PService } from "@/services/pService";
 import { JiraService } from "@/services/jiraService";
 import { Board } from "@/shared/interfaces";
-import { Sprint } from "../components/SprintDropdown";
 import { Dropdown, DropdownOption } from "../../../ui-kit/dropdown";
-import { Assignee } from "types/pandora";
-import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { usePlanner } from "@/contexts/PlannerContext";
 
 type Props = {
-  handleRefresh: () => void;
   closeModal?: () => void;
-  setSprints: (sprint: any[]) => void;
-  setLoading: (value: boolean) => void;
 };
 
-export interface SprintResponse {
-  maxResults: number;
-  startAt: number;
-  isLast: boolean;
-  values: Sprint[];
-}
-
 export const SelectTeamForm = ({
-  handleRefresh,
   closeModal,
-  setSprints,
-  setLoading,
 }: Props) => {
+  const {
+    setSprints,
+    handleRefresh,
+    setLoading,
+    selectTeam
+  } = usePlanner();
+
   const [teams, setTeams] = useState<string[]>([]);
   const [assignees, setAssignees] = useState<string[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<string>("");
@@ -39,84 +31,69 @@ export const SelectTeamForm = ({
   const { setShowLoader } = useLoader();
   const searchParams = useSearchParams();
 
-  const router = useRouter();
-
   const pService = new PService(process.env.NEXT_PUBLIC_API_URL || "");
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
 
   useEffect(() => {
     fetchTeams();
-    const teamFromUrl = searchParams.get('team');
-    const boardFromUrl = searchParams.get('board');
-    
-    if (teamFromUrl) {
-      console.log("Setting team from URL:", teamFromUrl);
-      setSelectedTeam(teamFromUrl);
 
-      // URL'den takım geldiğinde hemen localStorage'a geçici olarak bilgiyi kaydet
-      // bu ilk yüklemede takım görüntülenmesini sağlar
-      localStorage.setItem('JIRA_TEAM_NAME', teamFromUrl);
+    const initializeFormFromUrl = () => {
+      const teamFromUrl = searchParams.get('team');
+      const boardFromUrl = searchParams.get('board');
       
-      // Eğer localStorage'da henüz takım verisi yoksa, boş bir dizi ekle
-      // bu sayede hasTeamSelected true olabilir
-      if (!localStorage.getItem('JIRA_DEFAULT_ASSIGNEES')) {
-        localStorage.setItem('JIRA_DEFAULT_ASSIGNEES', JSON.stringify([]));
-      }
-      
-      if (boardFromUrl) {
-        localStorage.setItem('JIRA_BOARD', boardFromUrl);
-      }
-      
-      (async () => {
-        try {
-          const organisationResponse = await pService.getOrganization(teamFromUrl);
-          
-          if (organisationResponse.isSuccess && organisationResponse.data) {
-            localStorage.removeItem('JIRA_TEAM_NAME');
-            localStorage.removeItem('JIRA_DEFAULT_ASSIGNEES');
+      if (teamFromUrl) {
+        setSelectedTeam(teamFromUrl);
+        
+        (async () => {
+          try {
+            const organisationResponse = await pService.getOrganization(teamFromUrl);
             
-            const { developer, qa } = organisationResponse.data.metadata;
-            const teamAssignees = [...developer, ...qa];
-            
-            setAssignees(teamAssignees);
-            localStorage.setItem('JIRA_DEFAULT_ASSIGNEES', JSON.stringify(teamAssignees));
-            localStorage.setItem('JIRA_TEAM_NAME', teamFromUrl);
-            
-            const boardsResponse = await jiraService.getBoardsByProjectKey(
-              organisationResponse.data.metadata["jira-projects"][0].key
-            );
-            
-            if (boardsResponse.isSuccess && boardsResponse.data) {
-              setBoards(boardsResponse.data);
+            if (organisationResponse.isSuccess && organisationResponse.data) {
+              const { developer, qa } = organisationResponse.data.metadata;
+              const teamAssignees = [...developer, ...qa];
               
-              if (boardFromUrl) {
-                setSelectedJiraBoardId(boardFromUrl);
-                localStorage.setItem('JIRA_BOARD', boardFromUrl);
+              setAssignees(teamAssignees);
+              
+              const boardsResponse = await jiraService.getBoardsByProjectKey(
+                organisationResponse.data.metadata["jira-projects"][0].key
+              );
+              
+              if (boardsResponse.isSuccess && boardsResponse.data) {
+                setBoards(boardsResponse.data);
                 
-                const response = await fetch(
-                  `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardFromUrl}/future`
-                );
-                const data = await response.json();
-                setSprints(data.values);
-                handleRefresh();
+                if (boardFromUrl) {
+                  setSelectedJiraBoardId(boardFromUrl);
+                }
               }
             }
+          } catch (error) {
+            console.error("Error fetching team data from URL params:", error);
           }
-        } catch (error) {
-          console.error("Error fetching team data from URL params:", error);
-        }
-      })();
+        })();
+      }
+    };
+
+    const isInitialRender = !selectedTeam;
+    if (isInitialRender) {
+      initializeFormFromUrl();
     }
-  }, [searchParams]);
+  }, []);
+  
+  const fetchTeams = async () => {
+    try {
+      const response = await pService.getOrganizations();
+      if (response.isSuccess && response.data) {
+        setTeams(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    }
+  };
 
   const handleTeamSelect = async (option: DropdownOption) => {
     if (!option?.value) return;
+    setSelectedTeam(option.value);
     handleTeamSelectionAndFetchData(option.value);
-  };
-
-  const fetchTeams = async () => {
-    const response = await pService.getOrganizations();
-    if (response.isSuccess && response.data) setTeams(response.data);
   };
 
   const handleBoardSelect = async (option: DropdownOption) => {
@@ -130,63 +107,21 @@ export const SelectTeamForm = ({
   };
 
   const handleSaveSelections = async () => {
-    setLoading(true);
-
+    if (!selectedTeam || !selectedJiraBoardId) {
+      console.error("Can't save: missing team or board selection");
+      return;
+    }
+    
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/jira/${selectedJiraBoardId}/future`
-      );
-      const data: SprintResponse = await response.json();
-      setSprints(data.values);
-      localStorage.setItem("JIRA_DEFAULT_ASSIGNEES", JSON.stringify(assignees));
-      localStorage.setItem("JIRA_BOARD", selectedJiraBoardId);
-      localStorage.setItem("JIRA_TEAM_NAME", selectedTeam);
-      
-      const url = new URL(window.location.href);
-      url.searchParams.set('team', selectedTeam);
-      url.searchParams.set('board', selectedJiraBoardId);
-      window.history.pushState({}, '', url.toString());
-      
-      handleClearForm();
-      handleRefresh();
       if (closeModal) {
         closeModal();
       }
       
+      await selectTeam(selectedTeam, selectedJiraBoardId);
+      
       window.location.reload();
     } catch (error) {
-      console.error("Error fetching future sprints:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBoardData = async (boardId: string) => {
-    setLoading(true);
-    try {
-      console.log("Fetching data for board:", boardId);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`
-      );
-      const data: SprintResponse = await response.json();
-      setSprints(data.values);
-      localStorage.setItem("JIRA_BOARD", boardId);
-      handleRefresh();
-      
-      const teamFromUrl = searchParams.get('team');
-      if (teamFromUrl) {
-        const organisationResponse = await pService.getOrganization(teamFromUrl);
-        if (organisationResponse.isSuccess && organisationResponse.data) {
-          const { developer, qa } = organisationResponse.data.metadata;
-          const teamAssignees = [...developer, ...qa];
-          setAssignees(teamAssignees);
-          localStorage.setItem("JIRA_DEFAULT_ASSIGNEES", JSON.stringify(teamAssignees));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching future sprints:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error in handleSaveSelections:", error);
     }
   };
 
@@ -197,7 +132,6 @@ export const SelectTeamForm = ({
     setShowLoader(true);
 
     try {
-      console.log("Fetching details for team:", teamName);
       const organisationResponse = await pService.getOrganization(teamName);
 
       if (organisationResponse.isSuccess && organisationResponse.data) {
@@ -211,12 +145,13 @@ export const SelectTeamForm = ({
 
         if (boardsResponse.isSuccess && boardsResponse.data) {
           setBoards(boardsResponse.data);
-          
-          const boardFromUrl = searchParams.get('board');
-          if (boardFromUrl) {
-            setSelectedJiraBoardId(boardFromUrl);
-          }
+        } else {
+          console.warn("No boards found for the selected team");
+          setBoards([]);
+          setSelectedJiraBoardId("");
         }
+      } else {
+        console.error("Failed to fetch organization data:", organisationResponse);
       }
     } catch (error) {
       console.error("Error fetching team details:", error);

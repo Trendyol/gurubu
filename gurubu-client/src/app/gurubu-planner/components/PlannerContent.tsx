@@ -1,58 +1,35 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PlannerTable from './PlannerTable';
 import { SelectTeamForm } from './SelectTeamForm';
-import { Sprint } from '../components/SprintDropdown';
 import { Modal } from '@/components/common/modal';
 import { IconUsers } from '@tabler/icons-react';
-import { useSearchParams } from 'next/navigation';
+import { usePlanner } from '@/contexts/PlannerContext';
+
 interface PlannerContentProps {
-  setSprints: (sprint: Sprint[]) => void;
   selectedSprintId: number | null;
-  refreshTrigger: number;
-  handleRefresh: () => void;
-  selectedSprint: Sprint | null;
-  onSprintSelect: (sprint: Sprint | null) => void;
-  showTeamSelect: boolean;
-  handleCloseTeamSelect: () => void;
-  handleTeamSelectClick: () => void;
-  hasTeamSelected: boolean;
-  loading: boolean;
-  setLoading: (value: boolean) => void;
 }
 
 export const PlannerContent: React.FC<PlannerContentProps> = ({
-  setSprints,
-  selectedSprintId,
-  refreshTrigger,
-  handleRefresh,
-  showTeamSelect,
-  handleCloseTeamSelect,
-  handleTeamSelectClick,
-  hasTeamSelected,
-  loading,
-  setLoading
+  selectedSprintId
 }) => {
-  const searchParams = useSearchParams();
-  const [hasEmptyTeam, setHasEmptyTeam] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const {
+    hasTeamSelected,
+    selectedTeam,
+    showTeamSelect,
+    setShowTeamSelect,
+    hasEmptyTeam,
+  } = usePlanner();
 
-  useEffect(() => {
-    const teamFromUrl = searchParams.get('team');
-    const storedTeam = localStorage.getItem('JIRA_TEAM_NAME');
-    
-    // Önce URL'den takım bilgisini kontrol et, yoksa localStorage'dan al
-    const effectiveTeam = teamFromUrl || storedTeam;
-    setSelectedTeam(effectiveTeam);
-    
-    console.log("Setting selectedTeam from", teamFromUrl ? "URL" : "localStorage", ":", effectiveTeam);
-  }, [searchParams]);
-
-  const handleEmptyTeam = (isEmpty: boolean) => {
-    setHasEmptyTeam(isEmpty);
+  const handleCloseTeamSelect = () => {
+    setShowTeamSelect(false);
   };
-  console.log("hasTeamSelected", hasTeamSelected, "selectedTeam", selectedTeam);
+
+  const handleTeamSelectClick = () => {
+    setShowTeamSelect(true);
+  };
+
   return (
     <div className="gurubu-planner-content">
       {selectedTeam && (
@@ -60,10 +37,7 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
       )}
       <Modal isOpen={showTeamSelect} onClose={handleCloseTeamSelect}>
         <SelectTeamForm
-          setSprints={setSprints}
-          handleRefresh={handleRefresh}
           closeModal={handleCloseTeamSelect}
-          setLoading={setLoading}
         />
       </Modal>
 
@@ -82,10 +56,6 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
       ) : (
         <PlannerTable
           selectedSprintId={selectedSprintId}
-          refreshTrigger={refreshTrigger}
-          loading={loading}
-          setLoading={setLoading}
-          onEmptyTeam={handleEmptyTeam}
         />
       )}
     </div>
