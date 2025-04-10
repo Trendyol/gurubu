@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { IconChevronDown } from "@tabler/icons-react";
+import React, { useEffect, useState, useRef } from 'react';
+import { IconChevronDown } from '@tabler/icons-react';
+import { useSearchParams } from 'next/navigation';
 
 export interface Sprint {
   id: number;
@@ -28,29 +29,41 @@ interface SprintDropdownProps {
   onSprintSelect: (sprint: Sprint | null) => void;
 }
 
-const SprintDropdown: React.FC<SprintDropdownProps> = ({
-  selectedSprint,
-  onSprintSelect,
-  sprints,
-  setSprints,
-}) => {
+const SprintDropdown: React.FC<SprintDropdownProps> = ({ selectedSprint, onSprintSelect, sprints, setSprints }) => {
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const boardId = localStorage.getItem("JIRA_BOARD");
+    const boardId = searchParams.get('board') || localStorage.getItem('JIRA_BOARD');
 
     const fetchSprints = async () => {
+      if (!boardId) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch sprints");
+          throw new Error(`Failed to fetch sprints for board ${boardId}`);
         }
-        const data: SprintResponse = await response.json();
+        const data = await response.json();
+        
+        // Handle error response format
+        if (data.error) {
+          throw new Error(`Failed to fetch sprints for board ${boardId}`);
+        }
+        
+        // Check if data has the expected structure
+        if (!data || !Array.isArray(data.values)) {
+          throw new Error(`Invalid sprint data received for board ${boardId}`);
+        }
+
         setSprints(data.values);
 
         // Only select first sprint on initial load
@@ -58,20 +71,22 @@ const SprintDropdown: React.FC<SprintDropdownProps> = ({
           onSprintSelect(data.values[0]);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        console.error('Error fetching sprints:', err);
+        setError(err instanceof Error ? err.message : `Failed to fetch sprints for board ${boardId}`);
+        setSprints([]); // Reset sprints on error
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchSprints();
-  }, []); // Remove selectedSprint from dependencies
+  }, [searchParams]);
 
   useEffect(() => {
-    if (sprints?.length) {
+    if (sprints && sprints.length > 0) {
       onSprintSelect(sprints[0]);
     }
-  }, [sprints]);
+  },[sprints]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -129,7 +144,7 @@ const SprintDropdown: React.FC<SprintDropdownProps> = ({
           className={`gurubu-planner-dropdown-arrow ${isOpen ? "open" : ""}`}
         />
       </div>
-      {isOpen && (
+      {isOpen && sprints && sprints.length > 0 && (
         <div className="gurubu-planner-dropdown-menu">
           {sprints.map((sprint) => (
             <div

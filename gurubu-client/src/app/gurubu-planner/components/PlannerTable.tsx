@@ -2,6 +2,7 @@
 
 import React from "react";
 import { IconUserFilled } from "@tabler/icons-react";
+import { usePlanner } from "@/contexts/PlannerContext";
 
 interface AssigneeStatistics {
   assignee: string;
@@ -33,9 +34,6 @@ interface SprintStatisticsResponse {
 
 interface PlannerTableProps {
   selectedSprintId: number | null;
-  refreshTrigger: number;
-  setLoading: (isLoading: boolean) => void;
-  loading: boolean;
 }
 
 const LoadingSkeleton = () => {
@@ -76,14 +74,15 @@ const LoadingSkeleton = () => {
   );
 };
 
-const PlannerTable: React.FC<PlannerTableProps> = ({
-  selectedSprintId,
-  refreshTrigger,
-  setLoading,
-  loading,
-}) => {
-  const [statistics, setStatistics] =
-    React.useState<SprintStatisticsResponse | null>(null);
+const PlannerTable: React.FC<PlannerTableProps> = ({ selectedSprintId }) => {
+  const { 
+    refreshTrigger, 
+    setLoading, 
+    loading, 
+    setHasEmptyTeam 
+  } = usePlanner();
+  
+  const [statistics, setStatistics] = React.useState<SprintStatisticsResponse | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
   const fetchControllerRef = React.useRef<AbortController | null>(null);
@@ -110,10 +109,25 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
       try {
         const assigneesData = localStorage.getItem("JIRA_DEFAULT_ASSIGNEES");
         if (!assigneesData) {
-          throw new Error("No team selected");
+          setHasEmptyTeam(true);
+          setLoading(false);
+          return;
         }
 
         const assignees: string[] = JSON.parse(assigneesData);
+        
+        if (assignees.length === 0) {
+          const teamFromUrl = new URL(window.location.href).searchParams.get('team');
+          
+          if (teamFromUrl) {
+            return;
+          } else {
+            setHasEmptyTeam(true);
+            setLoading(false);
+            return;
+          }
+        }
+        
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/jira/${selectedSprintId}/statistics`,
           {
@@ -127,6 +141,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
             body: JSON.stringify({ assignees }),
           }
         );
+        
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Sprint statistics error:", errorData);
@@ -134,17 +149,23 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
             errorData.error || "Failed to fetch sprint statistics"
           );
         }
+        
         const data: SprintStatisticsResponse = await response.json();
-        setStatistics(data);
-        setLoading(false);
+        
+        if (data.statistics.length === 0) {
+          setHasEmptyTeam(true);
+        } else {
+          setHasEmptyTeam(false);
+          setStatistics(data);
+        }
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           return;
         }
-        setLoading(false);
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        if (controller === fetchControllerRef.current) {
+        setLoading(false);
+        if (fetchControllerRef.current === controller) {
           fetchControllerRef.current = null;
         }
       }
@@ -158,7 +179,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({
         fetchControllerRef.current = null;
       }
     };
-  }, [selectedSprintId, refreshTrigger]);
+  }, [selectedSprintId, refreshTrigger, setLoading, setHasEmptyTeam]);
 
   return (
     <div className="gurubu-planner-table">
