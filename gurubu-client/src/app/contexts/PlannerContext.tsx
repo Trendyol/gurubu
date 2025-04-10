@@ -71,7 +71,7 @@ export const PlannerProvider: React.FC<PlannerProviderProps> = ({ children }) =>
         const { developer, qa } = organisationResponse.data.metadata;
         const teamAssignees = [...developer, ...qa];
         
-        localStorage.setItem('JIRA_DEFAULT_ASSIGNEES', JSON.stringify(teamAssignees));
+        localStorage.setItem('JIRA_DEFAULT_ASSIGNEE_LIST', JSON.stringify(teamAssignees));
         localStorage.setItem('JIRA_TEAM_NAME', teamName);
         localStorage.setItem('JIRA_BOARD', boardId);
         
@@ -88,7 +88,7 @@ export const PlannerProvider: React.FC<PlannerProviderProps> = ({ children }) =>
       } else {
         localStorage.setItem('JIRA_TEAM_NAME', teamName);
         localStorage.setItem('JIRA_BOARD', boardId);
-        localStorage.setItem('JIRA_DEFAULT_ASSIGNEES', JSON.stringify([]));
+        localStorage.setItem('JIRA_DEFAULT_ASSIGNEE_LIST', JSON.stringify([]));
         
         setHasEmptyTeam(true);
       }
@@ -109,7 +109,7 @@ export const PlannerProvider: React.FC<PlannerProviderProps> = ({ children }) =>
       const teamFromUrl = searchParams.get('team');
       const boardFromUrl = searchParams.get('board');
       const storedTeamName = localStorage.getItem('JIRA_TEAM_NAME');
-      const hasAssignees = !!localStorage.getItem('JIRA_DEFAULT_ASSIGNEES');
+      const hasAssignees = !!localStorage.getItem('JIRA_DEFAULT_ASSIGNEE_LIST');
       
       if (teamFromUrl && boardFromUrl) {
         setSelectedTeam(teamFromUrl);

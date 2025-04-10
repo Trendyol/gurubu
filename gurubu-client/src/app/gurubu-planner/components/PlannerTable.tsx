@@ -107,7 +107,7 @@ const PlannerTable: React.FC<PlannerTableProps> = ({ selectedSprintId }) => {
       setError(null);
 
       try {
-        const assigneesData = localStorage.getItem("JIRA_DEFAULT_ASSIGNEES");
+        const assigneesData = localStorage.getItem("JIRA_DEFAULT_ASSIGNEE_LIST");
         if (!assigneesData) {
           setHasEmptyTeam(true);
           setLoading(false);
