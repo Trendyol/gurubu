@@ -7,7 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import { useSearchParams } from "next/navigation";
-import { Sprint } from "../gurubu-planner/components/SprintDropdown";
+import { Sprint } from "../planner/components/SprintDropdown";
 import { PService } from "@/services/pService";
 import { JiraService } from "@/services/jiraService";
 
