@@ -5,10 +5,6 @@ import "@/styles/globals.scss";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-});
 
 export const metadata: Metadata = {
   title: "Gurubu | Simple, fast and practical grooming",
@@ -39,7 +35,6 @@ export default function RootLayout({
       <body
         className={classNames([
           inter.className,
-          spaceGrotesk.variable,
           inter.variable,
         ])}
       >

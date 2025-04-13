@@ -1,15 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Space_Grotesk } from "next/font/google";
-
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
 type Props = {
   className?: string;
   isLink?: boolean;
+  type?: "planner" | "poker";
 };
 
-const LogoContent = () => {
+const LogoContent = ({ type }: { type: "planner" | "poker" }) => {
   return (
     <>
       <Image
@@ -19,24 +17,24 @@ const LogoContent = () => {
         alt="Gurubu Logo"
         priority
       />
-      <span className={spaceGrotesk.className}>GuruBu</span>
+      <span>{type === "planner" ? "GuruBu Planner" : "GuruBu Planning Poker"}</span>
     </>
   );
 };
 
 const Logo: React.FC<Props> = (props) => {
-  const { className, isLink = true } = props;
+  const { className, isLink = true, type = "poker" } = props;
 
   if (isLink) {
     return (
       <Link href="/" className={`logo ${className}`}>
-        <LogoContent />
+        <LogoContent type={type} />
       </Link>
     );
   }
   return (
     <div className={`logo ${className}`}>
-      <LogoContent />
+      <LogoContent type={type} />
     </div>
   );
 };

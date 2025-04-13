@@ -17,6 +17,23 @@
     font-size: $font-size-header-5;
     font-weight: $bold;
     margin-bottom: $space-xlarge;
+    font-weight: $bold;
+    background: linear-gradient(135deg, $purple-700 0%, $blue-500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse-text 3s infinite alternate;
+    margin: 0;
+    will-change: filter;
+    
+    @keyframes pulse-text {
+      0% {
+        filter: brightness(1) drop-shadow(0 0 5px rgba($purple-500, 0.3));
+      }
+      100% {
+        filter: brightness(1.2) drop-shadow(0 0 8px rgba($purple-500, 0.5));
+      }
+    }
   }
   &__title {
     color: $title-color;

@@ -1,4 +1,3 @@
-import { useGroomingRoom } from '@/contexts/GroomingRoomContext';
 import { useState, useEffect } from 'react';
 
 const announcements = [
@@ -21,7 +20,6 @@ const announcements = [
 const AnnouncementBanner = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const { isAnnouncementBannerVisible, setIsAnnouncementBannerVisible } = useGroomingRoom();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -35,15 +33,11 @@ const AnnouncementBanner = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (!isAnnouncementBannerVisible) {
-    return null;
-  }
 
   const currentAnnouncement = announcements[currentIndex];
 
   const handleActionClick = () => {
     window.open(currentAnnouncement.link, '_blank');
-    setIsAnnouncementBannerVisible(false);
   };
 
   return (

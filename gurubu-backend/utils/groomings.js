@@ -135,18 +135,13 @@ const generateNewRoom = (nickName, groomingType) => {
   };
 };
 
-const handleJoinRoom = (nickName, roomID, isAdmin) => {
+const handleJoinRoom = (nickName, roomID) => {
   const user = userJoin(nickName, roomID);
   if (!user) {
     return handleErrors("handleJoinRoom", roomID);
   }
 
-  user.isAdmin = false;
   user.connected = true;
-
-  if(isAdmin){
-    user.isAdmin = isAdmin
-  }
 
   const { credentials, ...userWithoutCredentials } = user;
 
