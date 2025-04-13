@@ -10,7 +10,7 @@ import { LoaderProvider } from "@/contexts/LoaderContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { IconUsers } from "@tabler/icons-react";
 import { PlannerProvider, usePlanner } from "@/contexts/PlannerContext";
-
+import AnnouncementBanner from "../components/common/announcement-banner";
 const AUTO_REFRESH_INTERVAL = 15;
 
 export default function GurubuPlanner() {
@@ -18,6 +18,7 @@ export default function GurubuPlanner() {
     <LoaderProvider>
       <ToastProvider>
         <PlannerProvider>
+          <AnnouncementBanner />
           <PlannerNavbar />
           <PlannerContentWrapper />
         </PlannerProvider>

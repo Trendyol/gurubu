@@ -10,7 +10,7 @@ import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
 import { GroomingMode } from "@/shared/enums";
 import { AnnouncementTooltip } from "./announcement-tooltip";
-import AnnouncementBanner from "./announcement-banner";
+import AnnouncementBanner from "../../common/announcement-banner";
 import classNames from "classnames";
 
 interface Props {

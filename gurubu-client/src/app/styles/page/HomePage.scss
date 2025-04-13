@@ -42,7 +42,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
   animation: pulse-text 3s infinite alternate;
   margin: 0;
   will-change: filter;
@@ -79,11 +78,10 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
   filter: drop-shadow(0 2px 5px rgba(106, 65, 198, 0.2));
   position: relative;
   display: inline-block;
-  animation: gradient-text 8s ease infinite;
+  animation: gradient-text 4s ease infinite;
   will-change: background-position;
   
   &::after {

@@ -133,7 +133,7 @@ const NicknameForm = ({ roomId }: IProps) => {
         <Image priority src="/logo.svg" alt="logo" width={30} height={30} />
         GuruBu
       </h1>
-      <h1 className="nickname-form__title">Welcome to Gurubu</h1>
+      <h1 className="nickname-form__title">Welcome to GuruBu Planning Poker</h1>
       <div className="nickname-form__action-wrapper">
         <div className="nickname-form__input-wrapper">
           <label
