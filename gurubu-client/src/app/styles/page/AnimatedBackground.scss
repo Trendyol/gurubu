@@ -1,0 +1,97 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.animated-background::before,
+.animated-background::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  z-index: -1;
+  will-change: transform;
+  border-radius: 40%;
+}
+
+.animated-background::before {
+  background: linear-gradient(
+    135deg,
+    rgba($purple-200, 0.1) 0%,
+    rgba($blue-200, 0.1) 50%,
+    rgba($purple-100, 0.1) 100%
+  );
+  animation: rotate-bg 25s linear infinite;
+}
+
+.animated-background::after {
+  background: linear-gradient(
+    -45deg,
+    rgba($blue-200, 0.1) 0%,
+    rgba($purple-200, 0.1) 50%,
+    rgba($blue-100, 0.1) 100%
+  );
+  animation: rotate-bg 30s linear infinite reverse;
+  top: -20%;
+  left: -20%;
+}
+
+@keyframes rotate-bg {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Decorative shapes
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(30px);
+  opacity: 0.1;
+  z-index: -1;
+
+  &.shape-1 {
+    width: 400px;
+    height: 400px;
+    background-color: $blue-200;
+    top: -100px;
+    right: -100px;
+    animation: pulse-shape 15s ease infinite alternate;
+  }
+
+  &.shape-2 {
+    width: 300px;
+    height: 300px;
+    background-color: $purple-200;
+    bottom: -50px;
+    left: -50px;
+    animation: pulse-shape 10s ease infinite alternate-reverse;
+  }
+}
+
+@keyframes pulse-shape {
+  0% {
+    transform: scale(0.9) translate(0, 0);
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(1.1) translate(20px, 20px);
+    opacity: 0.08;
+  }
+} 

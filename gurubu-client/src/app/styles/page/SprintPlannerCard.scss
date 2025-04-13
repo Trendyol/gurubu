@@ -1,0 +1,18 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.purple-card {
+  background-color: $purple-50;
+  
+  .project-card__button {
+    background-color: $purple-500;
+    
+    &:hover {
+      background-color: $purple-600;
+    }
+  }
+}
+
+.icon-container.purple {
+  background-color: $purple-500;
+} 

@@ -1,0 +1,18 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.icon-container {
+  width: 65px;
+  height: 65px;
+  border-radius: $radius-xlarge;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  
+  svg {
+    width: 35px;
+    height: 35px;
+    color: $white;
+  }
+} 

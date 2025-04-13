@@ -1,0 +1,18 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.blue-card {
+  background-color: $purple-50;
+  
+  .project-card__button {
+    background-color: $blue-500;
+    
+    &:hover {
+      background-color: $blue-600;
+    }
+  }
+}
+
+.icon-container.blue {
+  background-color: $blue-500;
+} 
