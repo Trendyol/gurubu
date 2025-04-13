@@ -1,0 +1,85 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.project-card {
+  cursor: pointer;
+  background-color: $white;
+  border-radius: $radius-xlarge;
+  padding: 2rem;
+  display: $flex;
+  flex-direction: column;
+  box-shadow: $shadow-lg;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: translateZ(0);
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  will-change: transform, box-shadow;
+  
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    
+    .project-card__button {
+      transform: translateY(-2px);
+      
+      .arrow {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  &__title {
+    font-size: $font-size-header-5;
+    font-weight: $bold;
+    margin-bottom: 1rem;
+    color: $gray-900;
+  }
+  
+  &__description {
+    font-size: $font-size-paragraph-3;
+    line-height: $line-height-paragraph-3;
+    color: $gray-600;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+  }
+  
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    border-radius: $radius-large;
+    color: $white;
+    font-weight: $semibold;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+    align-self: flex-start;
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover::after {
+      transform: translateX(0);
+    }
+    
+    .arrow {
+      margin-left: 8px;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+  }
+} 

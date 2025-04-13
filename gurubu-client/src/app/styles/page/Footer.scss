@@ -1,0 +1,30 @@
+@import "../variables.scss";
+@import "../mixins.scss";
+
+.site-footer {
+  width: 100%;
+  padding: 0.5rem 0;
+  margin-top: auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.copyright {
+  font-size: $font-size-paragraph-4;
+  color: $gray-600;
+  font-weight: $medium;
+}
+
+.footer-tagline {
+  font-size: $font-size-paragraph-5;
+  color: $gray-500;
+  font-style: italic;
+} 

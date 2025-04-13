@@ -1,11 +1,14 @@
 @import "../variables.scss";
 @import "../mixins.scss";
 
-// Sections
-@import "./hero-section.scss";
-@import "./testimonial.scss";
-@import "./pricing.scss";
-@import "./features.scss";
+@import "./HomePage.scss";
+@import "./ProjectCard.scss";
+@import "./PlanningPokerCard.scss";
+@import "./SprintPlannerCard.scss";
+@import "./IconContainer.scss";
+@import "./FloatingStats.scss";
+@import "./AnimatedBackground.scss";
+@import "./Footer.scss";
 
 main {
   min-height: 100vh;
