@@ -39,7 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "classnames": "^2.3.2",
     "eslint": "^8",
-    "eslint-config-next": "14.0.0",
+    "eslint-config-next": "15.3.0",
     "sass": "^1.69.5",
     "typescript": "^5"
   }
