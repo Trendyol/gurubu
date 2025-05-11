@@ -88,7 +88,8 @@ class JiraService {
     // Process each issue
     issues.forEach((issue) => {
       const storyPoint = issue.storyPoint || 0;
-      const testStoryPoint = issue.testStoryPoint || 0;
+      // If storyPoint is 0, force testStoryPoint to be 0 as well
+      const testStoryPoint = !storyPoint || storyPoint === 0 ? 0 : (issue.testStoryPoint || 0);
 
       totalStoryPoints += storyPoint;
       totalTestStoryPoints += testStoryPoint;
