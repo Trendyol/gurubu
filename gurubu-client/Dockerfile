@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN yarn
+RUN npm install
 
 COPY . .
 
@@ -28,8 +28,8 @@ ENV NEXT_PUBLIC_JIRA_ISSUE_IMPORTER_HELP=$JIRA_ISSUE_IMPORTER_HELP
 ARG TEST_STORY_POINT_CUSTOM_FIELD
 ENV NEXT_PUBLIC_TEST_STORY_POINT_CUSTOM_FIELD=$TEST_STORY_POINT_CUSTOM_FIELD
 
-RUN yarn build
+RUN npm run build
 
 EXPOSE 3000
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]

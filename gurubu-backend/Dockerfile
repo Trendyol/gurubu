@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN yarn
+RUN npm install
 
 COPY . .
 
@@ -34,8 +34,8 @@ ENV P_GATEWAY_URL=$P_GATEWAY_URL
 ENV OPENAI_ASSISTANT_ID=$OPENAI_ASSISTANT_ID
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
-RUN yarn build
+RUN npm run build
 
 EXPOSE 5000
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]
