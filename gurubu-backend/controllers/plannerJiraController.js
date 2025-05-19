@@ -1,4 +1,5 @@
 const jiraService = require("../services/jiraService");
+const pService = require("../services/pService");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -55,6 +56,21 @@ exports.getSprintStatistics = async (req, res) => {
       issues.issues,
       assignees
     );
+    
+    const userProfileMap = {};
+    for (const assignee of assignees) {
+      const userData = await pService.searchUsers(assignee);
+      if (userData && userData.length > 0 && userData[0].spec?.profile?.picture) {
+        userProfileMap[assignee] = userData[0].spec.profile;
+      }
+    }
+    
+    statistics.statistics = statistics.statistics.map(stat => ({
+      ...stat,
+      assigneePicture: userProfileMap[stat.assignee].picture || null,
+      assigneeFullName: userProfileMap[stat.assignee].displayName || null,
+    }));
+    
     res.json(statistics);
   } catch (error) {
     console.error("Error getting sprint statistics:", {
