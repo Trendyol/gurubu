@@ -1,4 +1,4 @@
-ARG RUNTIME_IMAGE
+ARG RUNTIME_IMAGE=node:20-alpine
 
 FROM $RUNTIME_IMAGE
 
@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN yarn
 
 COPY . .
 
@@ -34,8 +34,8 @@ ENV P_GATEWAY_URL=$P_GATEWAY_URL
 ENV OPENAI_ASSISTANT_ID=$OPENAI_ASSISTANT_ID
 ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
-RUN npm run build
+RUN yarn build
 
 EXPOSE 5000
 
-CMD [ "npm", "start" ]
+CMD [ "yarn", "start" ]
