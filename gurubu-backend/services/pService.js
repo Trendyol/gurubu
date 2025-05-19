@@ -16,7 +16,6 @@ class PService {
       return response.data;
     } catch (error) {
       console.error("Error getting organizations:", error);
-      throw error;
     }
   }
 
@@ -43,7 +42,6 @@ class PService {
       return teamNames;
     } catch (error) {
       console.error("Error searching organizations:", error);
-      throw error;
     }
   }
 
@@ -66,7 +64,23 @@ class PService {
       return teamData;
     } catch (error) {
       console.error("Error getting organization details:", error);
-      throw error;
+    }
+  }
+
+  async searchUsers(name) {
+    try {
+      const response = await axios.get(
+        `${this.baseUrl}/api/users/search`,
+        {
+          params: {
+            name,
+          },
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      console.error("Error searching users:", error);
     }
   }
 }

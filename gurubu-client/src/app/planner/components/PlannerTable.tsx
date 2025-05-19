@@ -3,9 +3,12 @@
 import React from "react";
 import { IconUserFilled } from "@tabler/icons-react";
 import { usePlanner } from "@/contexts/PlannerContext";
+import Image from "next/image";
 
 interface AssigneeStatistics {
   assignee: string;
+  assigneePicture: string | null;
+  assigneeFullName: string | null;
   totalStoryPoints: number;
   totalPairStoryPoints: number;
   totalTestStoryPoints: number;
@@ -201,8 +204,18 @@ const PlannerTable: React.FC<PlannerTableProps> = ({ selectedSprintId }) => {
               <div key={index} className="table-row">
                 <div className="body-cell">
                   <div className="assignee-info">
-                    <IconUserFilled size={24} className="assignee-avatar" />
-                    <span>{stat.assignee}</span>
+                    {stat.assigneePicture ? (
+                      <Image
+                        src={stat.assigneePicture}
+                        width={24}
+                        height={24}
+                        alt={stat.assignee}
+                        className="assignee-avatar"
+                      />
+                    ) : (
+                      <IconUserFilled size={24} className="assignee-avatar" />
+                    )}
+                    <span>{stat.assigneeFullName}</span>
                   </div>
                 </div>
                 <div className="body-cell">

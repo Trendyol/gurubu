@@ -9,6 +9,12 @@ const nextConfig = {
         port: '',
         pathname: '/web/production/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'avatars.slack-edge.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
