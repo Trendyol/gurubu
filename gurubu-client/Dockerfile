@@ -33,7 +33,9 @@ RUN yarn build
 
 FROM $RUNTIME_IMAGE AS runner
 
-COPY --from=builder . .
+WORKDIR /app
+
+COPY --from=builder /app .
 
 EXPOSE 3000
 
