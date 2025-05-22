@@ -6,6 +6,7 @@ import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { GroomingMode, PARTICIPANT_VOTES_COUNT } from "@/shared/enums";
 import { IconCheck, IconCoffee } from "@tabler/icons-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface Props {
   participantKey: string;
@@ -78,11 +79,23 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
             )}
           </div>
         )}
-        <div className={classNames({
-          'admin-avatar': isAdmin,
-          'disconnected-avatar': !hasSockets
-        })}>
-          <Avatar svg={avatarSvg} />
+        <div
+          className={classNames({
+            "admin-avatar": isAdmin,
+            "disconnected-avatar": !hasSockets,
+            "profile-picture": participant?.profile?.picture,
+          })}
+        >
+          {participant?.profile?.picture ? (
+            <Image
+              src={participant?.profile?.picture}
+              alt="Avatar"
+              width={32}
+              height={32}
+            />
+          ) : (
+            <Avatar svg={avatarSvg} />
+          )}
         </div>
         <label
           className={classNames("grooming-board-participants__nickname", {

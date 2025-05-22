@@ -76,7 +76,10 @@ export const PlannerProvider: React.FC<PlannerProviderProps> = ({ children }) =>
         localStorage.setItem('JIRA_BOARD', boardId);
         
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`
+          `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`,
+          {
+            credentials: 'include',
+          }
         );
         
         if (response.ok) {

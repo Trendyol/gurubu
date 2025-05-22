@@ -136,13 +136,14 @@ const PlannerTable: React.FC<PlannerTableProps> = ({ selectedSprintId }) => {
           {
             method: "POST",
             signal: controller.signal,
+            credentials: 'include',
             headers: {
               "Cache-Control": "no-cache",
               Pragma: "no-cache",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ assignees }),
-          }
+          },
         );
         
         if (!response.ok) {
