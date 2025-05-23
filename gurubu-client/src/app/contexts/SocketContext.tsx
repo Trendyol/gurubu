@@ -55,10 +55,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
       setGroomingInfo(data);
     }
 
-    const updateProfilePicture = (data: GroomingInfo) => {
-      setGroomingInfo(data);
-    }
-
     socket.on("voteSent", handleVoteSent);
     socket.on("showResults", handleShowResults);
     socket.on("resetVotes", handleResetVotes);
@@ -66,7 +62,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
     socket.on("setGurubuAI", setGurubuAI);
     socket.on("updateTimer", updateTimer);
     socket.on("updateAvatar", updateAvatar);
-    socket.on("updateProfilePicture", updateProfilePicture);
 
     return () => {
       socket.off("voteSent", handleVoteSent);
@@ -76,7 +71,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
       socket.off("setGurubuAI", setGurubuAI);
       socket.off("updateTimer", updateTimer);
       socket.off("updateAvatar", updateAvatar);
-      socket.off("updateProfilePicture", updateProfilePicture);
     };
   }, [setGroomingInfo, setEditVoteClicked, setUserVote])
 

@@ -66,23 +66,4 @@ export class PService {
       };
     }
   }
-
-  async searchUser(): Promise<ServiceResponse<any[]>> {
-    try {
-      const response = await axios.get(`${this.baseUrl}/p/users/search`, {
-        withCredentials: true,
-      });
-      
-      return {
-        isSuccess: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error("Error searching user:", error);
-      return {
-        isSuccess: false,
-        error: "Failed to search user",
-      };
-    }
-  }
 }
