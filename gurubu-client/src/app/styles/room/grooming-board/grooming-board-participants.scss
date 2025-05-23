@@ -149,6 +149,15 @@
   justify-content: center;
 }
 
+.profile-picture {
+  img {
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
 .consensus-banner {
   background: linear-gradient(135deg, #fac515 0%, #85e13a 100%);
   padding: 12px 16px;
