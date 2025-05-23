@@ -41,24 +41,3 @@ exports.getOrganization = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-exports.searchUsers = async (req, res) => {
-  try {
-    const { username } = req.pUser;
-
-    if (!username || username.trim() === "") {
-      return res.status(400).json({ error: "Search name is required" });
-    }
-
-    const results = await pService.searchUsers(username);
-    
-    if (!results) {
-      return res.status(404).json({ error: "No users found" });
-    }
-    
-    res.json(results);
-  } catch (error) {
-    console.error("Error in searchUsers controller:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};

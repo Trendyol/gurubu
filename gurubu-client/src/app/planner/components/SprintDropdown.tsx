@@ -47,10 +47,7 @@ const SprintDropdown: React.FC<SprintDropdownProps> = ({ selectedSprint, onSprin
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`,
-          {
-            credentials: 'include',
-          }
+          `${process.env.NEXT_PUBLIC_API_URL}/jira/${boardId}/future`
         );
         if (!response.ok) {
           throw new Error(`Failed to fetch sprints for board ${boardId}`);

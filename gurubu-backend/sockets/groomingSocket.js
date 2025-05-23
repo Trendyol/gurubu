@@ -10,8 +10,7 @@ const {
   setIssues,
   updateTimer,
   updateAvatar,
-  setGurubuAI,
-  updateProfilePicture
+  setGurubuAI
 } = require("../utils/groomings");
 
 module.exports = (io) => {
@@ -108,16 +107,6 @@ module.exports = (io) => {
         return;
       }
       io.to(roomID).emit("updateAvatar", result);
-    });
-
-    socket.on("updateProfilePicture", (roomID, data, credentials) => {
-      joinRoomMiddleware(socket, roomID, credentials);
-      const result = updateProfilePicture(data, credentials, roomID, socket);
-      if(result?.isSuccess === false){
-        io.to(socket.id).emit("encounteredError", result);
-        return;
-      }
-      io.to(roomID).emit("updateProfilePicture", result);
     });
 
     socket.on("disconnect", (reason) => {

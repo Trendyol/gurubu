@@ -1,5 +1,5 @@
 import Avatar from "@/components/common/avatar";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Modal } from "@/components/common/modal";
 import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
@@ -8,9 +8,6 @@ import { ChangeAvatar } from "./change-avatar";
 import { IconChevronDown, IconInfoCircle, IconX } from "@tabler/icons-react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useTour } from "@/contexts/TourContext";
-import { PService } from "../../../services/pService";
-import { useSocket } from "@/contexts/SocketContext";
-import Image from "next/image";
 
 type Props = {
   roomId: string;
@@ -30,7 +27,6 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     avatar,
     setAvatar,
   } = useAvatar();
-  const socket = useSocket();
   const { userInfo, groomingInfo } = useGroomingRoom();
   const { showTour } = useTour();
   const selectorRef = useRef<HTMLDivElement>(null);
@@ -120,38 +116,6 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const updateProfilePicture = useCallback(
-    (profile: any) => {
-      if (!userInfo.lobby?.roomID || !userInfo.lobby?.credentials) {
-        return;
-      }
-      socket.emit(
-        "updateProfilePicture",
-        userInfo.lobby?.roomID,
-        profile,
-        userInfo.lobby?.credentials
-      );
-    },
-    [userInfo.lobby?.roomID, userInfo.lobby?.credentials]
-  );
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
-        const pService = new PService(baseUrl);
-
-        const result = await pService.searchUser();
-        if (result.isSuccess && result.data) {
-          const profile = result?.data?.[0]?.spec?.profile;
-          updateProfilePicture(profile);
-        }
-      } catch (error) {}
-    };
-
-    fetchUser();
-  }, []);
-
   return (
     <>
       <div
@@ -161,16 +125,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
       >
         <div className="grooming-board-profile__content">
           <div className="grooming-board-profile__icon">
-            {groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile?.picture ? (
-              <Image
-                src={groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile?.picture}
-                alt="Profile Picture"
-                width={32}
-                height={32}
-              />
-            ) : (
-              <Avatar svg={avatar} />
-            )}
+            <Avatar svg={avatar} />
           </div>
           <span className="grooming-board-profile__nickname">
             {userInfo.nickname}
@@ -184,7 +139,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
           <div className="grooming-board-profile__tooltip" ref={selectorRef}>
             <IconInfoCircle size={16} />
             <span>You can customize your avatar and profile from here</span>
-            <button
+            <button 
               className="grooming-board-profile__tooltip-close"
               onClick={handleCloseTooltip}
               aria-label="Close tooltip"

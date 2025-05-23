@@ -391,25 +391,6 @@ const updateAvatar = (data, credentials, roomID, socket) => {
   return groomings[user.roomID];
 };
 
-const updateProfilePicture = (data, credentials, roomID, socket) => {
-  const user = getCurrentUser(credentials, socket);
-  const isRoomExpired = checkIsRoomExpired(roomID);
-  if (!user || isRoomExpired) {
-    return handleErrors("updateProfilePicture", roomID, socket, isRoomExpired);
-  }
-  if (!groomings[user.roomID]) {
-    return;
-  }
-
-  const userLobbyData = groomings[user.roomID].participants[user.userID];
-  groomings[user.roomID].participants[user.userID] = {
-    ...userLobbyData,
-    profile: data,
-  };
-
-  return groomings[user.roomID];
-};
-
 const resetVotes = (credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
   const isRoomExpired = checkIsRoomExpired(roomID);
@@ -530,6 +511,5 @@ module.exports = {
   setIssues,
   updateTimer,
   updateAvatar,
-  setGurubuAI,
-  updateProfilePicture
+  setGurubuAI
 };

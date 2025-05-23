@@ -12,7 +12,6 @@ export interface User {
   votes: Votes;
   isAdmin: boolean;
   avatar: Avatar;
-  profile: any;
 }
 
 export interface Metric {

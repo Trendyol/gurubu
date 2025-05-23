@@ -1,18 +1,14 @@
-"use client";
-
 import { IconBell, IconX } from "@tabler/icons-react";
 import { useState, useEffect, useRef } from "react";
 
 export const AnnouncementTooltip = () => {
-  const [showTooltip, setShowTooltip] = useState(
-    localStorage.getItem("hasSeenAnnouncementV2") === "true" ? false : true
-  );
+  const [showTooltip, setShowTooltip] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
-  const whatsNewText = "Profile Pictures Beta!";
+  const whatsNewText = "What's New - v1.0.0";
 
   useEffect(() => {
-    const hasSeenAnnouncement = localStorage.getItem("hasSeenAnnouncementV2");
+    const hasSeenAnnouncement = localStorage.getItem("hasSeenAnnouncement");
     setHasUnread(!hasSeenAnnouncement);
   }, []);
 
@@ -23,8 +19,6 @@ export const AnnouncementTooltip = () => {
         !selectorRef.current.contains(event.target as Node)
       ) {
         setShowTooltip(false);
-        setHasUnread(false);
-        localStorage.setItem("hasSeenAnnouncementV2", "true");
       }
     };
 
@@ -34,22 +28,16 @@ export const AnnouncementTooltip = () => {
 
   const handleClick = () => {
     setShowTooltip(!showTooltip);
-    if (!localStorage.getItem("hasSeenAnnouncementV2")) {
-      localStorage.setItem("hasSeenAnnouncementV2", "true");
+    if (!localStorage.getItem("hasSeenAnnouncement")) {
+      localStorage.setItem("hasSeenAnnouncement", "true");
       setHasUnread(false);
     }
   };
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
-    localStorage.setItem("hasSeenAnnouncementV2", "true");
     setShowTooltip(false);
-    setHasUnread(false);
   };
-
-  useEffect(() => {
-    localStorage.removeItem("hasSeenAnnouncement");
-  }, []);
 
   return (
     <div className="announcement-tooltip" ref={selectorRef}>
@@ -66,15 +54,14 @@ export const AnnouncementTooltip = () => {
             </button>
           </div>
           <div className="announcement-tooltip__body">
-            <p>Welcome to GuruBu! Here are the latest updates:</p>
-            <ul>
-              <li>Profile Pictures Added (Beta)</li>
-              <li>{process.env.NEXT_PUBLIC_P_ANNOUNCEMENT_TEXT ?? ""}</li>
-            </ul>
             <p>
-              This feature is still in beta and we would love to hear your
-              feedback!
+              Welcome to GuruBu! Here are the latest updates:
             </p>
+            <ul>
+              <li>Customizable avatars add</li>
+              <li>Improved UI/UX</li>
+              <li>Better performance</li>
+            </ul>
           </div>
         </div>
       )}
