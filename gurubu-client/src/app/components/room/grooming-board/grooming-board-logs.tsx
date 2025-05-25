@@ -18,13 +18,14 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
   const isScoreGrooming = groomingInfo?.mode === GroomingMode.ScoreGrooming;
+  const isStoryPointMode = groomingInfo?.mode === GroomingMode.PlanningPoker;
 
   const toggleTooltipHover = (metricId?: number | null) => {
     setHoveredMetric(metricId ?? null);
   };
 
   return (
-    <section className={classNames("grooming-board__logs-section", {"score-grooming": isScoreGrooming})}>
+    <section className={classNames("grooming-board__logs-section", {"score-grooming": isScoreGrooming, "story-point-mode": isStoryPointMode})}>
       {isGroomingInfoLoaded && (
         <>
           <ul className="grooming-board__metrics">

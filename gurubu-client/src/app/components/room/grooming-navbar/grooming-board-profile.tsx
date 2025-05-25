@@ -175,6 +175,17 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
         const profile = result?.data?.[0]?.spec?.profile;
         profile.isSelected = ispProfileSelected || ispProfileLoginClicked;
         updateProfile(profile);
+      } else {
+        localStorage.setItem("pProfile", JSON.stringify({
+          isLoginClicked: ispProfileLoginClicked,
+          isSelected: ispProfileSelected,
+          isConsentGiven: false,
+        }));
+        setPProfileStorage({
+          isLoginClicked: ispProfileLoginClicked,
+          isSelected: ispProfileSelected,
+          isConsentGiven: false,
+        });
       }
     } catch (error) {}
   };

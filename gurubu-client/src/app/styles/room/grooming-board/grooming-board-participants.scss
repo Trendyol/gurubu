@@ -63,6 +63,16 @@
       overflow: hidden;
     }
   }
+  &.story-point-mode{
+    li{
+      label{
+        max-width: 140px;
+      }
+    }
+    .grooming-board-participants__nickname-container{
+      min-width: auto;
+    }
+  }
   &__nickname-container {
     display: flex;
     min-width: 140px;
