@@ -97,10 +97,37 @@
     font-size: $font-size-paragraph-4;
     color: $gray-700;
     font-weight: $medium;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  }
+
+  &__p-logo-container {
+    position: relative;
+    .p-logo-exclamation {
+      position: absolute;
+      top: -5px;
+      left: 10px;
+      color: $red-700;
+      background-color: #fff;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+    }
+    .p-logo-check {
+      position: absolute;
+      top: -5px;
+      left: 10px;
+      color: $success-500;
+      background-color: #fff;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  &__p-logo {
+    font-size: 8px;
+    width: 2em;
+    height: auto;
+    vertical-align: middle;
   }
 
   &__chevron {
@@ -203,6 +230,38 @@
     transition: all 0.2s;
     text-align: left;
   }
+
+  &__p-sync-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: $radius-medium;
+    cursor: pointer;
+    font-weight: $semibold;
+    font-size: $font-size-paragraph-4;
+    color: $gray-500-v2;
+    background: $gray-50-v2;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    .p-sync-new {
+      background-color: $red-600;
+      font-size: $font-size-paragraph-5;
+      font-weight: $semibold;
+      color: $white;
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+
+    &:hover {
+      background-color: $white;
+      color: $gray-700;
+      box-shadow: $shadow-sm;
+    }
+  }
+  
 
   &__update-avatar-button {
     border: none;

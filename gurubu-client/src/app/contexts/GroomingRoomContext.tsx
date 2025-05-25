@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
@@ -24,6 +26,12 @@ interface GroomingContextValues {
   setJiraSidebarExpanded: (value: boolean) => void;
   isAnnouncementBannerVisible: boolean;
   setIsAnnouncementBannerVisible: (value: boolean) => void;
+  pProfileStorage: {
+    isSelected: boolean;
+    isLoginClicked: boolean;
+    isConsentGiven: boolean;
+  };
+  setPProfileStorage: (value: { isSelected: boolean; isLoginClicked: boolean; isConsentGiven: boolean; }) => void;
 }
 
 const GroomingRoomContext = createContext({} as GroomingContextValues);
@@ -43,6 +51,22 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
   const [currentJiraIssueIndex, setCurrentJiraIssueIndex] = useState(0);
   const [jiraSidebarExpanded, setJiraSidebarExpanded] = useState(false);
   const [isAnnouncementBannerVisible, setIsAnnouncementBannerVisible] = useState(true);
+  const [pProfileStorage, setPProfileStorage] = useState({
+    isSelected: false,
+    isLoginClicked: false,
+    isConsentGiven: false,
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pProfileData = JSON.parse(localStorage.getItem("pProfile") || "{}");
+      
+      setPProfileStorage(prev => ({
+        ...prev,
+        isConsentGiven: pProfileData.isConsentGiven ?? false
+      }));
+    }
+  }, []);
 
   useEffect(() => {
     const nickname = localStorage.getItem("nickname");
@@ -79,7 +103,9 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       jiraSidebarExpanded,
       setJiraSidebarExpanded,
       isAnnouncementBannerVisible,
-      setIsAnnouncementBannerVisible
+      setIsAnnouncementBannerVisible,
+      pProfileStorage,
+      setPProfileStorage
     }),
     [
       roomStatus,
@@ -101,7 +127,9 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       jiraSidebarExpanded,
       setJiraSidebarExpanded,
       isAnnouncementBannerVisible,
-      setIsAnnouncementBannerVisible
+      setIsAnnouncementBannerVisible,
+      pProfileStorage,
+      setPProfileStorage
     ]
   );
   return <GroomingRoomContext.Provider value={values}>{children}</GroomingRoomContext.Provider>;

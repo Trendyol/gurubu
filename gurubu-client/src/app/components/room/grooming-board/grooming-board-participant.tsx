@@ -86,7 +86,7 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
             "profile-picture": participant?.profile?.picture,
           })}
         >
-          {participant?.profile?.picture ? (
+          {participant?.profile?.picture && participant?.profile?.isSelected ? (
             <Image
               src={participant?.profile?.picture}
               alt="Avatar"
@@ -102,7 +102,7 @@ const GroomingBoardParticipant = ({ participantKey }: Props) => {
             "connection-lost": !hasSockets
           })}
         >
-          {nickname}
+          {participant?.profile?.displayName && participant?.profile?.isSelected ? participant?.profile?.displayName : nickname}
         </label>
       </div>
 

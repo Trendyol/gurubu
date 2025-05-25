@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ServiceResponse } from "@/shared/interfaces";
+import { ServiceResponse, pProfile } from "@/shared/interfaces";
 import { PandoraOrganization } from "types/pandora";
 
 export class PService {
@@ -67,7 +67,7 @@ export class PService {
     }
   }
 
-  async searchUser(): Promise<ServiceResponse<any[]>> {
+  async searchUser(): Promise<ServiceResponse<{spec: {profile: pProfile}}[]>> {
     try {
       const response = await axios.get(`${this.baseUrl}/p/users/search`, {
         withCredentials: true,
