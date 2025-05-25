@@ -12,7 +12,7 @@ export interface User {
   votes: Votes;
   isAdmin: boolean;
   avatar: Avatar;
-  profile: any;
+  profile: pProfile;
 }
 
 export interface Metric {
@@ -117,4 +117,15 @@ export interface ServiceResponse<T> {
   isSuccess: boolean;
   data?: T;
   error?: string;
+}
+
+export interface pProfile {
+  department: string;
+  description: string;
+  displayName: string;
+  email: string;
+  phone: string;
+  picture: string;
+  title: string;
+  isSelected?: boolean;
 }

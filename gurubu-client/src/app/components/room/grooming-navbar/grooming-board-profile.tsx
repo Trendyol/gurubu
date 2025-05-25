@@ -5,18 +5,26 @@ import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { ChangeAvatar } from "./change-avatar";
-import { IconChevronDown, IconInfoCircle, IconX } from "@tabler/icons-react";
+import {
+  IconChevronDown,
+  IconCircleCheckFilled,
+  IconInfoCircle,
+  IconX,
+  IconExclamationCircleFilled,
+} from "@tabler/icons-react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useTour } from "@/contexts/TourContext";
 import { PService } from "../../../services/pService";
 import { useSocket } from "@/contexts/SocketContext";
 import Image from "next/image";
+import PLogo from "./p-icon";
+import PsyncModalContent from "./p-sync-modal-content";
 
 type Props = {
   roomId: string;
 };
 
-type ModalType = "changeName" | "leaveRoom" | "changeAvatar" | null;
+type ModalType = "changeName" | "leaveRoom" | "changeAvatar" | "Psync" | null;
 
 const GroomingBoardProfile = ({ roomId }: Props) => {
   const [showProfileBar, setShowProfileBar] = useState(false);
@@ -31,7 +39,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     setAvatar,
   } = useAvatar();
   const socket = useSocket();
-  const { userInfo, groomingInfo } = useGroomingRoom();
+  const { userInfo, groomingInfo, pProfileStorage, setPProfileStorage } = useGroomingRoom();
   const { showTour } = useTour();
   const selectorRef = useRef<HTMLDivElement>(null);
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
@@ -120,7 +128,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const updateProfilePicture = useCallback(
+  const updateProfile = useCallback(
     (profile: any) => {
       if (!userInfo.lobby?.roomID || !userInfo.lobby?.credentials) {
         return;
@@ -135,21 +143,44 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
     [userInfo.lobby?.roomID, userInfo.lobby?.credentials]
   );
 
+  const fetchPUser = async () => {
+    try {
+      const ispProfileConsentGiven = JSON.parse(
+        localStorage.getItem("pProfile") || "{}"
+      ).isConsentGiven;
+      const ispProfileLoginClicked = JSON.parse(
+        localStorage.getItem("pProfile") || "{}"
+      ).isLoginClicked;
+      const ispProfileSelected = JSON.parse(
+        localStorage.getItem("pProfile") || "{}"
+      ).isSelected;
+      if ((ispProfileConsentGiven === false) && !ispProfileLoginClicked) {
+        return;
+      }
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const pService = new PService(baseUrl);
+
+      const result = await pService.searchUser();
+      if (result.isSuccess && result.data) {
+        localStorage.setItem("pProfile", JSON.stringify({
+          isLoginClicked: ispProfileLoginClicked,
+          isSelected: ispProfileSelected,
+          isConsentGiven: true,
+        }));
+        setPProfileStorage({
+          isLoginClicked: ispProfileLoginClicked,
+          isSelected: ispProfileSelected,
+          isConsentGiven: true,
+        });
+        const profile = result?.data?.[0]?.spec?.profile;
+        profile.isSelected = ispProfileSelected || ispProfileLoginClicked;
+        updateProfile(profile);
+      }
+    } catch (error) {}
+  };
+
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
-        const pService = new PService(baseUrl);
-
-        const result = await pService.searchUser();
-        if (result.isSuccess && result.data) {
-          const profile = result?.data?.[0]?.spec?.profile;
-          updateProfilePicture(profile);
-        }
-      } catch (error) {}
-    };
-
-    fetchUser();
+    fetchPUser();
   }, []);
 
   return (
@@ -161,9 +192,15 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
       >
         <div className="grooming-board-profile__content">
           <div className="grooming-board-profile__icon">
-            {groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile?.picture ? (
+            {groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+              ?.picture &&
+            groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+              ?.isSelected ? (
               <Image
-                src={groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile?.picture}
+                src={
+                  groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+                    ?.picture
+                }
                 alt="Profile Picture"
                 width={32}
                 height={32}
@@ -173,8 +210,26 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
             )}
           </div>
           <span className="grooming-board-profile__nickname">
-            {userInfo.nickname}
+            {groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+              ?.isSelected
+              ? groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+                  ?.displayName
+              : userInfo.nickname}
           </span>
+          {process.env.NEXT_PUBLIC_P_ENABLED === "true" && (
+            <div className="grooming-board-profile__p-logo-container">
+              {!pProfileStorage.isConsentGiven && (
+                <IconExclamationCircleFilled
+                  size={16}
+                  className="p-logo-exclamation"
+                />
+              )}
+              {pProfileStorage.isConsentGiven && (
+                <IconCircleCheckFilled size={16} className="p-logo-check" />
+              )}
+              <PLogo className="grooming-board-profile__p-logo" />
+            </div>
+          )}
           <IconChevronDown
             size={16}
             className="grooming-board-profile__chevron"
@@ -182,7 +237,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
         </div>
         {showTooltip && (
           <div className="grooming-board-profile__tooltip" ref={selectorRef}>
-            <IconInfoCircle size={16} />
+            <IconInfoCircle />
             <span>You can customize your avatar and profile from here</span>
             <button
               className="grooming-board-profile__tooltip-close"
@@ -198,6 +253,16 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
             className="grooming-board-profile__bar"
             id="grooming-board-profile__bar"
           >
+            {process.env.NEXT_PUBLIC_P_ENABLED === "true" && (
+              <button
+                className="grooming-board-profile__p-sync-button"
+                onClick={() => openModal("Psync")}
+              >
+                <PLogo className="grooming-board-profile__p-logo" />
+                <p>Profile</p>
+                <p className="p-sync-new">New</p>
+              </button>
+            )}
             <button
               className="grooming-board-profile__update-avatar-button"
               onClick={() => openModal("changeAvatar")}
@@ -224,6 +289,11 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
           <ChangeNameForm closeModal={closeModal} />
         ) : selectedModal === "changeAvatar" ? (
           <ChangeAvatar closeModal={closeModal} />
+        ) : selectedModal === "Psync" ? (
+          <PsyncModalContent
+            updateProfile={updateProfile}
+            closeModal={closeModal}
+          />
         ) : (
           <LeaveRoom roomId={roomId} closeModal={closeModal} />
         )}

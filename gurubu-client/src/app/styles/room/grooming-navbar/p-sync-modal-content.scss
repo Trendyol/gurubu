@@ -1,0 +1,205 @@
+.p-sync-modal-content {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    .p-sync-modal-content__profile-logo{
+      width: 20px;
+    }
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+
+  &__login-button-text {
+    font-size: 14px;
+    color: $red-600;
+    margin: 0;
+  }
+
+  &__login-button {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $gray-500-v2;
+    border: 1px solid $gray-500-v2;
+    background-color: #fff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: $gray-50-v2;
+    }
+  }
+
+  &__p-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &__profile-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__profile-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    width: 100%;
+    height: 70px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+
+    &:hover {
+      background-color: #eaeaea;
+    }
+
+    &--selected {
+      border-color: #F27A1A;
+      background-color: rgba(242, 122, 26, 0.05);
+    }
+  }
+
+  &__profile-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &:checked {
+      background-color: #F27A1A;
+      border-color: #F27A1A;
+    }
+
+    &:checked::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 5px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &__profile-picture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+
+  &__profile-logo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  &__profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  &__profile-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__profile-email {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__logout-button {
+    background-color: transparent;
+    color: #F27A1A;
+    border: 1px solid #F27A1A;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: rgba(242, 122, 26, 0.1);
+    }
+  }
+
+  &__save-button {
+    background-color: #F27A1A;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-end;
+    width: 100%;
+
+    &:hover {
+      background-color: darken(#F27A1A, 5%);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__consent-text {
+    font-size: 12px;
+    color: #999;
+    margin: 0;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
