@@ -148,6 +148,12 @@
     padding: 0 12px 12px 12px;
     max-height: max-content;
     width: 300px;
+    &.story-point-mode{
+      .grooming-board__metrics{
+        justify-content: space-between;
+        padding: 12px 14px;
+      }
+    }
     &.score-grooming{
       min-width: 300px;
       width: auto;

@@ -3,7 +3,8 @@ import GroomingBoardParticipant from "./grooming-board-participant";
 import GurubuAIParticipant from "./gurubu-ai/gurubu-ai-participant";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { AnimatePresence } from "framer-motion";
-
+import { GroomingMode } from "@/shared/enums";
+import classNames from "classnames";
 interface Props {
   roomId: string;
 }
@@ -12,6 +13,8 @@ const GroomingBoardParticipants = ({roomId}: Props) => {
   const { groomingInfo } = useGroomingRoom();
   const groomingInfoParticipants = Object.keys(groomingInfo.participants || {});
   const [sortedParticipants, setSortedParticipants] = useState<string[]>([]);
+
+  const isStoryPointMode = groomingInfo?.mode === GroomingMode.PlanningPoker;
 
   useEffect(() => {
     if (groomingInfo.isResultShown) {
@@ -34,7 +37,7 @@ const GroomingBoardParticipants = ({roomId}: Props) => {
 
   return (
     <>
-      <ul className="grooming-board-participants">
+      <ul className={classNames("grooming-board-participants", { "story-point-mode": isStoryPointMode })}>
         <AnimatePresence>
           <GurubuAIParticipant roomId={roomId} />
           {sortedParticipants.map((participantKey) => (
