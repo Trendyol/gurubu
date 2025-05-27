@@ -67,8 +67,8 @@ exports.getSprintStatistics = async (req, res) => {
     
     statistics.statistics = statistics.statistics.map(stat => ({
       ...stat,
-      assigneePicture: userProfileMap[stat.assignee].picture || null,
-      assigneeFullName: userProfileMap[stat.assignee].displayName || null,
+      assigneePicture: userProfileMap?.[stat?.assignee]?.picture || null,
+      assigneeFullName: userProfileMap?.[stat?.assignee]?.displayName || null,
     }));
     
     res.json(statistics);
