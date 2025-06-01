@@ -109,6 +109,7 @@ export class JiraService {
           ] ?? "",
         description: issue.fields.description,
         reporter: issue.fields.creator,
+        assigneeForAnalysis: issue.fields["customfield_16800"] ?? "",
       }));
       return { isSuccess: true, data: sprintIssues };
     } catch (error) {

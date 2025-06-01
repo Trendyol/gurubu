@@ -321,8 +321,16 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
           defaultValue={groomingInfo.issues?.[selectedIssueIndex]?.testPoint?.toString()}
         />
         <div className="grooming-board-jira-reporter-container">
-          <p className="grooming-board-jira-reporter-label">Reporter:</p>
-          <p className="grooming-board-jira-reporter-name">{groomingInfo?.issues?.[selectedIssueIndex]?.reporter?.displayName}</p>
+            <div className="grooming-board-jira-reporter-item">
+              <p className="grooming-board-jira-reporter-label">Reporter:</p>
+              <p className="grooming-board-jira-reporter-name">{groomingInfo?.issues?.[selectedIssueIndex]?.reporter?.displayName}</p>
+            </div>
+            {groomingInfo?.issues?.[selectedIssueIndex]?.assigneeForAnalysis?.displayName && (
+              <div className="grooming-board-jira-reporter-item">
+                <p className="grooming-board-jira-reporter-label">Assignee for Analysis:</p>
+                <p className="grooming-board-jira-reporter-name">{groomingInfo?.issues?.[selectedIssueIndex]?.assigneeForAnalysis?.displayName}</p>
+              </div>
+            )}
         </div>
         <div className="total-story-points-container">
           <div className="total-points-item">
