@@ -111,6 +111,9 @@ export interface Issue {
   reporter: {
     displayName: string;
   };
+  assigneeForAnalysis: {
+    displayName: string;
+  };
 }
 
 export interface ServiceResponse<T> {

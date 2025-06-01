@@ -80,8 +80,15 @@
     .grooming-board-jira-reporter-container{
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 24px;
       padding: 8px 0;
+      width: 100%;
+      .grooming-board-jira-reporter-item{
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        width: 50%;
+      }
       .grooming-board-jira-reporter-label{
         color: #42526E;
         font-size: 14px;
