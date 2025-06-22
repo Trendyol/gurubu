@@ -104,7 +104,8 @@
     display: flex;
     gap: 0 $space-large;
     width: 100%;
-    justify-content: space-around;
+    justify-content: flex-end;
+    padding-right: 14px;
   }
   &__point-card {
     border-radius: 50%;
