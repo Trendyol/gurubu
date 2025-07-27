@@ -25,7 +25,7 @@ const GroomingBoardActions = ({ roomId }: Props) => {
     socket.emit("resetVotes", roomId, userInfo.lobby.credentials);
   };
 
-  if (!userInfo.lobby?.isAdmin || !isGroomingInfoLoaded) {
+  if (!isGroomingInfoLoaded || (!userInfo.lobby?.isAdmin && !groomingInfo?.isResultShown)) {
     return null;
   }
 
@@ -35,7 +35,7 @@ const GroomingBoardActions = ({ roomId }: Props) => {
         "story-point-mode": groomingInfo.mode === GroomingMode.PlanningPoker,
       })}
     >
-      {!groomingInfo.isResultShown && (
+      {!groomingInfo?.isResultShown && userInfo.lobby?.isAdmin && (
         <button
           className={classNames("grooming-board__show-result-button", {
             disabled: groomingInfo.isResultShown,
@@ -45,12 +45,22 @@ const GroomingBoardActions = ({ roomId }: Props) => {
           Show Results
         </button>
       )}
+      {userInfo.lobby?.isAdmin && (
       <button
         className="grooming-board__reset-votes-button"
         onClick={handleResetVotesClick}
       >
-        Reset Votes
-      </button>
+          Reset Votes
+        </button>
+      )}
+      {groomingInfo?.isResultShown && !userInfo.lobby?.isAdmin && (
+      <button
+        className="grooming-board__reset-votes-button"
+        onClick={handleResetVotesClick}
+      >
+          Reset Votes
+        </button>
+      )}
     </div>
   );
 };
