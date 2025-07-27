@@ -332,6 +332,12 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
               </div>
             )}
         </div>
+        {groomingInfo?.issues?.[selectedIssueIndex]?.epic?.name && (
+          <div className="grooming-board-jira-epic-container">
+              <p className="grooming-board-jira-epic-label">Epic:</p>
+              <p className="grooming-board-jira-epic-name">{groomingInfo?.issues?.[selectedIssueIndex]?.epic?.name}</p>
+          </div>
+        )}
         <div className="total-story-points-container">
           <div className="total-points-item">
             <span className="total-points-label">Total Issues:</span>

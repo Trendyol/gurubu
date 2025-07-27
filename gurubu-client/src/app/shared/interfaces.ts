@@ -114,6 +114,17 @@ export interface Issue {
   assigneeForAnalysis: {
     displayName: string;
   };
+  epic: {
+    color: {
+      key: string;
+    },
+    summary: string;  
+    key: string;
+    id: string;
+    done: boolean;
+    name: string;
+    self: string;
+  }
 }
 
 export interface ServiceResponse<T> {

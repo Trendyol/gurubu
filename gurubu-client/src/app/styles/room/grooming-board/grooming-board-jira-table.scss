@@ -102,6 +102,26 @@
       }
     }
 
+    .grooming-board-jira-epic-container {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      gap: 24px;
+
+      .grooming-board-jira-epic-label {
+        color: #42526E;
+        font-size: 14px;
+        font-weight: 500;
+        min-width: 140px;
+      }
+
+      .grooming-board-jira-epic-name {
+        color: #172B4D;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+
     .grooming-board-jira-navigation {
       display: flex;
       align-items: center;
