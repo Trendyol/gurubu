@@ -1,4 +1,4 @@
-ARG RUNTIME_IMAGE
+ARG RUNTIME_IMAGE=ghcr.io/kirencore/kiren:latest
 ARG BUILD_IMAGE
 
 FROM $BUILD_IMAGE AS builder  
