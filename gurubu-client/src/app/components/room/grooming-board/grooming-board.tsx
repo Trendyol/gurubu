@@ -22,6 +22,7 @@ import { ROOM_STATUS } from "../../../room/[id]/enums";
 import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
 import { useLoader } from "@/contexts/LoaderContext";
+import { PreviousVotedTasks } from "./previous-voted-tasks/previous-voted-tasks";
 
 interface IProps {
   roomId: string;
@@ -213,6 +214,7 @@ const GroomingBoard = ({
             </button>
           </div>
         )}
+        {!groomingInfo.isResultShown && <PreviousVotedTasks />}
         {isScoreGrooming && <GroomingBoardActions roomId={roomId} />}
       </section>
       {!jiraSidebarExpanded && <GroomingBoardLogs roomId={roomId} />}

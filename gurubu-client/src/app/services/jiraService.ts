@@ -155,4 +155,34 @@ export class JiraService {
       return { isSuccess: false };
     }
   }
+
+  async getIssuesByStoryPoints(
+    projectKey: string,
+    storyPoints: string | number,
+    maxResults: number = 20,
+    excludeDone: boolean = true
+  ): Promise<ServiceResponse<any[]>> {
+    try {
+      const url = `${this.baseUrl}/jira/issues/by-story-points`;
+      const response = await axios.get(url, {
+        params: {
+          projectKey,
+          storyPoints,
+          maxResults,
+          excludeDone,
+        },
+      } as AxiosRequestConfig);
+
+      const issues = (response.data?.issues || []).map((i: any) => ({
+        key: i.key,
+        summary: i.summary,
+        issuetype: i.issuetype,
+        status: i.status,
+        assignee: i.assignee,
+      }));
+      return { isSuccess: true, data: issues };
+    } catch (error) {
+      return { isSuccess: false };
+    }
+  }
 }

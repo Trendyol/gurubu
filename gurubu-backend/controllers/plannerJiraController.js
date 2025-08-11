@@ -116,3 +116,35 @@ exports.getBoardsByProjectKey = async (req, res) => {
     res.status(500).json({ error: error.message || "Failed to get board" });
   }
 };
+
+exports.getIssuesByStoryPoints = async (req, res) => {
+  try {
+    const { projectKey, storyPoints } = req.query;
+    const maxResults = req.query.maxResults ? parseInt(req.query.maxResults) : 20;
+    const excludeDone = req.query.excludeDone === undefined ? true : req.query.excludeDone === 'true';
+
+    if (!projectKey || !storyPoints) {
+      return res.status(400).json({ error: "projectKey and storyPoints are required" });
+    }
+
+    const data = await jiraService.searchIssuesByStoryPoints(
+      projectKey,
+      storyPoints,
+      maxResults,
+      excludeDone
+    );
+    
+    const issues = (data.issues || []).map((issue) => ({
+      key: issue.key,
+      summary: issue.fields?.summary || "",
+      issuetype: issue.fields?.issuetype?.name || "",
+      status: issue.fields?.status?.name || "",
+      assignee: issue.fields?.assignee?.displayName || null,
+    }));
+
+    return res.json({ total: data.total || issues.length, issues });
+  } catch (error) {
+    console.error("Error searching issues by story points:", error);
+    return res.status(500).json({ error: error.message || "Failed to search issues" });
+  }
+};
