@@ -10,5 +10,6 @@ router.get("/board", plannerJiraController.getBoardByName);
 router.get("/:sprintId/issues", plannerJiraController.getSprintIssues);
 router.post("/:sprintId/statistics", plannerJiraController.getSprintStatistics);
 router.get("/:projectKey/boards", plannerJiraController.getBoardsByProjectKey);
+router.get("/issues/by-story-points", plannerJiraController.getIssuesByStoryPoints);
 
 module.exports = router;

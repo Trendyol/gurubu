@@ -285,6 +285,50 @@ class JiraService {
       throw new Error(`Failed to fetch board: ${error.message}`);
     }
   }
+
+  async searchIssuesByStoryPoints(projectKey, storyPoints, maxResults = 20, excludeDone = true) {
+    try {
+      const storyPointCustomField = process.env.JIRA_PROJECT_KEY_FOUR || "";
+      const customFieldIdMatch = storyPointCustomField.match(/customfield_(\d+)/);
+      const cfId = customFieldIdMatch ? customFieldIdMatch[1] : null;
+
+      const storyPointClause = cfId ? `cf[${cfId}] = ${storyPoints}` : `'Story Points' = ${storyPoints}`;
+      const baseClauses = [`project = ${projectKey}`, storyPointClause];
+      if (excludeDone) {
+        baseClauses.push("statusCategory != Done");
+      }
+      const jql = `${baseClauses.join(" AND ")} ORDER BY updated DESC`;
+      
+      const response = await axios.get(`${this.baseUrl}/rest/api/2/search`, {
+        params: {
+          jql,
+          maxResults,
+          fields: [
+            "summary",
+            "issuetype",
+            "status",
+            "assignee",
+          ].join(","),
+        },
+        auth: this.auth,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+        throw new Error(`Failed to search issues by story points: ${error.message}`);
+      }
+      throw error;
+    }
+  }
 }
 
 module.exports = new JiraService();
