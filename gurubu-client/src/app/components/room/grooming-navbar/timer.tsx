@@ -14,6 +14,8 @@ interface Props {
 }
 
 const TIME_OPTIONS = [
+  { label: "+10s", minutes: 10 / 60 },
+  { label: "+30s", minutes: 30 / 60 },
   { label: "+1", minutes: 1 },
   { label: "+5", minutes: 5 },
   { label: "+10", minutes: 10 },
