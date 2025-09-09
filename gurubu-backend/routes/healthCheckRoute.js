@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const healthCheckController = require("../controllers/healthCheckContoller");
+const healthCheckController = require("../controllers/healthCheckController");
 
 router.get("/", healthCheckController.check);
 
