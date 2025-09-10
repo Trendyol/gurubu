@@ -9,10 +9,38 @@ class JiraInitialStoryPointService {
   storyPointFieldName;
 
   constructor() {
-    this.baseUrl = process.env.JIRA_BASE_URL || "";
+    // Validate required environment variables
+    const requiredEnvVars = {
+      JIRA_BASE_URL: process.env.JIRA_BASE_URL,
+      JIRA_USERNAME: process.env.JIRA_USERNAME,
+      JIRA_API_TOKEN: process.env.JIRA_API_TOKEN,
+      JIRA_PROJECT_KEY_FOUR: process.env.JIRA_PROJECT_KEY_FOUR
+    };
+
+    const missingVars = [];
+    for (const [key, value] of Object.entries(requiredEnvVars)) {
+      if (!value || value.trim() === '') {
+        missingVars.push(key);
+      }
+    }
+
+    if (missingVars.length > 0) {
+      throw new Error(
+        `Missing required environment variables for JIRA service: ${missingVars.join(', ')}. ` +
+        'Please check your .env file and ensure all JIRA configuration variables are set.'
+      );
+    }
+
+    // Validate JIRA_BASE_URL format
+    try {
+      new URL(this.baseUrl = process.env.JIRA_BASE_URL);
+    } catch (error) {
+      throw new Error(`Invalid JIRA_BASE_URL format: ${process.env.JIRA_BASE_URL}. Must be a valid URL.`);
+    }
+
     this.auth = {
-      username: process.env.JIRA_USERNAME || "",
-      password: process.env.JIRA_API_TOKEN || "",
+      username: process.env.JIRA_USERNAME,
+      password: process.env.JIRA_API_TOKEN,
     };
     this.storyPointFieldName = process.env.JIRA_PROJECT_KEY_FOUR;
   }
