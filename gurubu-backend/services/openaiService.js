@@ -5,6 +5,9 @@ dotenv.config();
 
 class OpenAIService {
   constructor() {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is required');
+    }
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -13,7 +16,7 @@ class OpenAIService {
 
   async askAssistant(assistantId, message, threadId = null) {
     try {
-      
+
       let thread;
       if (!threadId) {
         thread = await this.openai.beta.threads.create();
@@ -63,7 +66,7 @@ class OpenAIService {
       }
 
       const latestMessage = assistantMessages[0];
-      
+
       const textContent = latestMessage.content
         .filter((content) => content.type === "text")
         .map((content) => content.text.value)
