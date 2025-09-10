@@ -4,8 +4,8 @@ exports.estimateStoryPoint = async (req, res) => {
   try {
     const { boardName, issueSummary, issueDescription, threadId } = req.body;
 
-    if(!boardName) {
-      return res.status(400).json({ error: "Board name is required" });     
+    if (!boardName) {
+      return res.status(400).json({ error: "Board name is required" });
     }
 
     if (!issueSummary) {
@@ -15,9 +15,12 @@ exports.estimateStoryPoint = async (req, res) => {
     if (!issueDescription) {
       return res.status(400).json({ error: "Issue Description is required" });
     }
-    
+
     const assistantId = process.env.OPENAI_ASSISTANT_ID;
-    
+    if (!assistantId) {
+      return res.status(500).json({ error: "OpenAI Assistant ID not configured" });
+    }
+
     const message = createStoryPointPrompt(issueSummary, issueDescription);
 
     const response = await openaiService.askAssistant(assistantId, message, threadId);
