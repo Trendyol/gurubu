@@ -2,6 +2,11 @@
   "name": "gurubu-client",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0",
+    "yarn": ">=1.22.19"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,7 +17,7 @@
     "@dicebear/collection": "^9.2.2",
     "@dicebear/core": "^9.2.2",
     "@tabler/icons-react": "^3.33.0",
-    "axios": "^1.6.0",
+    "axios": "^1.7.9",
     "canvas-confetti": "^1.9.3",
     "dompurify": "^3.2.4",
     "echarts": "^5.6.0",
@@ -22,25 +27,25 @@
     "intro.js": "^7.2.0",
     "lodash.debounce": "^4.0.8",
     "marked": "^15.0.4",
-    "next": "14.0.0",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "15.1.9",
+    "react": "^19",
+    "react-dom": "^19",
     "react-hot-toast": "^2.4.1",
     "react-select": "^5.10.1",
-    "sharp": "0.33.1",
+    "sharp": "^0.33.5",
     "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@types/dompurify": "^3.2.0",
     "@types/lodash.debounce": "^4.0.9",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
     "classnames": "^2.3.2",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.0",
-    "sass": "^1.69.5",
-    "typescript": "^5"
+    "eslint": "^9",
+    "eslint-config-next": "^15.1.0",
+    "sass": "^1.83.0",
+    "typescript": "^5.7.2"
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import "@/styles/gurubu-planner/style.scss";
 import PlannerNavbar from "./components/PlannerNavbar";
 import SprintDropdown from "./components/SprintDropdown";
@@ -11,17 +11,22 @@ import { ToastProvider } from "@/contexts/ToastContext";
 import { IconUsers } from "@tabler/icons-react";
 import { PlannerProvider, usePlanner } from "@/contexts/PlannerContext";
 import AnnouncementBanner from "../components/common/announcement-banner";
+
+export const dynamic = 'force-dynamic';
+
 const AUTO_REFRESH_INTERVAL = 15;
 
 export default function GurubuPlanner() {
   return (
     <LoaderProvider>
       <ToastProvider>
-        <PlannerProvider>
-          <AnnouncementBanner />
-          <PlannerNavbar />
-          <PlannerContentWrapper />
-        </PlannerProvider>
+        <Suspense fallback={<div className="planner-loading">Loading planner...</div>}>
+          <PlannerProvider>
+            <AnnouncementBanner />
+            <PlannerNavbar />
+            <PlannerContentWrapper />
+          </PlannerProvider>
+        </Suspense>
       </ToastProvider>
     </LoaderProvider>
   );
