@@ -149,7 +149,7 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
       <GurubuAITooltip
         message={aiMessage}
         isVisible={showTooltip}
-        anchorRef={participantRef}
+        anchorRef={participantRef as React.RefObject<HTMLElement>}
         onClose={handleCloseTooltip}
       />
       <div className="profile-container">

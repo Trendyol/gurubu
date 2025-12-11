@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import PlannerTable from './PlannerTable';
 import { SelectTeamForm } from './SelectTeamForm';
 import { Modal } from '@/components/common/modal';
@@ -36,9 +36,11 @@ export const PlannerContent: React.FC<PlannerContentProps> = ({
         <div className="selected-team-title">Selected Team: {selectedTeam}</div>
       )}
       <Modal isOpen={showTeamSelect} onClose={handleCloseTeamSelect}>
-        <SelectTeamForm
-          closeModal={handleCloseTeamSelect}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <SelectTeamForm
+            closeModal={handleCloseTeamSelect}
+          />
+        </Suspense>
       </Modal>
 
       {!hasTeamSelected ? (

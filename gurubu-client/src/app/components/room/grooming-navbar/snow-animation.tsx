@@ -6,7 +6,7 @@ interface SnowAnimationProps {
 
 const SnowAnimation = memo(({ isActive }: SnowAnimationProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
   const [isReverse, setIsReverse] = useState(false);
 
   useEffect(() => {
