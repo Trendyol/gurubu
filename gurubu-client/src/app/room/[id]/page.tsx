@@ -1,7 +1,7 @@
 "use client";
 
 import classnames from "classnames";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import ConnectingInfo from "@/components/room/grooming-board/connecting-info";
 import GroomingBoard from "@/components/room/grooming-board/grooming-board";
@@ -25,16 +25,17 @@ import { ToastProvider, useToast } from "@/contexts/ToastContext";
 import { AvatarProvider } from "@/contexts/AvatarContext";
 import "@/styles/room/style.scss";
 
-const GroomingRoom = ({ params }: { params: { id: string } }) => {
+const GroomingRoom = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params);
   return (
-    <GroomingRoomProvider roomId={params.id}>
+    <GroomingRoomProvider roomId={id}>
       <SocketProvider>
         <ThemeProvider>
           <TourProvider>
             <LoaderProvider>
               <ToastProvider>
                 <AvatarProvider>
-                  <GroomingRoomContent params={params} />
+                  <GroomingRoomContent roomId={id} />
                 </AvatarProvider>
               </ToastProvider>
             </LoaderProvider>
@@ -45,7 +46,7 @@ const GroomingRoom = ({ params }: { params: { id: string } }) => {
   );
 };
 
-const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
+const GroomingRoomContent = ({ roomId }: { roomId: string }) => {
   const [showNickNameForm, setShowNickNameForm] = useState(false);
   const { currentTheme, isThemeActive } = useTheme();
   const { startTour, showTour } = useTour();
@@ -97,19 +98,19 @@ const GroomingRoomContent = ({ params }: { params: { id: string } }) => {
           [`${currentTheme}-active`]: isThemeActive,
         })}
       >
-        <ConnectingInfo roomId={params.id} />
+        <ConnectingInfo roomId={roomId} />
         <GroomingNavbar
           showNickNameForm={showNickNameForm}
-          roomId={params.id}
+          roomId={roomId}
         />
         <GroomingBoard
-          roomId={params.id}
+          roomId={roomId}
           showNickNameForm={showNickNameForm}
           setShowNickNameForm={setShowNickNameForm}
         />
-        {showNickNameForm && <NicknameForm roomId={params.id} />}
+        {showNickNameForm && <NicknameForm roomId={roomId} />}
         <GroomingFooter />
-        <JiraSidebar roomId={params.id} />
+        <JiraSidebar roomId={roomId} />
       </main>
     </>
   );
