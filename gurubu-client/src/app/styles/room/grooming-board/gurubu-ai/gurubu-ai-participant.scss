@@ -6,6 +6,7 @@
   margin-bottom: 8px;
   border-top: none !important;
   position: relative;
+  cursor: pointer;
 
   .profile-container {
     display: flex;
@@ -40,6 +41,7 @@
     display: flex;
     gap: 0 16px;
     width: 100%;
-    justify-content: space-around;
+    justify-content: flex-end;
+    padding-right: 14px;
   }
 }

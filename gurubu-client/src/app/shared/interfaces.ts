@@ -35,12 +35,44 @@ export interface MetricAverages {
   };
 }
 
+export interface AIWorkflowReasoning {
+  complexity: {
+    explanation: string;
+    level: string;
+  };
+  effort: {
+    explanation: string;
+    level: string;
+  };
+  risk: {
+    explanation: string;
+    level: string;
+  };
+}
+
+export interface AIWorkflowResponse {
+  executionId: string;
+  issueKey: string;
+  projectKey: string;
+  confidence: string;
+  estimation: number;
+  historical_comparison: string;
+  reasoning: AIWorkflowReasoning;
+  split_recommendation: string | null;
+  status: string;
+}
+
 export interface GurubuAI {
   selectedBoardName: string;
   aiMessage: string;
   selectedIssueIndex: number;
   threadId: string | null;
   isAnalyzing: boolean;
+  confidence?: string;
+  reasoning?: AIWorkflowReasoning;
+  historicalComparison?: string;
+  status?: string;
+  splitRecommendation?: string | null;
 }
 
 export interface GroomingInfo {
