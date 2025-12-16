@@ -1,15 +1,24 @@
 import axios from 'axios';
 
-interface StoryPointEstimationRequest {
-  boardName: string;
-  issueSummary: string;
-  issueDescription: string;
-  threadId?: string;
+interface AIWorkflowRequest {
+  issueKey: string;
+  projectKey: string;
 }
 
-interface StoryPointEstimationResponse {
-  response: string;
-  threadId: string;
+interface AIWorkflowEstimationResponse {
+  executionId: string;
+  issueKey: string;
+  projectKey: string;
+  confidence: string;
+  estimation: number;
+  historical_comparison: string;
+  reasoning: {
+    complexity: { explanation: string; level: string };
+    effort: { explanation: string; level: string };
+    risk: { explanation: string; level: string };
+  };
+  split_recommendation: string | null;
+  status: string;
 }
 
 export class StoryPointService {
@@ -20,13 +29,15 @@ export class StoryPointService {
   }
 
   async estimateStoryPoint(
-    request: StoryPointEstimationRequest,
+    request: AIWorkflowRequest,
     signal?: AbortSignal
-  ): Promise<StoryPointEstimationResponse> {
+  ): Promise<AIWorkflowEstimationResponse> {
     try {
-      const response = await axios.post(`${this.baseUrl}/storypoint/estimate`, request, {
-        signal
-      });
+      const response = await axios.post(
+        `${this.baseUrl}/ai-workflow/estimate`, 
+        request, 
+        { signal }
+      );
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) {

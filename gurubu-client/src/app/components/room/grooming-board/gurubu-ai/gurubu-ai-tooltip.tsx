@@ -5,17 +5,68 @@ import Image from "next/image";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 
 interface GurubuAITooltipProps {
-  message: string;
+  estimation: string;
+  confidence?: string;
+  reasoning?: {
+    complexity: { explanation: string; level: string };
+    effort: { explanation: string; level: string };
+    risk: { explanation: string; level: string };
+  };
+  historicalComparison?: string;
+  status?: string;
+  splitRecommendation?: string | null;
   isVisible: boolean;
   anchorRef: React.RefObject<HTMLElement>;
-  onClose: () => void;
+  onClose: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const GurubuAITooltip = ({ message, isVisible, anchorRef, onClose }: GurubuAITooltipProps) => {
+const GurubuAITooltip = ({ 
+  estimation, 
+  confidence, 
+  reasoning, 
+  historicalComparison, 
+  status, 
+  splitRecommendation, 
+  isVisible, 
+  anchorRef, 
+  onClose 
+}: GurubuAITooltipProps) => {
   const { jiraSidebarExpanded } = useGroomingRoom();
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [mounted, setMounted] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const [expandedSections, setExpandedSections] = useState<{
+    reasoning: boolean;
+    historical: boolean;
+    split: boolean;
+  }>({
+    reasoning: false,
+    historical: false,
+    split: false,
+  });
+
+  const toggleSection = (section: 'reasoning' | 'historical' | 'split') => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const getConfidenceBadgeClass = (conf?: string) => {
+    if (!conf) return 'confidence-badge-medium';
+    const normalized = conf.toLowerCase();
+    if (normalized === 'high') return 'confidence-badge-high';
+    if (normalized === 'low') return 'confidence-badge-low';
+    return 'confidence-badge-medium';
+  };
+
+  const getLevelBadgeClass = (level?: string) => {
+    if (!level) return 'level-badge-medium';
+    const normalized = level.toLowerCase();
+    if (normalized === 'high') return 'level-badge-high';
+    if (normalized === 'low') return 'level-badge-low';
+    return 'level-badge-medium';
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -28,13 +79,23 @@ const GurubuAITooltip = ({ message, isVisible, anchorRef, onClose }: GurubuAIToo
 
       const anchorRect = anchorRef.current.getBoundingClientRect();
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
 
       requestAnimationFrame(() => {
+        let topPosition = anchorRect.top + window.scrollY;
+        
+        const availableSpaceBelow = viewportHeight - anchorRect.top;
+        const tooltipHeight = tooltipRect.height;
+        
+        if (tooltipHeight > availableSpaceBelow && anchorRect.top > tooltipHeight) {
+          topPosition = anchorRect.bottom - tooltipHeight + window.scrollY;
+        }
+        
         setTooltipPosition({
-          top: anchorRect.top + (anchorRect.height / 2) - (tooltipRect.height / 2) + window.scrollY,
+          top: topPosition,
           left: jiraSidebarExpanded 
-            ? anchorRect.right + 16 + window.scrollX // Sağ tarafta göster
-            : anchorRect.left - tooltipRect.width - 16 + window.scrollX // Sol tarafta göster
+            ? anchorRect.right + 16 + window.scrollX
+            : anchorRect.left - tooltipRect.width - 16 + window.scrollX
         });
       });
     };
@@ -52,9 +113,9 @@ const GurubuAITooltip = ({ message, isVisible, anchorRef, onClose }: GurubuAIToo
         clearTimeout(timeoutId);
       };
     }
-  }, [isVisible, message, anchorRef, mounted, jiraSidebarExpanded]);
+  }, [isVisible, estimation, anchorRef, mounted, jiraSidebarExpanded, expandedSections]);
 
-  if (!mounted || !isVisible || !message) return null;
+  if (!mounted || !isVisible || !estimation) return null;
 
   return createPortal(
     <AnimatePresence>
@@ -77,7 +138,98 @@ const GurubuAITooltip = ({ message, isVisible, anchorRef, onClose }: GurubuAIToo
             <Image src="/close-icon.svg" alt="Close" width={12} height={12} />
           </button>
           <div className="tooltip-content">
-            {message}
+            <div className="estimation-header">
+              <h3 className="estimation-value">Story Point: {estimation}</h3>
+              {confidence && (
+                <span className={`confidence-badge ${getConfidenceBadgeClass(confidence)}`}>
+                  {confidence}
+                </span>
+              )}
+            </div>
+
+            {status && (
+              <div className="status-indicator">
+                <span className="status-label">Status:</span>
+                <span className="status-value">{status}</span>
+              </div>
+            )}
+
+            {reasoning && (
+              <div className="expandable-section">
+                <button 
+                  className="section-header"
+                  onClick={() => toggleSection('reasoning')}
+                >
+                  <span className={`chevron ${expandedSections.reasoning ? 'expanded' : ''}`}>▶</span>
+                  <span>Reasoning</span>
+                </button>
+                {expandedSections.reasoning && (
+                  <div className="section-content">
+                    <div className="reasoning-item">
+                      <div className="reasoning-header">
+                        <strong>Complexity</strong>
+                        <span className={`level-badge ${getLevelBadgeClass(reasoning.complexity.level)}`}>
+                          {reasoning.complexity.level}
+                        </span>
+                      </div>
+                      <p>{reasoning.complexity.explanation}</p>
+                    </div>
+                    <div className="reasoning-item">
+                      <div className="reasoning-header">
+                        <strong>Effort</strong>
+                        <span className={`level-badge ${getLevelBadgeClass(reasoning.effort.level)}`}>
+                          {reasoning.effort.level}
+                        </span>
+                      </div>
+                      <p>{reasoning.effort.explanation}</p>
+                    </div>
+                    <div className="reasoning-item">
+                      <div className="reasoning-header">
+                        <strong>Risk</strong>
+                        <span className={`level-badge ${getLevelBadgeClass(reasoning.risk.level)}`}>
+                          {reasoning.risk.level}
+                        </span>
+                      </div>
+                      <p>{reasoning.risk.explanation}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {historicalComparison && (
+              <div className="expandable-section">
+                <button 
+                  className="section-header"
+                  onClick={() => toggleSection('historical')}
+                >
+                  <span className={`chevron ${expandedSections.historical ? 'expanded' : ''}`}>▶</span>
+                  <span>Historical Comparison</span>
+                </button>
+                {expandedSections.historical && (
+                  <div className="section-content">
+                    <p>{historicalComparison}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {splitRecommendation && (
+              <div className="expandable-section">
+                <button 
+                  className="section-header warning"
+                  onClick={() => toggleSection('split')}
+                >
+                  <span className={`chevron ${expandedSections.split ? 'expanded' : ''}`}>▶</span>
+                  <span>Split Recommendation</span>
+                </button>
+                {expandedSections.split && (
+                  <div className="section-content warning-content">
+                    <p>{splitRecommendation}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </motion.div>
       )}

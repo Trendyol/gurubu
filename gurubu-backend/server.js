@@ -27,6 +27,7 @@ const jiraRoutes = require("./routes/jiraRoutes");
 const pRoutes = require("./routes/pRoutes");
 const storyPointRoutes = require("./routes/storyPointRoutes");
 const initialStoryPointRoutes = require("./routes/initialStoryPointRoutes");
+const aiWorkflowRoutes = require("./routes/aiWorkflowRoutes");
 
 app.use("/room", cors(corsOptions), roomRoutes);
 app.use("/healthcheck", cors(corsOptions), healthCheckRoute);
@@ -34,6 +35,7 @@ app.use("/jira", cors(corsOptions), jiraRoutes);
 app.use("/p", cors(corsOptions), pTokenResolveMiddleware, pRoutes);
 app.use("/storypoint", cors(corsOptions), storyPointRoutes);
 app.use("/initial-storypoint", cors(corsOptions), initialStoryPointRoutes);
+app.use("/ai-workflow", cors(corsOptions), aiWorkflowRoutes);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {

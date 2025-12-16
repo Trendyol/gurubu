@@ -16,8 +16,6 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const participantRef = useRef<HTMLLIElement>(null);
-  const isSFWCBoard =
-    groomingInfo?.gurubuAI?.selectedBoardName?.includes("SFWC");
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
   const selectedIssueIndex = groomingInfo.issues?.findIndex(
     (issue) => issue.selected
@@ -25,7 +23,6 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
   const isIssueIndexChanged =
     selectedIssueIndex !== groomingInfo?.gurubuAI?.selectedIssueIndex;
   const selectedBoardName = groomingInfo?.gurubuAI?.selectedBoardName;
-  const threadId = groomingInfo?.gurubuAI?.threadId;
   const isAnalyzing = groomingInfo?.gurubuAI?.isAnalyzing;
   const isResultShown = groomingInfo?.isResultShown;
   const aiMessage = groomingInfo?.gurubuAI?.aiMessage;
@@ -35,25 +32,30 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
 
   const generateAIAnalysis = async () => {
     try {
+      if(!groomingInfo.issues.length) {
+        return;
+      }
       abortControllerRef.current = new AbortController();
+      
+      const issueKey = currentIssue?.key;
+      const projectKey = issueKey?.split('-')[0];
+      
+      if (!issueKey || !projectKey) {
+        throw new Error('Issue key or project key not found');
+      }
 
       const response = await storyPointService.estimateStoryPoint(
-        {
-          boardName: selectedBoardName || "",
-          issueSummary: currentIssue?.summary || "",
-          issueDescription: currentIssue?.description || "",
-          threadId: threadId || undefined,
-        },
+        { issueKey, projectKey },
         abortControllerRef.current.signal
       );
 
-      return { threadId: response.threadId, message: response.response };
+      return response;
     } catch (error: any) {
-      if (error.message === "Request was cancelled") {
-        return "";
+      if (error.message === 'Request was cancelled') {
+        return null;
       }
-      console.error("Error getting AI analysis:", error);
-      return "I encountered an error while analyzing the task. Please try again.";
+      console.error('Error getting AI analysis:', error);
+      return null;
     }
   };
 
@@ -63,7 +65,7 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
         abortControllerRef.current?.abort();
       }
 
-      if (isGroomingInfoLoaded && isResultShown && isSFWCBoard) {
+      if (isGroomingInfoLoaded && isResultShown) {
         socket.emit(
           "setGurubuAI",
           roomId,
@@ -77,11 +79,13 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
             roomId,
             {
               ...groomingInfo.gurubuAI,
-              aiMessage:
-                typeof analysis === "string" ? analysis : analysis.message,
+              aiMessage: analysis.estimation.toString(),
+              confidence: analysis.confidence,
+              reasoning: analysis.reasoning,
+              historicalComparison: analysis.historical_comparison,
+              status: analysis.status,
+              splitRecommendation: analysis.split_recommendation,
               selectedIssueIndex,
-              threadId:
-                typeof analysis === "string" ? undefined : analysis.threadId,
               isAnalyzing: false,
             },
             credentials
@@ -127,11 +131,18 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
     };
   }, [aiMessage, isResultShown, isAnalyzing]);
 
-  const handleCloseTooltip = () => {
+  const handleCloseTooltip = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setShowTooltip(false);
   };
 
-  if (!selectedBoardName || !isSFWCBoard) {
+  const handleParticipantClick = () => {
+    if (isResultShown && aiMessage && !isAnalyzing) {
+      setShowTooltip(true);
+    }
+  };
+
+  if (!selectedBoardName) {
     return null;
   }
 
@@ -145,9 +156,15 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
       key="gurubu-ai-participant"
       className="gurubu-ai-participant"
+      onClick={handleParticipantClick}
     >
       <GurubuAITooltip
-        message={aiMessage}
+        estimation={aiMessage}
+        confidence={groomingInfo?.gurubuAI?.confidence}
+        reasoning={groomingInfo?.gurubuAI?.reasoning}
+        historicalComparison={groomingInfo?.gurubuAI?.historicalComparison}
+        status={groomingInfo?.gurubuAI?.status}
+        splitRecommendation={groomingInfo?.gurubuAI?.splitRecommendation}
         isVisible={showTooltip}
         anchorRef={participantRef as React.RefObject<HTMLElement>}
         onClose={handleCloseTooltip}
@@ -155,13 +172,15 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
       <div className="profile-container">
         <div className="avatar">
           <Image
-            src="https://cdn.dsmcdn.com/web/develop/gurubu-ai.svg"
+            src="https://cdn.dsmcdn.com/web/production/armagan-ai.jpg"
             alt="GuruBu AI"
             width={32}
             height={32}
           />
         </div>
-        <div className="name">GuruBu AI</div>
+        <div className="name">
+          GuruBu AI <span className="beta-badge">Beta</span>
+        </div>
       </div>
       <div className="score">
         {isResultShown && aiMessage && !isAnalyzing

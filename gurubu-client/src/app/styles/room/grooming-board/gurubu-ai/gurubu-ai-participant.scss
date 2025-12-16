@@ -6,8 +6,11 @@
   margin-bottom: 8px;
   border-top: none !important;
   position: relative;
+  cursor: pointer;
+  gap: 10px !important;
 
   .profile-container {
+    width: 100%;
     display: flex;
     min-width: 140px;
     padding: 10px 0 10px 14px;
@@ -30,6 +33,20 @@
       flex: 1;
       font-weight: 400;
       color: #1a8236;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .beta-badge {
+        font-size: 10px;
+        font-weight: 600;
+        color: #1a8236;
+        background-color: rgba(26, 130, 54, 0.15);
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
     }
   }
 
@@ -39,7 +56,7 @@
     color: #1a8236;
     display: flex;
     gap: 0 16px;
-    width: 100%;
-    justify-content: space-around;
+    justify-content: flex-end;
+    padding-right: 14px;
   }
 }
