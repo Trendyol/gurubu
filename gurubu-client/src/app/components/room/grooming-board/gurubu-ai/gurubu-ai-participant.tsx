@@ -178,7 +178,9 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
             height={32}
           />
         </div>
-        <div className="name">GuruBu AI</div>
+        <div className="name">
+          GuruBu AI <span className="beta-badge">Beta</span>
+        </div>
       </div>
       <div className="score">
         {isResultShown && aiMessage && !isAnalyzing
