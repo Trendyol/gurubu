@@ -9,11 +9,49 @@ class JiraService {
   auth;
 
   constructor() {
-    this.baseUrl = process.env.JIRA_BASE_URL || "";
-    this.auth = {
-      username: process.env.JIRA_USERNAME || "",
-      password: process.env.JIRA_API_TOKEN || "",
+    // Validate required environment variables
+    const requiredEnvVars = {
+      JIRA_BASE_URL: process.env.JIRA_BASE_URL,
+      JIRA_USERNAME: process.env.JIRA_USERNAME,
+      JIRA_API_TOKEN: process.env.JIRA_API_TOKEN
     };
+
+    const missingVars = [];
+    for (const [key, value] of Object.entries(requiredEnvVars)) {
+      if (!value || value.trim() === '') {
+        missingVars.push(key);
+      }
+    }
+
+    if (missingVars.length > 0) {
+      throw new Error(
+        `Missing required environment variables for JIRA service: ${missingVars.join(', ')}. ` +
+        'Please check your .env file and ensure all JIRA configuration variables are set.'
+      );
+    }
+
+    // Validate JIRA_BASE_URL format
+    try {
+      new URL(this.baseUrl = process.env.JIRA_BASE_URL);
+    } catch (error) {
+      throw new Error(`Invalid JIRA_BASE_URL format: ${process.env.JIRA_BASE_URL}. Must be a valid URL.`);
+    }
+
+    this.auth = {
+      username: process.env.JIRA_USERNAME,
+      password: process.env.JIRA_API_TOKEN,
+    };
+
+    // Warn about optional JIRA project keys if not set
+    const optionalKeys = ['JIRA_PROJECT_KEY_ONE', 'JIRA_PROJECT_KEY_TWO', 'JIRA_PROJECT_KEY_THREE', 'JIRA_PROJECT_KEY_FOUR'];
+    const missingOptionalKeys = optionalKeys.filter(key => !process.env[key]);
+
+    if (missingOptionalKeys.length > 0) {
+      console.warn(
+        `Warning: Optional JIRA project keys not configured: ${missingOptionalKeys.join(', ')}. ` +
+        'Some features may not work correctly without these configurations.'
+      );
+    }
   }
 
   mapIssueResponse(response) {
@@ -47,14 +85,14 @@ class JiraService {
           key: issue.key,
           assignee: issue.fields.assignee
             ? {
-                self: `${this.baseUrl}/rest/api/2/user?username=${issue.fields.assignee.name}`,
-                name: issue.fields.assignee.name,
-                key: `JIRAUSER_${issue.fields.assignee.name}`,
-                emailAddress: issue.fields.assignee.emailAddress,
-                displayName: issue.fields.assignee.displayName,
-                active: true,
-                timeZone: "Europe/Istanbul",
-              }
+              self: `${this.baseUrl}/rest/api/2/user?username=${issue.fields.assignee.name}`,
+              name: issue.fields.assignee.name,
+              key: `JIRAUSER_${issue.fields.assignee.name}`,
+              emailAddress: issue.fields.assignee.emailAddress,
+              displayName: issue.fields.assignee.displayName,
+              active: true,
+              timeZone: "Europe/Istanbul",
+            }
             : null,
           pairAssignee,
           testAssignee,
@@ -298,7 +336,7 @@ class JiraService {
         baseClauses.push("statusCategory != Done");
       }
       const jql = `${baseClauses.join(" AND ")} ORDER BY updated DESC`;
-      
+
       const response = await axios.get(`${this.baseUrl}/rest/api/2/search`, {
         params: {
           jql,
