@@ -37,17 +37,22 @@ app.use("/storypoint", cors(corsOptions), storyPointRoutes);
 app.use("/initial-storypoint", cors(corsOptions), initialStoryPointRoutes);
 app.use("/ai-workflow", cors(corsOptions), aiWorkflowRoutes);
 
-const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app; 
 
-const io = socketIO(server, {
-  cors: {
-    origin: process.env.CLIENT_URL,
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-groomingSocket(io);
-cleanRoomsAndUsers();
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+
+  const io = socketIO(server, {
+    cors: {
+      origin: process.env.CLIENT_URL,
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
+  groomingSocket(io);
+  cleanRoomsAndUsers();
+}
