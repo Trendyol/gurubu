@@ -173,11 +173,11 @@ const VotingWindowContent = ({ roomId }: { roomId: string }) => {
 
         {isPlanningPoker && (
           <div className="voting-window__voting-sticks voting-window__voting-sticks--poker">
-            {groomingInfo.metrics?.map((metric) => (
+            {groomingInfo?.metrics?.map((metric) => (
               <VotingStickV2
-                key={metric.id}
-                points={metric.points}
-                name={metric.name}
+                key={metric?.id}
+                points={metric?.points}
+                name={metric?.name}
               />
             ))}
           </div>
