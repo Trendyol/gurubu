@@ -1,0 +1,36 @@
+name: Backend Integration Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: gurubu-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: gurubu-backend/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run Tests
+        run: yarn test
+        env:
+          NODE_ENV: test
+          CLIENT_URL: http://localhost:3000
+          PORT: 5000
