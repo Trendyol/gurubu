@@ -4,7 +4,7 @@ import GroomingBoardProfile from "./grooming-board-profile";
 import ThemeSelector from "./theme-selector";
 import { useState } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
-import { IconClipboardCheck, IconCopy, IconFileImport } from "@tabler/icons-react";
+import { IconClipboardCheck, IconCopy, IconFileImport, IconExternalLink } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { Modal } from "@/components/common/modal";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
@@ -36,9 +36,17 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
+  const isVotingWindowVisible = groomingInfo?.issues && groomingInfo?.issues?.length > 0;
+
   if (roomStatus !== ROOM_STATUS.FOUND || showNickNameForm) {
     return null;
   }
+
+  const handleOpenVotingWindow = () => {
+    const windowFeatures = "width=600,height=800,resizable=yes,scrollbars=yes,location=no,menubar=no,toolbar=no,status=no";
+    const votingWindowUrl = `/voting-window?roomId=${roomId}`;
+    window.open(votingWindowUrl, "GuruBuVotingWindow", windowFeatures);
+  };
 
   const getGroomingLink = () => {
     let currentUrl: string = "";
@@ -71,6 +79,21 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
           <Logo />
           <div className="grooming-navbar__content-right">
             <div className="grooming-navbar__content-actions">
+              {isVotingWindowVisible && (
+                <div className="grooming-navbar__content-voting-window-wrapper">
+                  <button
+                    className="grooming-navbar__content-voting-window"
+                    onClick={handleOpenVotingWindow}
+                  >
+                    <IconExternalLink size={20} />
+                    Vote Window
+                    <span className="grooming-navbar__content-voting-window-badge">NEW</span>
+                  </button>
+                  <div className="grooming-navbar__content-voting-window-tooltip">
+                    Open voting panel in a separate window - perfect for screen sharing!
+                  </div>
+                </div>
+              )}
               {userInfo.lobby?.isAdmin &&
                 groomingInfo?.mode === GroomingMode.PlanningPoker && (
                   <div>
