@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SocketProvider, useSocket } from "@/contexts/SocketContext";
 import { GroomingRoomProvider, useGroomingRoom } from "@/contexts/GroomingRoomContext";
@@ -17,6 +17,27 @@ import { checkUserJoinedLobbyBefore, getCurrentLobby } from "@/shared/helpers/lo
 import { GroomingInfo } from "@/shared/interfaces";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import "@/styles/voting-window/style.scss";
+
+const VotingWindowPage = () => {
+  return (
+    <Suspense fallback={<VotingWindowLoading />}>
+      <VotingWindow />
+    </Suspense>
+  );
+};
+
+const VotingWindowLoading = () => {
+  return (
+    <div className="voting-window">
+      <div className="voting-window__header">
+        <Logo />
+      </div>
+      <div className="voting-window__loading">
+        <Loading />
+      </div>
+    </div>
+  );
+};
 
 const VotingWindow = () => {
   const searchParams = useSearchParams();
@@ -191,5 +212,5 @@ const VotingWindowContent = ({ roomId }: { roomId: string }) => {
   );
 };
 
-export default VotingWindow;
+export default VotingWindowPage;
 
