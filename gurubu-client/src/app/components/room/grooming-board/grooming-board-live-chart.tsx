@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useMemo } from "react";
 import * as echarts from "echarts";
 import ReactECharts from "echarts-for-react";
 
@@ -8,17 +8,35 @@ import { GroomingMode } from "@/shared/enums";
 import { useTheme } from "@/contexts/ThemeContext";
 import classNames from "classnames";
 
+const CHART_COLORS = ['#6941c6', '#9f75ff', '#d4b7ff', '#f4ebff', '#7f56d9', '#5925dc', '#4a1fb8'];
+
 const GroomingBoardLiveChart = () => {
-  const chartRef = useRef<ReactECharts>(null);
   const { groomingInfo, jiraSidebarExpanded } = useGroomingRoom();
   const { currentTheme } = useTheme();
   
-  const calculatedVotes = calculateVotesOptimized(
-    groomingInfo.metrics?.[0]?.points,
-    groomingInfo.participants
+  const calculatedVotes = useMemo(() => 
+    calculateVotesOptimized(
+      groomingInfo?.metrics?.[0]?.points,
+      groomingInfo?.participants
+    ),
+    [groomingInfo?.metrics, groomingInfo?.participants]
   );
 
-  const getOption = (): echarts.EChartsOption => ({
+  const chartData = useMemo(() => {
+    if (!calculatedVotes || !groomingInfo?.metrics?.[0]?.points) return [];
+    
+    return groomingInfo?.metrics?.[0]?.points
+      .map((point, index) => ({
+        value: calculatedVotes?.[index] || 0,
+        name: point?.toString(),
+        itemStyle: {
+          color: CHART_COLORS[index % CHART_COLORS.length]
+        }
+      }))
+      .filter(item => item?.value > 0);
+  }, [calculatedVotes, groomingInfo?.metrics]);
+
+  const chartOption = useMemo((): echarts.EChartsOption => ({
     tooltip: {
       trigger: 'item',
       formatter: '{b} SP: {c} votes ({d}%)'
@@ -26,10 +44,11 @@ const GroomingBoardLiveChart = () => {
     legend: {
       orient: 'vertical',
       left: 'left',
+      data: chartData?.map(item => item?.name),
       textStyle: {
         fontFamily: "Inter, sans-serif",
         fontSize: "16px",
-        ...(currentTheme === "snow" ? {color: "#ffffff"} : {color: "#344054"})
+        color: currentTheme === "snow" ? "#ffffff" : "#344054"
       },
       formatter: '{name} SP'
     },
@@ -37,10 +56,7 @@ const GroomingBoardLiveChart = () => {
       {
         type: 'pie',
         radius: '70%',
-        data: groomingInfo.metrics?.[0]?.points.map((point, index) => ({
-          value: 0,
-          name: point.toString()
-        })),
+        data: chartData,
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -55,52 +71,29 @@ const GroomingBoardLiveChart = () => {
           fontFamily: "Inter, sans-serif",
           lineHeight: 20,
         },
-        itemStyle: {
-          color: function(params: any) {
-            const colors = ['#6941c6', '#9f75ff', '#d4b7ff', '#f4ebff', '#7f56d9', '#5925dc', '#4a1fb8'];
-            return colors[params.dataIndex % colors.length];
-          }
-        },
         animationType: 'expansion',
-        animationDuration: 1000,
-        animationEasing: 'cubicInOut',
-        animationDelay: function (idx: number) {
-          return idx * 100;
-        }
+        animationDuration: 800,
+        animationEasing: 'cubicOut'
       }
     ]
-  });
-
-  useEffect(() => {
-    const chart = chartRef.current?.getEchartsInstance();
-    if (!chart || !calculatedVotes || !groomingInfo.isResultShown) return;
-
-    const newData = groomingInfo.metrics?.[0]?.points
-      .map((point, index) => ({
-        value: calculatedVotes[index],
-        name: point.toString()
-      }))
-      .filter(item => item.value > 0);
-
-    // Update data with animation
-    chart.setOption({
-      series: [{
-        data: newData
-      }]
-    });
-  }, [groomingInfo.participants, groomingInfo.isResultShown, calculatedVotes]);
+  }), [chartData, currentTheme]);
 
   if (!groomingInfo.isResultShown || groomingInfo.mode === GroomingMode.ScoreGrooming) {
+    return null;
+  }
+
+  if (chartData?.length === 0) {
     return null;
   }
 
   return (
     <div className={classNames("grooming-board-live-chart", {"jira-sidebar-expanded": jiraSidebarExpanded})}>
       <ReactECharts
-        ref={chartRef}
-        option={getOption()}
+        option={chartOption}
         style={{ height: '400px' }}
         opts={{ renderer: 'canvas' }}
+        notMerge={false}
+        lazyUpdate={true}
       />
     </div>
   );

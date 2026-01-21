@@ -1,0 +1,117 @@
+@import "../variables.scss";
+@import "../room/grooming-board/voting-stick.scss";
+@import "../room/grooming-board/voting-stick-v2.scss";
+@import "../room/grooming-board/vote-card.scss";
+@import "../room/grooming-board/vote-card-v2.scss";
+
+.voting-window-body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.voting-window {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $purple-50 0%, $purple-100 100%);
+  padding: $space-large;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-small;
+    padding-bottom: $space-large;
+    border-bottom: 2px solid $purple-200;
+    margin-bottom: $space-large;
+  }
+
+  &__subtitle {
+    font-size: $font-size-paragraph-4;
+    line-height: $line-height-paragraph-4;
+    color: $gray-600;
+    font-weight: $medium;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-xlarge;
+    padding: $space-large 0;
+  }
+
+  &__voting-sticks {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xlarge;
+    width: 100%;
+    max-width: 500px;
+
+    &--poker {
+      gap: $space-base;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    padding-top: $space-large;
+    border-top: 2px solid $purple-200;
+    margin-top: $space-large;
+  }
+
+  &__hint {
+    font-size: $font-size-paragraph-5;
+    line-height: $line-height-paragraph-5;
+    color: $gray-500;
+    font-weight: $regular;
+    margin: 0;
+    text-align: center;
+  }
+
+  &-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: $gray-50;
+
+    p {
+      font-size: $font-size-paragraph-3;
+      color: $gray-700;
+      font-weight: $medium;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: $space-base;
+
+    &__content {
+      gap: $space-base;
+      padding: $space-base 0;
+    }
+
+    &__voting-sticks {
+      gap: $space-base;
+      max-width: 100%;
+
+      &--poker {
+        gap: $space-small;
+      }
+    }
+  }
+}
+

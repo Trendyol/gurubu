@@ -4,14 +4,14 @@ const announcements = [
   {
     id: 1,
     icon: "✨",
-    text: "Hey there! We'd love to hear your thoughts on our new Jira design. Your feedback shapes our future!",
+    text: "Hey! What do you think about the new voting window?",
     buttonText: "Share Thoughts",
     link: process.env.NEXT_PUBLIC_FEEDBACK_SHEET_LINK,
   },
   {
     id: 3,
     icon: "💡",
-    text: "Got ideas for making GuruBu better? We're all ears!",
+    text: "Hello! We'd love to hear your thoughts on our new feature GuruBu AI, what do you think about it?",
     buttonText: "Give Feedback",
     link: process.env.NEXT_PUBLIC_FEEDBACK_SHEET_LINK,
   }
