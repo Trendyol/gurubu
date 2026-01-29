@@ -13,6 +13,7 @@ export interface User {
   isAdmin: boolean;
   avatar: Avatar;
   profile: pProfile;
+  connected?: boolean;
 }
 
 export interface Metric {
@@ -23,8 +24,15 @@ export interface Metric {
   points: string[];
 }
 
+export interface RetroParticipant {
+  userID: number;
+  nickname: string;
+  avatarSeed?: string;
+  connected?: boolean;
+}
+
 export interface Participants {
-  [key: string]: User;
+  [key: string]: User | RetroParticipant;
 }
 
 export interface MetricAverages {
@@ -75,6 +83,55 @@ export interface GurubuAI {
   splitRecommendation?: string | null;
 }
 
+export interface RetroCard {
+  id: string;
+  text: string;
+  image: string | null;
+  color?: string | null;
+  author: string;
+  authorId: number;
+  createdAt: number;
+  stamps?: Array<{emoji: string, x: number, y: number}>;
+  mentions?: string[];
+  votes?: number[];
+  voteCount?: number;
+}
+
+export interface RetroCards {
+  [key: string]: RetroCard[];
+}
+
+export interface RetroMusic {
+  isPlaying: boolean;
+  url: string | null;
+}
+
+export interface RetroInfo {
+  title: string;
+  owner: number;
+  participants: Participants;
+  retroCards: RetroCards;
+  timer: Timer;
+  music: RetroMusic;
+  boardImages?: Array<{id: string, src: string, x: number, y: number, width: number, height: number}>;
+  columnHeaderImages?: Record<string, string | null>;
+  template?: {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    popular: boolean;
+    columns: Array<{
+      key: string;
+      title: string;
+      color: string;
+      description: string;
+      isMain?: boolean;
+    }>;
+  };
+  status: string;
+}
+
 export interface GroomingInfo {
   mode: string;
   participants: Participants;
@@ -101,7 +158,7 @@ export interface Avatar {
 export interface Timer {
   timeLeft: number;
   isRunning: boolean;
-  startTime: number;
+  startTime: number | null;
 }
 
 export interface UserInfo {

@@ -202,14 +202,23 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
         onClick={handleClick}
       >
         <div className="grooming-board-profile__content">
-          <div className="grooming-board-profile__icon">
-            {groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+          <div 
+            className="grooming-board-profile__icon"
+            data-username={
+              (groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
+                ?.isSelected
+                ? (groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
+                    ?.displayName
+                : userInfo.nickname
+            }
+          >
+            {(groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
               ?.picture &&
-            groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+            (groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
               ?.isSelected ? (
               <Image
                 src={
-                  groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+                  (groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
                     ?.picture
                 }
                 alt="Profile Picture"
@@ -221,9 +230,9 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
             )}
           </div>
           <span className="grooming-board-profile__nickname">
-            {groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+            {(groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
               ?.isSelected
-              ? groomingInfo?.participants?.[userInfo.lobby?.userID]?.profile
+              ? (groomingInfo?.participants?.[userInfo.lobby?.userID] as any)?.profile
                   ?.displayName
               : userInfo.nickname}
           </span>
@@ -264,6 +273,12 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
             className="grooming-board-profile__bar"
             id="grooming-board-profile__bar"
           >
+            <button
+              className="grooming-board-profile__update-avatar-button grooming-board-profile__update-avatar-button--primary"
+              onClick={() => openModal("changeAvatar")}
+            >
+              Edit Avatar
+            </button>
             {process.env.NEXT_PUBLIC_P_ENABLED === "true" && (
               <button
                 className="grooming-board-profile__p-sync-button"
@@ -274,12 +289,6 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
                 <p className="p-sync-new">New</p>
               </button>
             )}
-            <button
-              className="grooming-board-profile__update-avatar-button"
-              onClick={() => openModal("changeAvatar")}
-            >
-              Avatar
-            </button>
             <button
               className="grooming-board-profile__update-nickname-button"
               onClick={() => openModal("changeName")}

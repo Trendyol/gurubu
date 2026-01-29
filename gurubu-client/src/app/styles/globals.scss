@@ -3,6 +3,21 @@
 @import "./common/style.scss";
 @import "./voting-window/style.scss";
 
+:root {
+  --text-primary: #{$gray-900};
+  --text-secondary: #{$gray-600};
+  --card-background: #{$white};
+  --input-background: #{$white};
+  --border-color: #{$gray-300};
+  --primary-color: #{$primary-700};
+  --primary-hover: #{$primary-600};
+  --secondary-color: #{$blue-600};
+  --secondary-hover: #{$blue-500};
+  --cancel-color: #{$gray-100};
+  --cancel-hover: #{$gray-200};
+  --hover-background: #{$gray-50};
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

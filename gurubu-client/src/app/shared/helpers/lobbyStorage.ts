@@ -27,6 +27,36 @@ export const getCurrentLobby = (roomId: string) => {
   }
 };
 
+export const getCurrentRetroLobby = (retroId: string) => {
+  clearExpiredRetros();
+  if (typeof window !== "undefined") {
+    const lobby = JSON.parse(localStorage.getItem("retroLobby") || "{}");
+    if (!Object.keys(lobby).length) {
+      return null;
+    }
+
+    return lobby.state.retros[retroId];
+  }
+};
+
+function clearExpiredRetros() {
+  const currentTime = new Date().getTime();
+  if (typeof window !== "undefined") {
+    const lobby = JSON.parse(localStorage.getItem("retroLobby") || "{}");
+    if (!Object.keys(lobby).length) {
+      return null;
+    }
+
+    Object.keys(lobby.state.retros).forEach((retroKey) => {
+      if (lobby.state.retros[retroKey].expiredAt < currentTime) {
+        delete lobby.state.retros[retroKey];
+      }
+    });
+
+    localStorage.setItem("retroLobby", JSON.stringify(lobby));
+  }
+}
+
 function clearExpiredRooms() {
   const currentTime = new Date().getTime();
   if (typeof window !== "undefined") {
