@@ -15,6 +15,7 @@ interface RetroColumnProps {
   newCardImage: string | null;
   showAddButton: boolean;
   draggedCard: any;
+  draggedImage: any;
   selectedStamp: string | null;
   columnHeaderImages: Record<string, string | null>;
   participants: any[];
@@ -25,9 +26,11 @@ interface RetroColumnProps {
   onSetNewCardImage: (image: string | null) => void;
   onSetSelectedStamp: (stamp: string | null) => void;
   onSetDraggedCard: (card: any) => void;
+  onSetDraggedImage: (image: any) => void;
+  onDropImageOnColumn: (e: React.DragEvent, image: any) => void;
   onAddCard: (columnKey: string) => void;
   onDeleteCard: (columnKey: string, cardId: string) => void;
-  onUpdateCard: (columnKey: string, cardId: string, text: string, image: string | null, stamps: string[]) => void;
+  onUpdateCard: (columnKey: string, cardId: string, text: string, image: string | null, stamps?: Array<{emoji: string, x: number, y: number}>) => void;
   onVoteCard: (columnKey: string, cardId: string) => void;
   onColumnHeaderImageUpload: (columnKey: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveColumnHeaderImage: (columnKey: string) => void;
@@ -43,6 +46,7 @@ const RetroColumn = ({
   newCardImage,
   showAddButton,
   draggedCard,
+  draggedImage,
   selectedStamp,
   columnHeaderImages,
   participants,
@@ -53,6 +57,8 @@ const RetroColumn = ({
   onSetNewCardImage,
   onSetSelectedStamp,
   onSetDraggedCard,
+  onSetDraggedImage,
+  onDropImageOnColumn,
   onAddCard,
   onDeleteCard,
   onUpdateCard,
@@ -70,12 +76,15 @@ const RetroColumn = ({
       requestAnimationFrame(() => {
         onSetDraggedCard(null);
       });
+    } else if (draggedImage) {
+      // Drop image on the column area
+      onDropImageOnColumn(e, draggedImage);
     }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    if (draggedCard) {
+    if (draggedCard || draggedImage) {
       e.dataTransfer.dropEffect = "copy";
     }
   };
@@ -83,7 +92,7 @@ const RetroColumn = ({
   return (
     <div
       className={classNames("retro-column", `retro-column--${columnConfig.color}`, {
-        "retro-column--drag-over": draggedCard,
+        "retro-column--drag-over": draggedCard || draggedImage,
       })}
       onDrop={handleDrop}
       onDragOver={handleDragOver}

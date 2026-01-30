@@ -176,7 +176,15 @@ const RetroBoard = ({ roomId }: IProps) => {
       socket.emit("heartbeat");
     }, 30000);
 
-    const handleInitializeRetro = (data: any) => setRetroInfo(data);
+    const handleInitializeRetro = (data: any) => {
+      setRetroInfo(data);
+      if (data.boardImages) {
+        setBoardImages(data.boardImages);
+      }
+      if (data.columnHeaderImages) {
+        setColumnHeaderImages(data.columnHeaderImages);
+      }
+    };
     const handleAddRetroCard = (data: any) => setRetroInfo(data);
     const handleUpdateRetroCard = (data: any) => setRetroInfo(data);
     const handleDeleteRetroCard = (data: any) => setRetroInfo(data);
@@ -351,7 +359,7 @@ const RetroBoard = ({ roomId }: IProps) => {
     setDeleteConfirm({ show: false, cardId: null, column: null });
   };
 
-  const handleUpdateCard = (columnKey: string, cardId: string, text: string, image: string | null, stamps: string[]) => {
+  const handleUpdateCard = (columnKey: string, cardId: string, text: string, image: string | null, stamps?: Array<{emoji: string, x: number, y: number}>) => {
     if (userInfo.lobby) {
       socket.emit("updateRetroCard", roomId, columnKey, cardId, { text, image, stamps }, userInfo.lobby.credentials);
     }
@@ -487,6 +495,35 @@ const RetroBoard = ({ roomId }: IProps) => {
   const handleImageDragStart = (image: any, e: React.DragEvent) => {
     setDraggedImage(image);
     e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', image.id);
+  };
+
+  const handleDropImageOnColumn = (e: React.DragEvent, image: any) => {
+    // Get the column element's position
+    const columnElement = e.currentTarget as HTMLElement;
+    const rect = columnElement.getBoundingClientRect();
+    
+    // Calculate position relative to the board (not the column)
+    const boardElement = document.querySelector('.retro-board') as HTMLElement;
+    if (!boardElement) return;
+    
+    const boardRect = boardElement.getBoundingClientRect();
+    const x = Math.max(60, e.clientX - boardRect.left - image.width / 2);
+    const y = Math.max(0, e.clientY - boardRect.top - image.height / 2);
+    
+    const updatedImages = boardImages.map(img => 
+      img.id === image.id 
+        ? { ...img, x, y }
+        : img
+    );
+    
+    setBoardImages(updatedImages);
+    
+    if (userInfo.lobby) {
+      socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
+    }
+    
+    setDraggedImage(null);
   };
 
   const handleBoardImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -555,18 +592,23 @@ const RetroBoard = ({ roomId }: IProps) => {
     const newX = Math.max(60, e.clientX - dragOffset.x);
     const newY = Math.max(0, e.clientY - dragOffset.y);
 
-    const updatedImages = boardImages.map(img => 
-      img.id === draggingImage 
-        ? { ...img, x: newX, y: newY }
-        : img
-    );
-    
-    setBoardImages(updatedImages);
+    setBoardImages(prevImages => {
+      const updatedImages = prevImages.map(img => 
+        img.id === draggingImage 
+          ? { ...img, x: newX, y: newY }
+          : img
+      );
+      return updatedImages;
+    });
   };
 
   const handleImageMouseUp = () => {
     if (draggingImage && userInfo.lobby) {
-      socket.emit("updateBoardImages", roomId, boardImages, userInfo.lobby.credentials);
+      // Use the latest boardImages state
+      setBoardImages(prevImages => {
+        socket.emit("updateBoardImages", roomId, prevImages, userInfo.lobby.credentials);
+        return prevImages;
+      });
     }
     setDraggingImage(null);
     setDragOffset(null);
@@ -617,18 +659,23 @@ const RetroBoard = ({ roomId }: IProps) => {
     const newWidth = Math.max(100, resizingImage.startWidth + deltaX);
     const newHeight = newWidth / aspectRatio;
 
-    const updatedImages = boardImages.map(img => 
-      img.id === resizingImage.id 
-        ? { ...img, width: newWidth, height: newHeight }
-        : img
-    );
-    
-    setBoardImages(updatedImages);
+    setBoardImages(prevImages => {
+      const updatedImages = prevImages.map(img => 
+        img.id === resizingImage.id 
+          ? { ...img, width: newWidth, height: newHeight }
+          : img
+      );
+      return updatedImages;
+    });
   };
 
   const handleResizeEnd = () => {
     if (resizingImage && userInfo.lobby) {
-      socket.emit("updateBoardImages", roomId, boardImages, userInfo.lobby.credentials);
+      // Use the latest boardImages state
+      setBoardImages(prevImages => {
+        socket.emit("updateBoardImages", roomId, prevImages, userInfo.lobby.credentials);
+        return prevImages;
+      });
     }
     setResizingImage(null);
   };
@@ -697,6 +744,7 @@ const RetroBoard = ({ roomId }: IProps) => {
         newCardImage={newCardImage}
         showAddButton={showAddButton}
         draggedCard={draggedCard}
+        draggedImage={draggedImage}
         selectedStamp={selectedStamp}
         columnHeaderImages={columnHeaderImages}
         participants={participants}
@@ -707,6 +755,8 @@ const RetroBoard = ({ roomId }: IProps) => {
         onSetNewCardImage={setNewCardImage}
         onSetSelectedStamp={setSelectedStamp}
         onSetDraggedCard={setDraggedCard}
+        onSetDraggedImage={setDraggedImage}
+        onDropImageOnColumn={handleDropImageOnColumn}
         onAddCard={handleAddCard}
         onDeleteCard={handleDeleteCard}
         onUpdateCard={handleUpdateCard}
@@ -769,7 +819,7 @@ const RetroBoard = ({ roomId }: IProps) => {
         onStampSelect={setSelectedStamp}
         onRemoveCustomStamp={handleRemoveCustomStamp}
         onCustomStampUpload={handleCustomStampUpload}
-        boardImages={boardImages}
+        boardImages={boardImages.filter(img => img.x < 0 || img.y < 0)}
         onRemoveBoardImage={handleRemoveBoardImage}
         onBoardImageUpload={handleBoardImageUpload}
         onImageDragStart={handleImageDragStart}
@@ -782,8 +832,8 @@ const RetroBoard = ({ roomId }: IProps) => {
           e.preventDefault();
           if (draggedImage) {
             const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left - draggedImage.width / 2;
-            const y = e.clientY - rect.top - draggedImage.height / 2;
+            const x = Math.max(60, e.clientX - rect.left - draggedImage.width / 2);
+            const y = Math.max(0, e.clientY - rect.top - draggedImage.height / 2);
             
             const updatedImages = boardImages.map(img => 
               img.id === draggedImage.id 
@@ -791,10 +841,11 @@ const RetroBoard = ({ roomId }: IProps) => {
                 : img
             );
             
-            socket.emit("updateBoardImages", {
-              retroId: roomId,
-              images: updatedImages,
-            });
+            setBoardImages(updatedImages);
+            
+            if (userInfo.lobby) {
+              socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
+            }
             
             setDraggedImage(null);
           }

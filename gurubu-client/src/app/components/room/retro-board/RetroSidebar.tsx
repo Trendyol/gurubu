@@ -300,19 +300,11 @@ const RetroSidebar = ({
                   className="retro-board-image-preview"
                   draggable
                   onDragStart={(e) => {
+                    e.stopPropagation();
                     onImageDragStart(image, e);
-                    e.dataTransfer.effectAllowed = 'move';
-                    // Create drag image
-                    const dragImg = document.createElement('img');
-                    dragImg.src = image.src;
-                    dragImg.style.width = '100px';
-                    dragImg.style.height = '100px';
-                    dragImg.style.objectFit = 'cover';
-                    dragImg.style.borderRadius = '8px';
-                    dragImg.style.opacity = '0.8';
-                    document.body.appendChild(dragImg);
-                    e.dataTransfer.setDragImage(dragImg, 50, 50);
-                    setTimeout(() => document.body.removeChild(dragImg), 0);
+                  }}
+                  onDragEnd={() => {
+                    // Cleanup if needed
                   }}
                   style={{ cursor: 'grab' }}
                 >
