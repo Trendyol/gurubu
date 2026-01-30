@@ -1,5 +1,5 @@
 const uuid = require("uuid");
-const { userJoin, getCurrentUser, getCurrentUserWithSocket } = require("../utils/users");
+const { retroUserJoin, getCurrentRetroUser, getCurrentRetroUserWithSocket } = require("../utils/retroUsers");
 const { getTemplate } = require("../config/retroTemplates");
 
 let retros = {};
@@ -38,7 +38,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well') => {
   
   console.log("generateNewRetro:", { nickName, title, templateId, retroId, currentTime, expireTime });
 
-  const user = userJoin(nickName, retroId);
+  const user = retroUserJoin(nickName, retroId);
   const template = getTemplate(templateId);
 
   const newRetroRoom = {
@@ -94,7 +94,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well') => {
 };
 
 const handleJoinRetro = (nickName, retroId) => {
-  const user = userJoin(nickName, retroId);
+  const user = retroUserJoin(nickName, retroId);
   if (!user) {
     return handleErrors("handleJoinRetro", retroId);
   }
@@ -152,25 +152,25 @@ const leaveUserFromRetro = (user) => {
     return;
   }
 
-  if (!retros[user.roomID]) {
-    console.log(`leaveUserFromRetro: Retro ${user.roomID} not found`);
+  if (!retros[user.retroId]) {
+    console.log(`leaveUserFromRetro: Retro ${user.retroId} not found`);
     return;
   }
   
-  const userRetroData = retros[user.roomID].participants[user.userID];
+  const userRetroData = retros[user.retroId].participants[user.userID];
   if (!userRetroData) {
     console.log(`leaveUserFromRetro: User ${user.userID} not found in retro participants`);
     return;
   }
 
   // Mark user as disconnected
-  retros[user.roomID].participants[user.userID] = {
+  retros[user.retroId].participants[user.userID] = {
     ...userRetroData,
     connected: false,
   };
-  console.log(`User ${user.nickname} (${user.userID}) marked as disconnected in retro ${user.roomID}`);
+  console.log(`User ${user.nickname} (${user.userID}) marked as disconnected in retro ${user.retroId}`);
   
-  return user.roomID;
+  return user.retroId;
 };
 
 const extractMentions = (text) => {
@@ -182,7 +182,7 @@ const extractMentions = (text) => {
 };
 
 const addRetroCard = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("addRetroCard", retroId, socket, isRetroExpired);
@@ -208,12 +208,12 @@ const addRetroCard = (data, credentials, retroId, socket) => {
   console.log("🎨 addRetroCard - Created card with color:", newCard.color);
   console.log("👥 addRetroCard - Mentions found:", mentions);
 
-  if (retros[user.roomID].retroCards && retros[user.roomID].retroCards[column]) {
-    retros[user.roomID].retroCards[column].push(newCard);
+  if (retros[user.retroId].retroCards && retros[user.retroId].retroCards[column]) {
+    retros[user.retroId].retroCards[column].push(newCard);
   }
 
   return {
-    retroData: retros[user.roomID],
+    retroData: retros[user.retroId],
     mentions: mentions,
     cardId: cardId,
     author: user.nickname,
@@ -222,7 +222,7 @@ const addRetroCard = (data, credentials, retroId, socket) => {
 };
 
 const updateRetroCard = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("updateRetroCard", retroId, socket, isRetroExpired);
@@ -233,14 +233,14 @@ const updateRetroCard = (data, credentials, retroId, socket) => {
   // Extract mentions from updated text if text is provided
   const mentions = text ? extractMentions(text) : undefined;
 
-  if (retros[user.roomID].retroCards && retros[user.roomID].retroCards[column]) {
-    const cardIndex = retros[user.roomID].retroCards[column].findIndex(
+  if (retros[user.retroId].retroCards && retros[user.retroId].retroCards[column]) {
+    const cardIndex = retros[user.retroId].retroCards[column].findIndex(
       (card) => card.id === cardId
     );
 
     if (cardIndex !== -1) {
-      const existingCard = retros[user.roomID].retroCards[column][cardIndex];
-      retros[user.roomID].retroCards[column][cardIndex] = {
+      const existingCard = retros[user.retroId].retroCards[column][cardIndex];
+      retros[user.retroId].retroCards[column][cardIndex] = {
         ...existingCard,
         // Update text only if provided
         text: text !== undefined ? text : existingCard.text,
@@ -261,7 +261,7 @@ const updateRetroCard = (data, credentials, retroId, socket) => {
   }
 
   return {
-    retroData: retros[user.roomID],
+    retroData: retros[user.retroId],
     mentions: mentions,
     cardId: cardId,
     author: user.nickname,
@@ -270,7 +270,7 @@ const updateRetroCard = (data, credentials, retroId, socket) => {
 };
 
 const deleteRetroCard = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("deleteRetroCard", retroId, socket, isRetroExpired);
@@ -278,75 +278,75 @@ const deleteRetroCard = (data, credentials, retroId, socket) => {
 
   const { column, cardId } = data;
 
-  if (retros[user.roomID].retroCards && retros[user.roomID].retroCards[column]) {
-    retros[user.roomID].retroCards[column] = retros[user.roomID].retroCards[
+  if (retros[user.retroId].retroCards && retros[user.retroId].retroCards[column]) {
+    retros[user.retroId].retroCards[column] = retros[user.retroId].retroCards[
       column
     ].filter((card) => card.id !== cardId);
   }
 
-  return retros[user.roomID];
+  return retros[user.retroId];
 };
 
 const updateRetroTimer = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("updateRetroTimer", retroId, socket, isRetroExpired);
   }
 
   // Check if user is owner
-  if (retros[user.roomID].owner !== user.userID) {
+  if (retros[user.retroId].owner !== user.userID) {
     return {
       isSuccess: false,
       message: "Only the retro owner can control the timer"
     };
   }
 
-  retros[user.roomID].timer = data;
+  retros[user.retroId].timer = data;
 
-  return retros[user.roomID];
+  return retros[user.retroId];
 };
 
 const updateRetroMusic = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("updateRetroMusic", retroId, socket, isRetroExpired);
   }
 
   // Check if user is owner
-  if (retros[user.roomID].owner !== user.userID) {
+  if (retros[user.retroId].owner !== user.userID) {
     return {
       isSuccess: false,
       message: "Only the retro owner can control the music"
     };
   }
 
-  retros[user.roomID].music = data;
+  retros[user.retroId].music = data;
 
-  return retros[user.roomID];
+  return retros[user.retroId];
 };
 
 const updateBoardImages = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("updateBoardImages", retroId, socket, isRetroExpired);
   }
 
-  retros[user.roomID].boardImages = data;
-  return retros[user.roomID];
+  retros[user.retroId].boardImages = data;
+  return retros[user.retroId];
 };
 
 const updateColumnHeaderImages = (data, credentials, retroId, socket) => {
-  const user = getCurrentUser(credentials, socket);
+  const user = getCurrentRetroUser(credentials, retroId, socket);
   const isRetroExpired = checkIsRetroExpired(retroId);
   if (!user || isRetroExpired) {
     return handleErrors("updateColumnHeaderImages", retroId, socket, isRetroExpired);
   }
 
-  retros[user.roomID].columnHeaderImages = data;
-  return retros[user.roomID];
+  retros[user.retroId].columnHeaderImages = data;
+  return retros[user.retroId];
 };
 
 const cleanRetros = () => {
@@ -418,6 +418,27 @@ const moveRetroCard = (retroId, sourceColumn, targetColumn, cardId) => {
   return retro;
 };
 
+const updateRetroNickname = (retroId, userID, newNickname) => {
+  const retro = retros[retroId];
+  if (!retro || !retro.participants || !retro.participants[userID]) {
+    return null;
+  }
+
+  // Update nickname in participants
+  retro.participants[userID].nickname = newNickname;
+
+  // Update nickname in all cards authored by this user
+  Object.keys(retro.retroCards).forEach(columnKey => {
+    retro.retroCards[columnKey].forEach(card => {
+      if (card.authorId === userID) {
+        card.author = newNickname;
+      }
+    });
+  });
+
+  return retro;
+};
+
 module.exports = {
   generateNewRetro,
   handleJoinRetro,
@@ -433,5 +454,6 @@ module.exports = {
   updateColumnHeaderImages,
   voteCard,
   moveRetroCard,
+  updateRetroNickname,
   cleanRetros
 };

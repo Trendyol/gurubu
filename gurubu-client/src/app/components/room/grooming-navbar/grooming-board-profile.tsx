@@ -187,7 +187,9 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
           isConsentGiven: false,
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching P user:", error);
+    }
   };
 
   useEffect(() => {

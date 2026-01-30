@@ -14,6 +14,15 @@
   &__display {
     width: 80px;
     height: 80px;
+    transition: all 0.3s ease;
+
+    &--warning {
+      animation: shake 0.5s ease-in-out infinite;
+    }
+
+    &--finished {
+      animation: shakeAndFade 2s ease-out forwards;
+    }
   }
 
   &__circle {
@@ -44,6 +53,11 @@
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
     transform: rotate(90deg);
     transform-origin: center;
+    transition: fill 0.3s ease;
+
+    &--warning {
+      fill: #ef4444;
+    }
   }
 
   &__controls {
@@ -197,9 +211,20 @@
     font-weight: 700;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     animation: pulse 2s ease-in-out infinite;
+    transition: all 0.3s ease;
 
     &--inline {
       margin-right: 1rem;
+    }
+
+    &--warning {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+      animation: shake 0.5s ease-in-out infinite, pulseRed 2s ease-in-out infinite;
+    }
+
+    &--finished {
+      animation: shakeAndFade 2s ease-out forwards;
     }
   }
 
@@ -230,5 +255,47 @@
   }
   50% {
     box-shadow: 0 4px 16px rgba(102, 126, 234, 0.5);
+  }
+}
+
+@keyframes pulseRed {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.7);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px) rotate(-1deg);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px) rotate(1deg);
+  }
+}
+
+@keyframes shakeAndFade {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  10%, 30%, 50%, 70% {
+    transform: translateX(-3px) rotate(-2deg) scale(1.05);
+  }
+  20%, 40%, 60% {
+    transform: translateX(3px) rotate(2deg) scale(1.05);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(0) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0) scale(0.8);
   }
 }

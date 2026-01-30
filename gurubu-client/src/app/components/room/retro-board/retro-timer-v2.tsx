@@ -19,43 +19,41 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [isAlarmPlaying, setIsAlarmPlaying] = useState(false);
 
-  // Play alarm sound
+  // Play gentle notification sound
   const playAlarm = () => {
     setIsAlarmPlaying(true);
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    let beepCount = 0;
-    const maxBeeps = 6; // 3 seconds (6 beeps of 0.5s each)
     
-    const beep = () => {
-      if (beepCount >= maxBeeps) {
-        setIsAlarmPlaying(false);
-        return;
-      }
-      
+    // Play a gentle three-tone notification (like a soft chime)
+    const playTone = (frequency: number, startTime: number, duration: number) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
-      oscillator.frequency.value = 800; // Hz
-      oscillator.type = 'sine';
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine'; // Soft sine wave
       
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+      // Gentle fade in and out
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.05); // Gentle volume
+      gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
       
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.2);
-      
-      beepCount++;
-      if (beepCount < maxBeeps) {
-        setTimeout(beep, 500);
-      } else {
-        setIsAlarmPlaying(false);
-      }
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
     };
     
-    beep();
+    const now = audioContext.currentTime;
+    
+    // Pleasant three-tone sequence (C-E-G chord progression)
+    playTone(523.25, now, 0.3);        // C5
+    playTone(659.25, now + 0.15, 0.3); // E5
+    playTone(783.99, now + 0.3, 0.4);  // G5
+    
+    setTimeout(() => {
+      setIsAlarmPlaying(false);
+    }, 800);
   };
 
   // Calculate actual time left based on startTime
@@ -128,24 +126,27 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
     return (displayTime / totalSeconds) * 100;
   };
 
+  const isWarning = displayTime <= 10 && displayTime > 0;
+  const isFinished = displayTime === 0;
+
   // Owner controls
   if (isOwner) {
     return (
       <div className="retro-timer-v2 retro-timer-v2--owner">
         {/* Show user view if timer is running */}
         {timer.isRunning && (
-          <div className="retro-timer-v2__user-display retro-timer-v2__user-display--inline">
+          <div className={`retro-timer-v2__user-display retro-timer-v2__user-display--inline ${isWarning ? 'retro-timer-v2__user-display--warning' : ''} ${isFinished ? 'retro-timer-v2__user-display--finished' : ''}`}>
             <IconClock size={20} className="retro-timer-v2__icon" />
             <span className="retro-timer-v2__user-time">{formatTime(displayTime)}</span>
           </div>
         )}
         
-        <div className="retro-timer-v2__display">
+        <div className={`retro-timer-v2__display ${isWarning ? 'retro-timer-v2__display--warning' : ''} ${isFinished ? 'retro-timer-v2__display--finished' : ''}`}>
           <svg className="retro-timer-v2__circle" viewBox="0 0 120 120">
             <defs>
               <linearGradient id="timer-gradient-v2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#667eea" />
-                <stop offset="100%" stopColor="#764ba2" />
+                <stop offset="0%" stopColor={isWarning ? "#ef4444" : "#667eea"} />
+                <stop offset="100%" stopColor={isWarning ? "#dc2626" : "#764ba2"} />
               </linearGradient>
             </defs>
             <circle
@@ -167,7 +168,7 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
             <text
               x="60"
               y="60"
-              className="retro-timer-v2__time"
+              className={`retro-timer-v2__time ${isWarning ? 'retro-timer-v2__time--warning' : ''}`}
               textAnchor="middle"
               dominantBaseline="middle"
             >
@@ -231,21 +232,24 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
     );
   }
 
+  // Play alarm for users too when time is up
+  useEffect(() => {
+    if (!isOwner && displayTime === 0 && !isAlarmPlaying) {
+      playAlarm();
+    }
+  }, [displayTime, isAlarmPlaying, isOwner]);
+
   // User view - only show if timer is running
   if (!timer.isRunning) {
     return null;
   }
 
-  // Play alarm for users too when time is up
-  useEffect(() => {
-    if (displayTime === 0 && !isAlarmPlaying) {
-      playAlarm();
-    }
-  }, [displayTime, isAlarmPlaying]);
+  const isWarningUser = displayTime <= 10 && displayTime > 0;
+  const isFinishedUser = displayTime === 0;
 
   return (
     <div className="retro-timer-v2 retro-timer-v2--user">
-      <div className="retro-timer-v2__user-display">
+      <div className={`retro-timer-v2__user-display ${isWarningUser ? 'retro-timer-v2__user-display--warning' : ''} ${isFinishedUser ? 'retro-timer-v2__user-display--finished' : ''}`}>
         <IconClock size={20} className="retro-timer-v2__icon" />
         <span className="retro-timer-v2__user-time">{formatTime(displayTime)}</span>
       </div>

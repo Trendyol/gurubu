@@ -30,7 +30,7 @@ const CreateRetro = () => {
   const retroService = new RetroService(process.env.NEXT_PUBLIC_API_URL || "");
 
   useEffect(() => {
-    const savedNickname = localStorage.getItem("nickname");
+    const savedNickname = localStorage.getItem("retroNickname");
     if (savedNickname) {
       setNickname(savedNickname);
     }
@@ -70,7 +70,7 @@ const CreateRetro = () => {
       return;
     }
 
-    localStorage.setItem("nickname", trimmedNickName);
+    localStorage.setItem("retroNickname", trimmedNickName);
 
     const payload = {
       nickName: trimmedNickName,

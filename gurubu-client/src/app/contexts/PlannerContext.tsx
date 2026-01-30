@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   ReactNode,
 } from "react";
 import { useSearchParams } from "next/navigation";
@@ -46,8 +47,8 @@ export const PlannerProvider: React.FC<PlannerProviderProps> = ({ children }) =>
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const [hasEmptyTeam, setHasEmptyTeam] = useState(false);
 
-  const pService = new PService(process.env.NEXT_PUBLIC_API_URL || "");
-  const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
+  const pService = useMemo(() => new PService(process.env.NEXT_PUBLIC_API_URL || ""), []);
+  const jiraService = useMemo(() => new JiraService(process.env.NEXT_PUBLIC_API_URL || ""), []);
 
   const handleRefresh = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);

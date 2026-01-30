@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { IconUser, IconNote, IconMoodSmile, IconPhoto, IconRefresh } from "@tabler/icons-react";
+import { IconUser, IconNote, IconMoodSmile, IconPhoto, IconRefresh, IconSparkles } from "@tabler/icons-react";
 import classNames from "classnames";
 
 interface RetroSidebarProps {
@@ -32,6 +32,10 @@ interface RetroSidebarProps {
   boardImages: any[];
   onRemoveBoardImage: (id: string) => void;
   onBoardImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageDragStart: (image: any, e: React.DragEvent) => void;
+
+  // Confetti
+  onConfetti: () => void;
 }
 
 const RetroSidebar = ({
@@ -55,6 +59,8 @@ const RetroSidebar = ({
   boardImages,
   onRemoveBoardImage,
   onBoardImageUpload,
+  onImageDragStart,
+  onConfetti,
 }: RetroSidebarProps) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'cards' | 'stamps' | 'images' | null>(null);
 
@@ -91,6 +97,7 @@ const RetroSidebar = ({
         <button
           className={classNames("retro-sidebar__icon", { active: activeTab === 'cards' })}
           onClick={() => setActiveTab(activeTab === 'cards' ? null : 'cards')}
+          data-type="cards"
           title="Cards"
         >
           <IconNote size={20} />
@@ -98,6 +105,7 @@ const RetroSidebar = ({
         <button
           className={classNames("retro-sidebar__icon", { active: activeTab === 'stamps' })}
           onClick={() => setActiveTab(activeTab === 'stamps' ? null : 'stamps')}
+          data-type="stamps"
           title="Stamps"
         >
           <IconMoodSmile size={20} />
@@ -105,9 +113,18 @@ const RetroSidebar = ({
         <button
           className={classNames("retro-sidebar__icon", { active: activeTab === 'images' })}
           onClick={() => setActiveTab(activeTab === 'images' ? null : 'images')}
+          data-type="images"
           title="Images"
         >
           <IconPhoto size={20} />
+        </button>
+        <button
+          className="retro-sidebar__icon retro-sidebar__icon--confetti"
+          onClick={onConfetti}
+          data-type="confetti"
+          title="Celebrate! 🎉"
+        >
+          <IconSparkles size={20} />
         </button>
 
         <div className="retro-sidebar__spacer"></div>
@@ -150,24 +167,25 @@ const RetroSidebar = ({
                   <div className="retro-profile__edit">
                     <input
                       type="text"
+                      className="retro-profile__input"
                       value={newNickname}
                       onChange={(e) => setNewNickname(e.target.value)}
-                      className="retro-profile__input"
-                      maxLength={20}
+                      maxLength={16}
                       autoFocus
                     />
                     <div className="retro-profile__actions">
                       <button
-                        className="retro-profile__btn retro-profile__btn--save"
+                        className="retro-profile__button retro-profile__button--save"
                         onClick={onSaveNickname}
+                        disabled={!newNickname.trim() || newNickname === currentNickname}
                       >
                         Save
                       </button>
                       <button
-                        className="retro-profile__btn retro-profile__btn--cancel"
+                        className="retro-profile__button retro-profile__button--cancel"
                         onClick={() => {
-                          setNewNickname(currentNickname);
                           setEditingNickname(false);
+                          setNewNickname(currentNickname);
                         }}
                       >
                         Cancel
@@ -178,8 +196,9 @@ const RetroSidebar = ({
                   <div className="retro-profile__display">
                     <div className="retro-profile__nickname">{currentNickname}</div>
                     <button
-                      className="retro-profile__edit-btn"
+                      className="retro-profile__edit-button"
                       onClick={() => setEditingNickname(true)}
+                      title="Edit nickname"
                     >
                       Edit
                     </button>
@@ -276,7 +295,27 @@ const RetroSidebar = ({
             <h3 className="retro-sidebar__title">Board Images</h3>
             <div className="retro-board-images">
               {boardImages.map((image) => (
-                <div key={image.id} className="retro-board-image-preview">
+                <div 
+                  key={image.id} 
+                  className="retro-board-image-preview"
+                  draggable
+                  onDragStart={(e) => {
+                    onImageDragStart(image, e);
+                    e.dataTransfer.effectAllowed = 'move';
+                    // Create drag image
+                    const dragImg = document.createElement('img');
+                    dragImg.src = image.src;
+                    dragImg.style.width = '100px';
+                    dragImg.style.height = '100px';
+                    dragImg.style.objectFit = 'cover';
+                    dragImg.style.borderRadius = '8px';
+                    dragImg.style.opacity = '0.8';
+                    document.body.appendChild(dragImg);
+                    e.dataTransfer.setDragImage(dragImg, 50, 50);
+                    setTimeout(() => document.body.removeChild(dragImg), 0);
+                  }}
+                  style={{ cursor: 'grab' }}
+                >
                   <img src={image.src} alt="Board" draggable={false} />
                   <button
                     className="retro-board-image-preview__remove"
@@ -298,7 +337,7 @@ const RetroSidebar = ({
               </label>
             </div>
             <p className="retro-board-images__hint">
-              💡 Images will appear on the board and can be moved around
+              💡 Drag images from here to place them on the board
             </p>
           </div>
         </div>

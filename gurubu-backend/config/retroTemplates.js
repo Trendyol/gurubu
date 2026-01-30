@@ -10,28 +10,28 @@ const RETRO_TEMPLATES = {
         key: 'start', 
         title: 'Start 🚀', 
         color: 'green', 
-        description: 'What should we start doing?',
+        description: 'New practices, tools, or behaviors we should begin. What would make us more effective?',
         isMain: true
       },
       { 
         key: 'stop', 
         title: 'Stop 🛑', 
         color: 'red', 
-        description: 'What should we stop doing?',
+        description: 'Activities or habits that waste time or create problems. What should we eliminate?',
         isMain: true
       },
       { 
         key: 'continue', 
         title: 'Continue ✅', 
         color: 'blue', 
-        description: 'What should we continue doing?',
+        description: 'Successful practices worth maintaining. What is working well and should stay?',
         isMain: true
       },
       { 
         key: 'actionItems', 
         title: 'Action Items 🎯', 
         color: 'purple', 
-        description: 'Next steps and tasks',
+        description: 'Specific commitments to start, stop, or continue. Who owns what?',
         isMain: false
       }
     ]
@@ -47,28 +47,28 @@ const RETRO_TEMPLATES = {
         key: 'mad', 
         title: 'Mad 😠', 
         color: 'red', 
-        description: 'What made you angry or frustrated?',
+        description: 'Things that frustrated or angered you. Express strong concerns that need attention.',
         isMain: true
       },
       { 
         key: 'sad', 
         title: 'Sad 😢', 
         color: 'orange', 
-        description: 'What disappointed you?',
+        description: 'Disappointments and missed opportunities. Share what let you down.',
         isMain: true
       },
       { 
         key: 'glad', 
         title: 'Glad 😊', 
         color: 'green', 
-        description: 'What made you happy?',
+        description: 'Positive moments and achievements. Celebrate what made you happy!',
         isMain: true
       },
       { 
         key: 'actionItems', 
         title: 'Action Items 🎯', 
         color: 'purple', 
-        description: 'Next steps and tasks',
+        description: 'Turn emotions into action. How do we address concerns and amplify successes?',
         isMain: false
       }
     ]
@@ -84,21 +84,21 @@ const RETRO_TEMPLATES = {
         key: 'good', 
         title: 'What went well? 😊', 
         color: 'green', 
-        description: 'Celebrate successes',
+        description: 'Share positive moments, achievements, and things that worked well during the sprint. Celebrate team successes!',
         isMain: true
       },
       { 
         key: 'bad', 
         title: 'What could be improved? 🤔', 
         color: 'red', 
-        description: 'Identify challenges',
+        description: 'Discuss challenges, blockers, and areas for improvement. Focus on constructive feedback and solutions.',
         isMain: true
       },
       { 
         key: 'actionItems', 
         title: 'Action Items 🎯', 
         color: 'blue', 
-        description: 'Next steps',
+        description: 'Define concrete next steps, commitments, and improvements. Assign owners and set deadlines.',
         isMain: false
       }
     ]
@@ -114,35 +114,35 @@ const RETRO_TEMPLATES = {
         key: 'loved', 
         title: 'Loved ❤️', 
         color: 'pink', 
-        description: 'What did we love?',
+        description: 'What aspects of the sprint did we absolutely love? Highlight the best moments and practices.',
         isMain: true
       },
       { 
         key: 'learned', 
         title: 'Learned 📚', 
         color: 'blue', 
-        description: 'What did we learn?',
+        description: 'What new knowledge, skills, or insights did we gain? Share learning experiences.',
         isMain: true
       },
       { 
         key: 'lacked', 
         title: 'Lacked 😔', 
         color: 'orange', 
-        description: 'What was missing?',
+        description: 'What resources, support, or conditions were missing? Identify gaps and needs.',
         isMain: true
       },
       { 
         key: 'longedFor', 
         title: 'Longed For 🔮', 
         color: 'purple', 
-        description: 'What do we wish for?',
+        description: 'What do we wish we had? Express desires for tools, processes, or improvements.',
         isMain: true
       },
       { 
         key: 'actionItems', 
         title: 'Action Items 🎯', 
         color: 'green', 
-        description: 'Next steps and tasks',
+        description: 'Concrete tasks and commitments based on our reflections. Who will do what by when?',
         isMain: false
       }
     ]
@@ -158,35 +158,35 @@ const RETRO_TEMPLATES = {
         key: 'wind', 
         title: 'Wind ⛵', 
         color: 'green', 
-        description: 'What propels us forward?',
+        description: 'What helps us move forward? Identify positive forces, momentum, and enabling factors.',
         isMain: true
       },
       { 
         key: 'anchor', 
         title: 'Anchor ⚓', 
         color: 'red', 
-        description: 'What slows us down?',
+        description: 'What holds us back? Discuss obstacles, blockers, and things that slow down progress.',
         isMain: true
       },
       { 
         key: 'island', 
         title: 'Island 🏝️', 
         color: 'blue', 
-        description: 'Our goal/destination',
+        description: 'Where are we heading? Define our goals, vision, and desired destination.',
         isMain: true
       },
       { 
         key: 'rocks', 
         title: 'Rocks 🪨', 
         color: 'orange', 
-        description: 'Risks and dangers',
+        description: 'What risks and dangers should we watch out for? Identify potential problems ahead.',
         isMain: true
       },
       { 
         key: 'actionItems', 
         title: 'Action Items 🎯', 
         color: 'purple', 
-        description: 'Next steps and tasks',
+        description: 'Chart our course forward. Define specific actions to navigate successfully.',
         isMain: false
       }
     ]
@@ -202,21 +202,21 @@ const RETRO_TEMPLATES = {
         key: 'rose', 
         title: 'Rose 🌹', 
         color: 'pink', 
-        description: 'What went well?',
+        description: 'Beautiful moments and highlights. What bloomed well during the sprint?',
         isMain: true
       },
       { 
         key: 'thorn', 
         title: 'Thorn 🌵', 
         color: 'red', 
-        description: 'Challenges and pain points',
+        description: 'Pain points and challenges that hurt. What pricked us along the way?',
         isMain: true
       },
       { 
         key: 'bud', 
         title: 'Bud 🌱', 
         color: 'green', 
-        description: 'Opportunities and potential',
+        description: 'Opportunities ready to bloom. What potential do we see for growth?',
         isMain: true
       },
       { 

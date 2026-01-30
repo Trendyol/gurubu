@@ -45,7 +45,7 @@ const RetroNicknameForm = ({ retroId, onJoinSuccess }: IProps) => {
         };
         
         localStorage.setItem("retroLobby", JSON.stringify(retroLobby));
-        localStorage.setItem("nickname", nickname);
+        localStorage.setItem("retroNickname", nickname);
         
         // Update context immediately
         setUserInfo({

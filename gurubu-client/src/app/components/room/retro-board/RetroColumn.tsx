@@ -1,6 +1,6 @@
 "use client";
 
-import { IconPlus, IconPhoto } from "@tabler/icons-react";
+import { IconPlus, IconPhoto, IconInfoCircle } from "@tabler/icons-react";
 import classNames from "classnames";
 import RetroCard from "./retro-card";
 import MentionTextarea from "./mention-textarea";
@@ -103,7 +103,17 @@ const RetroColumn = ({
 
       <div className="retro-column__header">
         <div className="retro-column__header-content">
-          <h2 className="retro-column__title">{columnConfig.title}</h2>
+          <div className="retro-column__title-wrapper">
+            <h2 className="retro-column__title">{columnConfig.title}</h2>
+            {columnConfig.description && (
+              <div 
+                className="retro-column__info"
+                title={columnConfig.description}
+              >
+                <IconInfoCircle size={16} className="retro-column__info-icon" />
+              </div>
+            )}
+          </div>
           <span className="retro-column__count">{cards.length}</span>
         </div>
         {!columnHeaderImages[columnKey] && (

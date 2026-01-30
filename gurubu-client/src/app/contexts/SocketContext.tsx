@@ -4,7 +4,7 @@ import { useGroomingRoom } from "./GroomingRoomContext";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { GroomingInfo } from "@/shared/interfaces";
 
-const socket = io(process.env.NEXT_PUBLIC_API_URL || "", {
+const socket = io(`${process.env.NEXT_PUBLIC_API_URL}/grooming` || "", {
   autoConnect: false,
 });
 const SocketContext = createContext(socket);

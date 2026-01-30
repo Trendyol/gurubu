@@ -35,12 +35,17 @@ const RetroHeader = ({
   onExportCSV,
   onCopyInviteLink,
 }: RetroHeaderProps) => {
+  // Sort participants by nickname alphabetically
+  const sortedParticipants = [...participants].sort((a, b) => 
+    a.nickname.localeCompare(b.nickname, 'tr', { sensitivity: 'base' })
+  );
+
   return (
     <div className="retro-board__header">
       <div className="retro-board__header-left">
         <h1 className="retro-board__title">{retroTitle}</h1>
         <div className="retro-board__participants">
-          {participants.map((participant) => (
+          {sortedParticipants.map((participant) => (
             <div
               key={participant.userID}
               className="retro-board__participant"
@@ -55,8 +60,8 @@ const RetroHeader = ({
       </div>
       
       <div className="retro-board__header-right">
-      {/* Timer - Show to everyone if running, or to owner if panel is open */}
-      {(timer.isRunning || (isOwner && showTimer)) && (
+      {/* Timer - Show to owner if panel is open, or to everyone if running */}
+      {(isOwner && showTimer) || (!isOwner && timer.isRunning) ? (
         <div className="retro-board__timer">
           <IconClock size={18} />
           <RetroTimerV2
@@ -65,7 +70,7 @@ const RetroHeader = ({
             onTimerUpdate={onTimerUpdate}
           />
         </div>
-      )}
+      ) : null}
 
       {/* Music - Show to owner if panel is open, or to everyone if playing */}
       {(music.isPlaying || (isOwner && showMusic)) && (
@@ -89,13 +94,15 @@ const RetroHeader = ({
             >
               <IconClock size={20} />
             </button>
-            <button
-              className={`retro-board__control-btn ${showMusic ? "active" : ""}`}
-              onClick={() => setShowMusic(!showMusic)}
-              title="Music"
-            >
-              <IconMusic size={20} />
-            </button>
+            <div className="retro-board__control-wrapper">
+              <button
+                className="retro-board__control-btn retro-board__control-btn--disabled"
+                disabled
+              >
+                <IconMusic size={20} />
+              </button>
+              <span className="retro-board__control-tooltip">Soon</span>
+            </div>
             <button
               className="retro-board__control-btn"
               onClick={onExportCSV}

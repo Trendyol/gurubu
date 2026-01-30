@@ -2,6 +2,7 @@ const {
   generateNewRetro,
   checkRetroExistance,
   handleJoinRetro,
+  getRetro,
 } = require("../utils/retros");
 const { getAllTemplates } = require("../config/retroTemplates");
 
@@ -9,9 +10,7 @@ exports.createRetro = async (req, res) => {
   const nickName = req.body.nickName;
   const title = req.body.title;
   const templateId = req.body.templateId || 'what-went-well';
-  
-  console.log("createRetro called:", { nickName, title, templateId });
-  
+
   if (!nickName) {
     return res.status(400).json({ error: "nickName is required" });
   }
@@ -46,8 +45,14 @@ exports.getRetro = async (req, res) => {
 
   const retroExist = checkRetroExistance(retroId);
 
-  if (retroExist) {
-    return res.status(200).json({ retroId: retroId });
+  if (!retroExist) {
+    return res.status(404).json({ message: "Retro not found or expired" });
+  }
+
+  const retroData = getRetro(retroId);
+
+  if (retroData) {
+    return res.status(200).json(retroData);
   }
 
   res.status(404).json({ message: "Retro not found" });

@@ -1,13 +1,16 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { SocketProvider } from "@/contexts/SocketContext";
+import { RetroSocketProvider } from "@/contexts/RetroSocketContext";
 import { RetroRoomProvider, useRetroRoom } from "@/contexts/RetroRoomContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LoaderProvider } from "@/contexts/LoaderContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import RetroBoard from "@/components/room/retro-board/retro-board";
 import RetroNicknameForm from "@/components/room/retro-board/retro-nickname-form";
+import RetroErrorPage from "@/components/room/retro-board/RetroErrorPage";
+import RetroLoadingScreen from "@/components/room/retro-board/RetroLoadingScreen";
+import { RetroService } from "@/services/retroService";
 import { Toaster } from "react-hot-toast";
 import "@/styles/room/style.scss";
 
@@ -16,7 +19,7 @@ const RetroPage = ({ params }: { params: Promise<{ id: string }> }) => {
   
   return (
     <RetroRoomProvider retroId={id}>
-      <SocketProvider>
+      <RetroSocketProvider>
         <ThemeProvider>
           <LoaderProvider>
             <ToastProvider>
@@ -24,7 +27,7 @@ const RetroPage = ({ params }: { params: Promise<{ id: string }> }) => {
             </ToastProvider>
           </LoaderProvider>
         </ThemeProvider>
-      </SocketProvider>
+      </RetroSocketProvider>
     </RetroRoomProvider>
   );
 };
@@ -33,12 +36,42 @@ const RetroContent = ({ retroId }: { retroId: string }) => {
   const { userInfo } = useRetroRoom();
   const [shouldShowNicknameForm, setShouldShowNicknameForm] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [retroExists, setRetroExists] = useState<boolean | null>(null);
+  const [errorType, setErrorType] = useState<'not-found' | 'expired' | 'error'>('not-found');
+
+  const checkRetroExists = async () => {
+    try {
+      const retroService = new RetroService(process.env.NEXT_PUBLIC_API_URL || "");
+      const result = await retroService.getRetro(retroId);
+      
+      if (result && (result.retroId || result.title)) {
+        setRetroExists(true);
+        checkUserCredentials();
+      } else {
+        setRetroExists(false);
+        setErrorType('not-found');
+        setIsChecking(false);
+      }
+    } catch (error: any) {
+      console.error("Error checking retro:", error);
+      setRetroExists(false);
+      
+      // Check if it's a 404 (not found) or other error
+      if (error?.response?.status === 404) {
+        setErrorType('not-found');
+      } else {
+        setErrorType('error');
+      }
+      
+      setIsChecking(false);
+    }
+  };
 
   const checkUserCredentials = () => {
     const retroLobby = localStorage.getItem("retroLobby");
-    const nickname = localStorage.getItem("nickname");
+    const retroNickname = localStorage.getItem("retroNickname");
     
-    if (retroLobby && nickname) {
+    if (retroLobby && retroNickname) {
       try {
         const lobby = JSON.parse(retroLobby);
         if (lobby.state?.retros?.[retroId]) {
@@ -61,7 +94,7 @@ const RetroContent = ({ retroId }: { retroId: string }) => {
   };
 
   useEffect(() => {
-    checkUserCredentials();
+    checkRetroExists();
   }, [retroId]);
 
   // Also check when userInfo changes (after successful join)
@@ -80,11 +113,16 @@ const RetroContent = ({ retroId }: { retroId: string }) => {
     return (
       <>
         <Toaster />
-        <main className="grooming-room">
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <p>Loading...</p>
-          </div>
-        </main>
+        <RetroLoadingScreen />
+      </>
+    );
+  }
+
+  if (retroExists === false) {
+    return (
+      <>
+        <Toaster />
+        <RetroErrorPage type={errorType} />
       </>
     );
   }

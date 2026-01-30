@@ -18,6 +18,8 @@ interface RetroContextValues {
   retroInfo: RetroInfoType;
   setRetroInfo: (info: RetroInfoType) => void;
   setUserInfo: (info: UserInfo) => void;
+  showErrorPopup: boolean;
+  setShowErrorPopup: (show: boolean) => void;
 }
 
 const RetroRoomContext = createContext({} as RetroContextValues);
@@ -34,9 +36,10 @@ interface RetroRoomProviderProps {
 export function RetroRoomProvider({ children, retroId }: RetroRoomProviderProps) {
   const [userInfo, setUserInfo] = useState({} as UserInfo);
   const [retroInfo, setRetroInfo] = useState({} as RetroInfoType);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   useEffect(() => {
-    const nickname = localStorage.getItem("nickname");
+    const nickname = localStorage.getItem("retroNickname");
     const lobby = getCurrentRetroLobby(retroId);
 
     if (!nickname || !lobby) {
@@ -54,6 +57,8 @@ export function RetroRoomProvider({ children, retroId }: RetroRoomProviderProps)
     retroInfo,
     setRetroInfo,
     setUserInfo,
+    showErrorPopup,
+    setShowErrorPopup,
   };
 
   return (

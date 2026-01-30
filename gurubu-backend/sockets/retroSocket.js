@@ -1,4 +1,10 @@
-const { updateUserSocket, userLeave } = require("../utils/users");
+const { 
+  updateRetroUserSocket, 
+  retroUserLeave,
+  getCurrentRetroUser,
+  getCurrentRetroUserWithSocket,
+  updateRetroUserNickname
+} = require("../utils/retroUsers");
 const {
   getRetro,
   leaveUserFromRetro,
@@ -10,14 +16,15 @@ const {
   updateBoardImages,
   updateColumnHeaderImages,
   voteCard,
-  moveRetroCard
+  moveRetroCard,
+  updateRetroNickname
 } = require("../utils/retros");
 
 module.exports = (io) => {
   const joinRetroMiddleware = (socket, retroId, credentials) => {
-    if (!io.sockets.adapter.rooms.get(retroId)?.has(socket.id)) {
+    if (!io.adapter.rooms.get(retroId)?.has(socket.id)) {
       socket.join(retroId);
-      updateUserSocket(credentials, socket.id);
+      updateRetroUserSocket(credentials, socket.id);
     }
   };
 
@@ -30,7 +37,7 @@ module.exports = (io) => {
     const now = Date.now();
     heartbeats.forEach((lastBeat, socketId) => {
       if (now - lastBeat > HEARTBEAT_TIMEOUT) {
-        const socket = io.sockets.sockets.get(socketId);
+        const socket = io.sockets.get(socketId);
         if (socket) {
           console.log(`Force disconnecting stale socket: ${socketId}`);
           socket.disconnect(true);
@@ -46,12 +53,11 @@ module.exports = (io) => {
     socket.on("joinRetro", ({ nickname, retroId, lobby, avatarSeed }) => {
       socket.join(retroId);
 
-      updateUserSocket(lobby?.credentials, socket.id, avatarSeed);
+      updateRetroUserSocket(lobby?.credentials, socket.id, avatarSeed);
 
       // Update participant's avatarSeed and connected status in retro data
-      const { getCurrentUser } = require("../utils/users");
       const { getRetro: getRetroUtil } = require("../utils/retros");
-      const user = getCurrentUser(lobby?.credentials, socket);
+      const user = getCurrentRetroUser(lobby?.credentials, socket);
 
       if (user) {
         const retroData = getRetroUtil(retroId);
@@ -176,9 +182,8 @@ module.exports = (io) => {
 
     socket.on("updateAvatar", ({ retroId, credentials, avatarSeed }) => {
       joinRetroMiddleware(socket, retroId, credentials);
-      const { getCurrentUser } = require("../utils/users");
       const { getRetro: getRetroUtil } = require("../utils/retros");
-      const user = getCurrentUser(credentials, socket);
+      const user = getCurrentRetroUser(credentials, socket);
 
       if (user) {
         // Update user's avatarSeed
@@ -199,31 +204,38 @@ module.exports = (io) => {
       }
     });
 
-    socket.on("updateNickname", ({ retroId, credentials, nickname }) => {
+    socket.on("updateNickname", ({ retroId, credentials, newNickname }) => {
       joinRetroMiddleware(socket, retroId, credentials);
-      const { getCurrentUser } = require("../utils/users");
-      const { getRetro: getRetroUtil } = require("../utils/retros");
-      const user = getCurrentUser(credentials, socket);
-
-      if (user && nickname && nickname.trim()) {
-        const trimmedNickname = nickname.trim();
-
-        // Update user's nickname
-        user.nickname = trimmedNickname;
-
-        // Update in retro data
-        const retroData = getRetroUtil(retroId);
-        if (retroData && retroData.participants && retroData.participants[user.userID]) {
-          retroData.participants[user.userID].nickname = trimmedNickname;
-        }
-
-        // Broadcast to all users in the room
-        io.to(retroId).emit("nicknameUpdated", {
-          userID: user.userID,
-          nickname: trimmedNickname,
-          retroData: getRetro(retroId)
+      
+      // Update in retroUsers
+      const userUpdateResult = updateRetroUserNickname(credentials, newNickname);
+      
+      if (!userUpdateResult) {
+        io.to(socket.id).emit("encounteredError", {
+          isSuccess: false,
+          message: "Failed to update nickname"
         });
+        return;
       }
+
+      // Update in retro data
+      const retroData = updateRetroNickname(retroId, userUpdateResult.userID, newNickname);
+      
+      if (!retroData) {
+        io.to(socket.id).emit("encounteredError", {
+          isSuccess: false,
+          message: "Failed to update nickname in retro"
+        });
+        return;
+      }
+
+      // Broadcast to all users in the room
+      io.to(retroId).emit("nicknameUpdated", {
+        userID: userUpdateResult.userID,
+        oldNickname: userUpdateResult.oldNickname,
+        newNickname: newNickname,
+        retroData: retroData
+      });
     });
 
     socket.on("updateBoardImages", (retroId, data, credentials) => {
@@ -253,8 +265,7 @@ module.exports = (io) => {
     socket.on("cursorMove", (retroId, data, credentials) => {
       joinRetroMiddleware(socket, retroId, credentials);
       // Get user info from credentials
-      const { getCurrentUser } = require("../utils/users");
-      const user = getCurrentUser(credentials, socket);
+      const user = getCurrentRetroUser(credentials, socket);
 
       // Broadcast cursor position to all other users in the room
       socket.to(retroId).emit("cursorMove", {
@@ -269,21 +280,15 @@ module.exports = (io) => {
     socket.on("disconnect", (reason) => {
       heartbeats.delete(socket.id);
 
-      const { getCurrentUser, getCurrentUserWithSocket } = require("../utils/users");
-
-      // TODO: Fix disconnect detection - users are not being marked as disconnected properly
-      // Issue: connected flag is not being set to false consistently
-      // Need to investigate why frontend still shows disconnected users
-
       // Get user BEFORE removing socket
-      const user = getCurrentUserWithSocket(socket.id);
+      const user = getCurrentRetroUserWithSocket(socket.id);
 
       if (!user) return;
 
-      const retroId = user.roomID;
+      const retroId = user.retroId;
 
       // Remove socket from user
-      const isUserPermanentlyLeave = userLeave(socket.id);
+      const isUserPermanentlyLeave = retroUserLeave(socket.id);
 
       // Update retro data based on remaining sockets
       if (isUserPermanentlyLeave) {
@@ -299,8 +304,7 @@ module.exports = (io) => {
     });
 
     socket.on("voteRetroCard", (retroId, data, credentials) => {
-      const { getCurrentUser } = require("../utils/users");
-      const user = getCurrentUser(credentials, socket);
+      const user = getCurrentRetroUser(credentials, socket);
 
       if (!user) return;
 
@@ -320,6 +324,12 @@ module.exports = (io) => {
       if (retroData) {
         io.to(retroId).emit("updateRetroCard", retroData);
       }
+    });
+
+    socket.on("triggerConfetti", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      // Broadcast confetti trigger to all users in the room
+      io.to(retroId).emit("confettiTriggered");
     });
   });
 };

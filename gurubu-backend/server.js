@@ -41,7 +41,7 @@ app.use("/initial-storypoint", cors(corsOptions), initialStoryPointRoutes);
 app.use("/ai-workflow", cors(corsOptions), aiWorkflowRoutes);
 app.use("/retro", cors(corsOptions), retroRoutes);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
@@ -53,7 +53,12 @@ const io = socketIO(server, {
     credentials: true,
   },
 });
-groomingSocket(io);
-retroSocket(io);
+
+// Separate namespaces for grooming and retro
+const groomingNamespace = io.of("/grooming");
+const retroNamespace = io.of("/retro");
+
+groomingSocket(groomingNamespace);
+retroSocket(retroNamespace);
 cleanRoomsAndUsers();
 cleanRetros();

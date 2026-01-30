@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRetroRoom } from "@/contexts/RetroRoomContext";
-import { useSocket } from "@/contexts/SocketContext";
+import { useRetroSocket } from "@/contexts/RetroSocketContext";
 import { createAvatar } from "@dicebear/core";
 import { avataaars } from "@dicebear/collection";
 import RetroColumn from "./RetroColumn";
@@ -10,6 +10,9 @@ import RetroSidebar from "./RetroSidebar";
 import RetroBoardImages from "./RetroBoardImages";
 import RetroDeleteConfirm from "./RetroDeleteConfirm";
 import RetroHeader from "./RetroHeader";
+import RetroErrorPopup from "./RetroErrorPopup";
+import RetroOnboarding from "./RetroOnboarding";
+import RetroLoadingScreen from "./RetroLoadingScreen";
 import { getCurrentRetroLobby } from "@/shared/helpers/lobbyStorage";
 import { RetroParticipant, User } from "@/shared/interfaces";
 import { RETRO_STAMPS, RETRO_CARD_TEMPLATES } from "@/constants/retroConstants";
@@ -23,8 +26,8 @@ interface IProps {
 type ColumnType = string;
 
 const RetroBoard = ({ roomId }: IProps) => {
-  const socket = useSocket();
-  const { retroInfo, userInfo, setRetroInfo } = useRetroRoom();
+  const socket = useRetroSocket();
+  const { retroInfo, userInfo, setRetroInfo, setShowErrorPopup } = useRetroRoom();
   
   const template = retroInfo?.template;
   const mainColumns = useMemo(() => 
@@ -47,6 +50,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [showMusic, setShowMusic] = useState(false);
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
   const [draggedCard, setDraggedCard] = useState<{color: string, emoji: string} | null>(null);
+  const [draggedImage, setDraggedImage] = useState<any>(null);
   const [editingNickname, setEditingNickname] = useState(false);
   const [currentNickname, setCurrentNickname] = useState(userInfo.nickname || "");
   const [newNickname, setNewNickname] = useState(userInfo.nickname || "");
@@ -57,6 +61,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [draggingImage, setDraggingImage] = useState<string | null>(null);
   const [resizingImage, setResizingImage] = useState<{id: string, startX: number, startY: number, startWidth: number, startHeight: number} | null>(null);
   const [dragOffset, setDragOffset] = useState<{x: number, y: number} | null>(null);
+  const [confettiElements, setConfettiElements] = useState<Array<{id: string, x: number, y: number, color: string, rotation: number, delay: number, randomX: number, size: number}>>([]);
   const [columnHeaderImages, setColumnHeaderImages] = useState<Record<string, string | null>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<{show: boolean, cardId: string | null, column: ColumnType | null}>({
     show: false,
@@ -104,16 +109,11 @@ const RetroBoard = ({ roomId }: IProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showActionItems]);
 
-  // Close timer panel when timer starts
-  useEffect(() => {
-    if (timer.isRunning && showTimer) {
-      setShowTimer(false);
-    }
-  }, [timer.isRunning]);
+  // Timer panel is now a toggle switch - no auto-close behavior
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedOptions = localStorage.getItem("avatarOptions");
+      const storedOptions = localStorage.getItem("retroAvatarOptions");
       if (storedOptions) {
         try {
           const parsed = JSON.parse(storedOptions);
@@ -124,7 +124,7 @@ const RetroBoard = ({ roomId }: IProps) => {
       } else {
         const newSeed = Math.random().toString(36).substring(2);
         setAvatarSeed(newSeed);
-        localStorage.setItem("avatarOptions", JSON.stringify({ seed: newSeed }));
+        localStorage.setItem("retroAvatarOptions", JSON.stringify({ seed: newSeed }));
       }
     }
   }, []);
@@ -148,7 +148,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   const handleRegenerateAvatar = () => {
     const newSeed = Math.random().toString(36).substring(2);
     setAvatarSeed(newSeed);
-    localStorage.setItem("avatarOptions", JSON.stringify({ seed: newSeed }));
+    localStorage.setItem("retroAvatarOptions", JSON.stringify({ seed: newSeed }));
     
     if (userInfo.lobby) {
       socket.emit("updateAvatar", {
@@ -160,7 +160,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   };
 
   useEffect(() => {
-    const nickname = localStorage.getItem("nickname");
+    const nickname = localStorage.getItem("retroNickname");
     const lobby = getCurrentRetroLobby(roomId);
     
     if (nickname && lobby) {
@@ -200,26 +200,16 @@ const RetroBoard = ({ roomId }: IProps) => {
       });
     };
 
-    const handleNicknameUpdated = (data: any) => {
+    const handleNicknameUpdated = (data: { userID: number; oldNickname: string; newNickname: string; retroData: any }) => {
       setRetroInfo(data.retroData);
       
-      if (userInfo.lobby && data.userID === Number(userInfo.lobby.userID)) {
-        setCurrentNickname(data.nickname);
-        setNewNickname(data.nickname);
+      // If it's the current user, update local nickname
+      if (userInfo.lobby && data.userID === userInfo.lobby.userID) {
+        setCurrentNickname(data.newNickname);
+        setNewNickname(data.newNickname);
       }
       
-      setCursors(prev => {
-        const updated = { ...prev };
-        Object.keys(updated).forEach(userId => {
-          if (userId === String(data.userID)) {
-            updated[userId] = {
-              ...updated[userId],
-              nickname: data.nickname
-            };
-          }
-        });
-        return updated;
-      });
+      // No toast notification for nickname changes
     };
 
     const handleBoardImagesUpdated = (data: any) => {
@@ -237,6 +227,15 @@ const RetroBoard = ({ roomId }: IProps) => {
       });
     };
 
+    const handleEncounteredError = (data: any) => {
+      console.error("Retro error:", data);
+      setShowErrorPopup(true);
+    };
+
+    const handleConfettiTriggered = () => {
+      triggerConfettiAnimation();
+    };
+
     socket.on("initializeRetro", handleInitializeRetro);
     socket.on("addRetroCard", handleAddRetroCard);
     socket.on("updateRetroCard", handleUpdateRetroCard);
@@ -247,10 +246,12 @@ const RetroBoard = ({ roomId }: IProps) => {
     socket.on("cursorLeave", handleCursorLeave);
     socket.on("userDisconnectedRetro", handleUserDisconnected);
     socket.on("avatarUpdated", handleAvatarUpdated);
+    socket.on("nicknameUpdated", handleNicknameUpdated);
     socket.on("boardImagesUpdated", handleBoardImagesUpdated);
     socket.on("columnHeaderImagesUpdated", handleColumnHeaderImagesUpdated);
     socket.on("mentioned", handleMentioned);
-    socket.on("nicknameUpdated", handleNicknameUpdated);
+    socket.on("encounteredError", handleEncounteredError);
+    socket.on("confettiTriggered", handleConfettiTriggered);
 
     return () => {
       clearInterval(heartbeatInterval);
@@ -264,10 +265,12 @@ const RetroBoard = ({ roomId }: IProps) => {
       socket.off("cursorLeave", handleCursorLeave);
       socket.off("userDisconnectedRetro", handleUserDisconnected);
       socket.off("avatarUpdated", handleAvatarUpdated);
+      socket.off("nicknameUpdated", handleNicknameUpdated);
       socket.off("boardImagesUpdated", handleBoardImagesUpdated);
       socket.off("columnHeaderImagesUpdated", handleColumnHeaderImagesUpdated);
       socket.off("mentioned", handleMentioned);
-      socket.off("nicknameUpdated", handleNicknameUpdated);
+      socket.off("encounteredError", handleEncounteredError);
+      socket.off("confettiTriggered", handleConfettiTriggered);
     };
   }, [socket, roomId, avatarSeed]);
 
@@ -395,17 +398,25 @@ const RetroBoard = ({ roomId }: IProps) => {
   };
 
   const handleSaveNickname = () => {
-    if (!newNickname.trim() || !userInfo.lobby) return;
-    
-    localStorage.setItem("nickname", newNickname);
-    
-    socket.emit("updateNickname", {
-      retroId: roomId,
-      credentials: userInfo.lobby.credentials,
-      nickname: newNickname,
-    });
-    
-    setEditingNickname(false);
+    if (!newNickname.trim() || newNickname === currentNickname) {
+      setEditingNickname(false);
+      return;
+    }
+
+    if (userInfo.lobby) {
+      socket.emit("updateNickname", {
+        retroId: roomId,
+        credentials: userInfo.lobby.credentials,
+        newNickname: newNickname.trim(),
+      });
+      
+      // Update local storage
+      localStorage.setItem("retroNickname", newNickname.trim());
+      
+      setCurrentNickname(newNickname.trim());
+      setEditingNickname(false);
+      toast.success("Nickname updated successfully!");
+    }
   };
 
   const handleRemoveCustomStamp = (index: number) => {
@@ -422,6 +433,60 @@ const RetroBoard = ({ roomId }: IProps) => {
       setCustomStamps(prev => [...prev, result]);
     };
     reader.readAsDataURL(file);
+  };
+
+  const triggerConfettiAnimation = () => {
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52C7B8',
+      '#FF85A1', '#FFD93D', '#6BCF7F', '#A29BFE', '#FD79A8',
+      '#FDCB6E', '#74B9FF', '#A29BFE', '#FF7675', '#00B894'
+    ];
+    const newConfetti: Array<{id: string, x: number, y: number, color: string, rotation: number, delay: number, randomX: number, size: number}> = [];
+    
+    // 5-7 farklı noktadan konfeti fırlat (daha dağınık)
+    const burstCount = 5 + Math.floor(Math.random() * 3); // 5-7 burst
+    
+    for (let burst = 0; burst < burstCount; burst++) {
+      // Tamamen rastgele konumlar (ekranın her yerinden)
+      const x = 100 + Math.random() * (window.innerWidth - 200);
+      const y = window.innerHeight * (0.5 + Math.random() * 0.3); // 50-80% yükseklikte
+      
+      // Her burst'ten 10-15 konfeti (daha az yoğun)
+      const confettiPerBurst = 10 + Math.floor(Math.random() * 6);
+      
+      for (let i = 0; i < confettiPerBurst; i++) {
+        newConfetti.push({
+          id: `confetti-${Date.now()}-${burst}-${i}-${Math.random()}`,
+          x: x + (Math.random() - 0.5) * 100,
+          y: y,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          delay: burst * 0.08 + Math.random() * 0.12, // Daha hızlı art arda
+          randomX: Math.random(),
+          size: 8 + Math.random() * 6, // 8-14px arası (daha küçük)
+        });
+      }
+    }
+    
+    setConfettiElements(prev => [...prev, ...newConfetti]);
+    
+    // Remove confetti after animation
+    setTimeout(() => {
+      setConfettiElements(prev => prev.filter(c => !newConfetti.find(nc => nc.id === c.id)));
+    }, 4500);
+  };
+
+  const handleConfetti = () => {
+    // Emit to socket to trigger for all users
+    if (socket && userInfo.lobby?.credentials) {
+      socket.emit("triggerConfetti", roomId, userInfo.lobby.credentials);
+    }
+  };
+
+  const handleImageDragStart = (image: any, e: React.DragEvent) => {
+    setDraggedImage(image);
+    e.dataTransfer.effectAllowed = 'move';
   };
 
   const handleBoardImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -447,8 +512,8 @@ const RetroBoard = ({ roomId }: IProps) => {
         const newImage = {
           id: Date.now().toString(),
           src: result,
-          x: 100,
-          y: 100,
+          x: -1000, // Off-screen initially, will be placed on drag
+          y: -1000,
           width,
           height
         };
@@ -656,14 +721,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   
   // Show loading if retroInfo hasn't loaded yet
   if (!retroInfo || !retroInfo.template) {
-    return (
-      <div className="retro-board-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
-          <div>Loading retrospective...</div>
-        </div>
-      </div>
-    );
+    return <RetroLoadingScreen />;
   }
 
   const avatarSvg = createAvatarSvg(avatarSeed);
@@ -674,6 +732,25 @@ const RetroBoard = ({ roomId }: IProps) => {
 
   return (
     <div className="retro-board-container">
+      {/* Confetti */}
+      {confettiElements.map(confetti => (
+        <div
+          key={confetti.id}
+          className="retro-confetti"
+          style={{
+            left: `${confetti.x}px`,
+            top: `${confetti.y}px`,
+            backgroundColor: confetti.color,
+            width: `${confetti.size}px`,
+            height: `${confetti.size}px`,
+            transform: `rotate(${confetti.rotation}deg)`,
+            animationDelay: `${confetti.delay}s`,
+            // @ts-ignore
+            '--random-x': confetti.randomX,
+          }}
+        />
+      ))}
+
       <RetroSidebar
         currentNickname={currentNickname}
         newNickname={newNickname}
@@ -695,9 +772,40 @@ const RetroBoard = ({ roomId }: IProps) => {
         boardImages={boardImages}
         onRemoveBoardImage={handleRemoveBoardImage}
         onBoardImageUpload={handleBoardImageUpload}
+        onImageDragStart={handleImageDragStart}
+        onConfetti={handleConfetti}
       />
 
-      <div className="retro-board">
+      <div 
+        className="retro-board"
+        onDrop={(e) => {
+          e.preventDefault();
+          if (draggedImage) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left - draggedImage.width / 2;
+            const y = e.clientY - rect.top - draggedImage.height / 2;
+            
+            const updatedImages = boardImages.map(img => 
+              img.id === draggedImage.id 
+                ? { ...img, x, y }
+                : img
+            );
+            
+            socket.emit("updateBoardImages", {
+              retroId: roomId,
+              images: updatedImages,
+            });
+            
+            setDraggedImage(null);
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (draggedImage) {
+            e.dataTransfer.dropEffect = 'move';
+          }
+        }}
+      >
         <div className="retro-board__main">
           <RetroHeader
             isOwner={isOwner}
@@ -725,7 +833,7 @@ const RetroBoard = ({ roomId }: IProps) => {
         </div>
 
         <RetroBoardImages
-          images={boardImages}
+          images={boardImages.filter(img => img.x >= 0 && img.y >= 0)}
           draggingImage={draggingImage}
           resizingImage={resizingImage}
           onImageMouseDown={handleImageMouseDown}
@@ -780,6 +888,9 @@ const RetroBoard = ({ roomId }: IProps) => {
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />
+
+      <RetroErrorPopup title="Connection Error" retroId={roomId} />
+      <RetroOnboarding isOwner={isOwner} onTriggerConfetti={handleConfetti} />
     </div>
   );
 };
