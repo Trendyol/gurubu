@@ -7,7 +7,7 @@ interface ProjectCardProps {
   description: string;
   buttonText: string;
   buttonLink: string;
-  bgColor: 'blue' | 'purple';
+  bgColor: 'blue' | 'purple' | 'orange';
 }
 
 export default function ProjectCard({
@@ -18,9 +18,11 @@ export default function ProjectCard({
   buttonLink,
   bgColor,
 }: ProjectCardProps) {
+  const cardClass = bgColor === 'blue' ? 'blue-card' : bgColor === 'orange' ? 'orange-card' : 'purple-card';
+  
   return (
     <Link href={buttonLink} className="card-link">
-      <div className={`project-card ${bgColor === 'blue' ? 'blue-card' : 'purple-card'}`}>
+      <div className={`project-card ${cardClass}`}>
         <div className="project-card__icon">
           {icon}
         </div>

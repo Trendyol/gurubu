@@ -5,9 +5,11 @@ const socketIO = require("socket.io");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const groomingSocket = require("./sockets/groomingSocket");
+const retroSocket = require("./sockets/retroSocket");
 const pTokenResolveMiddleware = require("./middlewares/pTokenResolveMiddleware");
 
 const { cleanRoomsAndUsers } = require("./utils/groomings");
+const { cleanRetros } = require("./utils/retros");
 
 require("dotenv").config();
 
@@ -28,6 +30,7 @@ const pRoutes = require("./routes/pRoutes");
 const storyPointRoutes = require("./routes/storyPointRoutes");
 const initialStoryPointRoutes = require("./routes/initialStoryPointRoutes");
 const aiWorkflowRoutes = require("./routes/aiWorkflowRoutes");
+const retroRoutes = require("./routes/retroRoutes");
 
 app.use("/room", cors(corsOptions), roomRoutes);
 app.use("/healthcheck", cors(corsOptions), healthCheckRoute);
@@ -36,6 +39,7 @@ app.use("/p", cors(corsOptions), pTokenResolveMiddleware, pRoutes);
 app.use("/storypoint", cors(corsOptions), storyPointRoutes);
 app.use("/initial-storypoint", cors(corsOptions), initialStoryPointRoutes);
 app.use("/ai-workflow", cors(corsOptions), aiWorkflowRoutes);
+app.use("/retro", cors(corsOptions), retroRoutes);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
@@ -49,5 +53,12 @@ const io = socketIO(server, {
     credentials: true,
   },
 });
-groomingSocket(io);
+
+// Separate namespaces for grooming and retro
+const groomingNamespace = io.of("/grooming");
+const retroNamespace = io.of("/retro");
+
+groomingSocket(groomingNamespace);
+retroSocket(retroNamespace);
 cleanRoomsAndUsers();
+cleanRetros();

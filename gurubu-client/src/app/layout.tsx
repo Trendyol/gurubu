@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/x-icon" sizes="7x10" />
         <Script
@@ -37,6 +37,7 @@ export default function RootLayout({
           inter.className,
           inter.variable,
         ])}
+        suppressHydrationWarning
       >
         {children}
       </body>

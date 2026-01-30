@@ -26,7 +26,7 @@ function userJoin(nickname, roomID) {
   return user;
 }
 
-function updateUserSocket(credentials, socketID) {
+function updateUserSocket(credentials, socketID, avatarSeed) {
   const user = users.find((user) => user.credentials === credentials);
   if (!user) {
     return;
@@ -36,6 +36,9 @@ function updateUserSocket(credentials, socketID) {
   }
 
   user.connected = true;
+  if (avatarSeed) {
+    user.avatarSeed = avatarSeed;
+  }
 }
 
 // Get current user
@@ -64,7 +67,7 @@ function userLeave(socketID) {
   const user = getCurrentUserWithSocket(socketID);
 
   if (!user) {
-    return;
+    return false;
   }
 
   const index = user.sockets.findIndex(
@@ -72,10 +75,11 @@ function userLeave(socketID) {
   );
 
   if (index !== -1) {
-    return user.sockets.splice(index, 1)[0];
+    user.sockets.splice(index, 1);
   }
 
-  return !Boolean(user.sockets.length);
+  // Return true if user has no more sockets (completely disconnected)
+  return user.sockets.length === 0;
 }
 
 // Get room users

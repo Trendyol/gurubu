@@ -16,7 +16,7 @@ const {
 
 module.exports = (io) => {
   const joinRoomMiddleware = (socket, roomID, credentials) => {
-    if (!io.sockets.adapter.rooms.get(roomID)?.has(socket.id)) {
+    if (!io.adapter.rooms.get(roomID)?.has(socket.id)) {
       socket.join(roomID);
       updateUserSocket(credentials, socket.id);
     }

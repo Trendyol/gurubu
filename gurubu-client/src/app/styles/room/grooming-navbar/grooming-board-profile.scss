@@ -7,8 +7,6 @@
   gap: 0 $space-semi-small;
   cursor: pointer;
   position: relative;
-  position: relative;
-  cursor: pointer;
 
   &__content {
     display: flex;
@@ -91,6 +89,37 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
+    &:hover::after {
+      content: attr(data-username);
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: $gray-900;
+      color: $white;
+      padding: 4px 8px;
+      border-radius: $radius-small;
+      font-size: $font-size-paragraph-5;
+      white-space: nowrap;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    &:hover::before {
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 6px solid $gray-900;
+      z-index: 100;
+      pointer-events: none;
+    }
   }
 
   &__nickname {
@@ -144,7 +173,7 @@
   }
 
   &__bar {
-    top: calc(100% + 4px);
+    top: calc(100% + 12px);
     right: 0;
     position: absolute;
     background: $white;
@@ -198,19 +227,6 @@
     padding: 4px;
     border-top: 1px solid $v2-gray-100;
     border-bottom: 1px solid $v2-gray-100;
-  }
-
-  &__icon {
-    width: 30px;
-    height: 30px;
-    border: 1px solid $primary-200;
-    border-radius: 100%;
-    color: $primary-600;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
   }
 
   &__text {
@@ -280,6 +296,19 @@
       background-color: $white;
       color: $gray-700;
       box-shadow: $shadow-sm;
+    }
+
+    &--primary {
+      background: $primary-600;
+      color: $white;
+      font-weight: $bold;
+      margin-bottom: 4px;
+
+      &:hover {
+        background-color: $primary-700;
+        color: $white;
+        box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
     }
   }
 

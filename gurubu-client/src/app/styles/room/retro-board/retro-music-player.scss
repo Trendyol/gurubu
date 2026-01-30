@@ -1,0 +1,169 @@
+.retro-music-player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.2);
+    }
+  }
+
+  &__volume {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  &__volume-slider {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.1);
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+
+    &::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+      border: none;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  &__volume-value {
+    font-size: 0.75rem;
+    color: #4a5568;
+    min-width: 35px;
+    text-align: right;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+  }
+
+  &__user-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__url-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    font-size: 0.875rem;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+  }
+
+  &__url-actions {
+    display: flex;
+    gap: 0.5rem;
+
+    button {
+      flex: 1;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:first-child {
+        background: #667eea;
+        color: white;
+
+        &:hover {
+          background: #5568d3;
+        }
+      }
+
+      &:last-child {
+        background: #f7fafc;
+        color: #4a5568;
+
+        &:hover {
+          background: #edf2f7;
+        }
+      }
+    }
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: #718096;
+    margin: 0;
+  }
+
+  &__add-music {
+    padding: 0.5rem 1rem;
+    border: 1px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    background: transparent;
+    color: #4a5568;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.02);
+      border-color: #667eea;
+      color: #667eea;
+    }
+  }
+}
