@@ -15,4 +15,20 @@
 
 .icon-container.blue {
   background-color: $blue-500;
+}
+
+.orange-card {
+  background-color: $orange-light;
+  
+  .project-card__button {
+    background-color: $dark-orange-500;
+    
+    &:hover {
+      background-color: $dark-orange-600;
+    }
+  }
+}
+
+.icon-container.orange {
+  background-color: $dark-orange-500;
 } 

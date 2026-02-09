@@ -2,6 +2,7 @@
 import "@/styles/page/style.scss";
 import PlanningPokerCard from "./components/page/PlanningPokerCard";
 import SprintPlannerCard from "./components/page/SprintPlannerCard";
+import RetrospectiveCard from "./components/page/RetrospectiveCard";
 import Footer from "./components/page/Footer";
 import Image from "next/image";
 import AnnouncementBanner from "./components/common/announcement-banner";
@@ -29,6 +30,7 @@ export default function Home() {
         <div className="projects-grid">
           <PlanningPokerCard />
           <SprintPlannerCard />
+          <RetrospectiveCard />
         </div>
         <Footer />
       </main>

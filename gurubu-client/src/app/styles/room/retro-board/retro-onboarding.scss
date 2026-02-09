@@ -1,0 +1,149 @@
+.retro-onboarding {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10001;
+  animation: slideUp 0.5s ease;
+  transition: all 0.3s ease;
+
+  &--positioned {
+    top: auto;
+    left: auto;
+    transform: none;
+  }
+
+  &__content {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem;
+    max-width: 340px;
+    width: 90vw;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+  }
+
+  &__icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    animation: bounce 1s ease-in-out infinite;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+  }
+
+  &__description {
+    font-size: 0.95rem;
+    color: #4a5568;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  &__progress {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    transition: all 0.3s ease;
+
+    &.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transform: scale(1.3);
+    }
+
+    &.completed {
+      background: #667eea;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  &__button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &--skip {
+      background: #e2e8f0;
+      color: #4a5568;
+
+      &:hover {
+        background: #cbd5e0;
+      }
+    }
+
+    &--next {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(1px);
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+  }
+}
+
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
