@@ -53,10 +53,8 @@ const RetroContent = ({ retroId }: { retroId: string }) => {
         setIsChecking(false);
       }
     } catch (error: any) {
-      console.error("Error checking retro:", error);
       setRetroExists(false);
       
-      // Check if it's a 404 (not found) or other error
       if (error?.response?.status === 404) {
         setErrorType('not-found');
       } else {

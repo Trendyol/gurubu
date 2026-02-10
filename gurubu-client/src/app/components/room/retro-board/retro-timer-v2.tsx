@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { IconPlayerPlay, IconPlayerPause, IconRefresh, IconClock } from "@tabler/icons-react";
+import { IconPlayerPlay, IconPlayerPause, IconRefresh, IconAlarm } from "@tabler/icons-react";
 
 interface IProps {
   timer: {
@@ -129,6 +129,13 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
   const isWarning = displayTime <= 10 && displayTime > 0;
   const isFinished = displayTime === 0;
 
+  // Play alarm for non-owner users when time is up
+  useEffect(() => {
+    if (!isOwner && displayTime === 0 && !isAlarmPlaying) {
+      playAlarm();
+    }
+  }, [displayTime, isAlarmPlaying, isOwner]);
+
   // Owner controls
   if (isOwner) {
     return (
@@ -136,7 +143,7 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
         {/* Show user view if timer is running */}
         {timer.isRunning && (
           <div className={`retro-timer-v2__user-display retro-timer-v2__user-display--inline ${isWarning ? 'retro-timer-v2__user-display--warning' : ''} ${isFinished ? 'retro-timer-v2__user-display--finished' : ''}`}>
-            <IconClock size={20} className="retro-timer-v2__icon" />
+            <IconAlarm size={20} className="retro-timer-v2__icon" />
             <span className="retro-timer-v2__user-time">{formatTime(displayTime)}</span>
           </div>
         )}
@@ -179,7 +186,15 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
 
         <div className="retro-timer-v2__controls">
           <div className="retro-timer-v2__buttons">
-            {!timer.isRunning ? (
+            {timer.isRunning ? (
+              <button 
+                className="retro-timer-v2__btn retro-timer-v2__btn--pause" 
+                onClick={handlePause}
+                title="Pause"
+              >
+                <IconPlayerPause size={18} />
+              </button>
+            ) : (
               <button 
                 className="retro-timer-v2__btn retro-timer-v2__btn--play" 
                 onClick={handleStart}
@@ -187,14 +202,6 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
                 title="Start"
               >
                 <IconPlayerPlay size={18} />
-              </button>
-            ) : (
-              <button 
-                className="retro-timer-v2__btn retro-timer-v2__btn--pause" 
-                onClick={handlePause}
-                title="Pause"
-              >
-                <IconPlayerPause size={18} />
               </button>
             )}
             <button 
@@ -232,25 +239,15 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
     );
   }
 
-  // Play alarm for users too when time is up
-  useEffect(() => {
-    if (!isOwner && displayTime === 0 && !isAlarmPlaying) {
-      playAlarm();
-    }
-  }, [displayTime, isAlarmPlaying, isOwner]);
-
   // User view - only show if timer is running
   if (!timer.isRunning) {
     return null;
   }
 
-  const isWarningUser = displayTime <= 10 && displayTime > 0;
-  const isFinishedUser = displayTime === 0;
-
   return (
     <div className="retro-timer-v2 retro-timer-v2--user">
-      <div className={`retro-timer-v2__user-display ${isWarningUser ? 'retro-timer-v2__user-display--warning' : ''} ${isFinishedUser ? 'retro-timer-v2__user-display--finished' : ''}`}>
-        <IconClock size={20} className="retro-timer-v2__icon" />
+      <div className={`retro-timer-v2__user-display ${isWarning ? 'retro-timer-v2__user-display--warning' : ''} ${isFinished ? 'retro-timer-v2__user-display--finished' : ''}`}>
+        <IconAlarm size={20} className="retro-timer-v2__icon" />
         <span className="retro-timer-v2__user-time">{formatTime(displayTime)}</span>
       </div>
     </div>

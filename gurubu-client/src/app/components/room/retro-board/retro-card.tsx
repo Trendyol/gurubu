@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { RetroCard as RetroCardType } from "@/shared/interfaces";
 import { IconTrash, IconEdit } from "@tabler/icons-react";
 import classNames from "classnames";
@@ -15,14 +15,19 @@ interface IProps {
   isOwner: boolean;
   selectedStamp?: string | null;
   onStampClick?: () => void;
-  participants?: Array<{ nickname: string }>;
+  participants?: Array<{ nickname: string; userID?: number; avatarSvg?: string }>;
+  authorAvatarSvg?: string;
+  authorName?: string;
+  hideAuthorAvatar?: boolean;
 }
 
-const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [] }: IProps) => {
+const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar }: IProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(card.text);
   const [imagePreview, setImagePreview] = useState<string | null>(card.image);
   const [stamps, setStamps] = useState<Array<{emoji: string, x: number, y: number}>>(card.stamps || []);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [editSize, setEditSize] = useState<{ width: number; height: number } | null>(null);
 
   const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (selectedStamp && !isEditing && onStampClick) {
@@ -39,17 +44,36 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
   };
 
 
+  const sanitizeCardText = (text: string): string => {
+    let sanitized = text.trim();
+    sanitized = sanitized.replace(/\n{3,}/g, '\n\n');
+    sanitized = sanitized.split('\n').map(line => line.trimEnd()).join('\n');
+    return sanitized;
+  };
+
   const handleSave = () => {
-    if (editText.trim()) {
-      onUpdate(card.id, editText, imagePreview);
+    const sanitized = sanitizeCardText(editText);
+    if (sanitized) {
+      onUpdate(card.id, sanitized, imagePreview);
       setIsEditing(false);
+      setEditSize(null);
     }
+  };
+
+  const startEditing = () => {
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      setEditSize({ width: rect.width, height: rect.height });
+    }
+    setEditText(card.text);
+    setIsEditing(true);
   };
 
   const handleCancel = () => {
     setEditText(card.text);
     setImagePreview(card.image);
     setIsEditing(false);
+    setEditSize(null);
   };
 
   // Generate avatar color based on author name
@@ -97,12 +121,16 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
 
   return (
     <div
+      ref={cardRef}
       className={classNames("retro-card", {
         editing: isEditing,
         'stamp-mode': selectedStamp
       })}
       onClick={handleCardClick}
-      style={{ backgroundColor: card.color || 'white' }}
+      style={{
+        backgroundColor: card.color || 'white',
+        ...(isEditing && editSize ? { minWidth: editSize.width, minHeight: editSize.height } : {}),
+      }}
     >
       {stamps.map((stamp, index) => (
         <div
@@ -125,12 +153,12 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
             onChange={setEditText}
             participants={participants}
             placeholder="Enter your thoughts... (use @ to mention someone)"
-            maxLength={120}
+            maxLength={200}
             autoFocus
             className="retro-card__textarea"
           />
           <div className="retro-card__char-count">
-            {editText.length}/120
+            {editText.length}/200
           </div>
           <div className="retro-card__actions">
             <button className="retro-card__icon-btn retro-card__icon-btn--save" onClick={handleSave} title="Save">
@@ -168,24 +196,38 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
                 </button>
               )}
             </div>
-            {isOwner && (
-              <div className="retro-card__owner-actions">
-                <button
-                  className="retro-card__edit-btn"
-                  onClick={() => setIsEditing(true)}
-                  title="Edit"
-                >
-                  <IconEdit size={16} />
-                </button>
-                <button
-                  className="retro-card__delete-btn"
-                  onClick={() => onDelete(card.id)}
-                  title="Delete"
-                >
-                  <IconTrash size={16} />
-                </button>
-              </div>
-            )}
+            <div className="retro-card__footer-right">
+              {isOwner && (
+                <div className="retro-card__owner-actions">
+                  <button
+                    className="retro-card__edit-btn"
+                    onClick={() => startEditing()}
+                    title="Edit"
+                  >
+                    <IconEdit size={16} />
+                  </button>
+                  <button
+                    className="retro-card__delete-btn"
+                    onClick={() => onDelete(card.id)}
+                    title="Delete"
+                  >
+                    <IconTrash size={16} />
+                  </button>
+                </div>
+              )}
+              {/* Author avatar */}
+              {authorAvatarSvg && !hideAuthorAvatar && (
+                <div className="retro-card__author-avatar-wrapper">
+                  <div 
+                    className="retro-card__author-avatar"
+                    dangerouslySetInnerHTML={{ __html: authorAvatarSvg }}
+                  />
+                  <span className="retro-card__author-tooltip">
+                    {authorName || card.author || 'Unknown'}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

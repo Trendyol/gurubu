@@ -38,12 +38,22 @@ export class RetroService {
   }
 
   async getRetro(retroId: string) {
+    const response = await axios.get(`${this.baseUrl}/retro/${retroId}`);
+    return response.data;
+  }
+
+  async checkRetroBatch(retroIds: string[]): Promise<{
+    existingIds: string[];
+    participants: Record<string, Array<{ nickname: string; avatarSeed: string; isAfk: boolean }>>;
+  }> {
     try {
-      const response = await axios.get(`${this.baseUrl}/retro/${retroId}`);
-      return response.data;
-    } catch (error) {
-      console.error("Error getting retro:", error);
-      return null;
+      const response = await axios.post(`${this.baseUrl}/retro/check-batch`, { retroIds });
+      return {
+        existingIds: response.data.existingIds || [],
+        participants: response.data.participants || {},
+      };
+    } catch {
+      return { existingIds: [], participants: {} };
     }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { IconClock, IconMusic, IconDownload, IconShare } from "@tabler/icons-react";
+import { useState, useRef, useEffect } from "react";
+import { IconAlarm, IconMusic, IconDownload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus } from "@tabler/icons-react";
 import RetroTimerV2 from "./retro-timer-v2";
 import RetroMusicPlayer from "./retro-music-player";
 
@@ -14,9 +15,12 @@ interface RetroHeaderProps {
   music: any;
   participants: any[];
   retroTitle: string;
+  roomId: string;
   onTimerUpdate: (data: any) => void;
   onMusicUpdate: (data: any) => void;
   onExportCSV: () => void;
+  onExportPDF: () => void;
+  onExportActionItemsPDF: () => void;
   onCopyInviteLink: () => void;
 }
 
@@ -30,11 +34,35 @@ const RetroHeader = ({
   music,
   participants,
   retroTitle,
+  roomId,
   onTimerUpdate,
   onMusicUpdate,
   onExportCSV,
+  onExportPDF,
+  onExportActionItemsPDF,
   onCopyInviteLink,
 }: RetroHeaderProps) => {
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [showInviteDropdown, setShowInviteDropdown] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+  const inviteRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setShowExportDropdown(false);
+      }
+      if (inviteRef.current && !inviteRef.current.contains(e.target as Node)) {
+        setShowInviteDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const inviteUrl = typeof window !== 'undefined' ? `${window.location.origin}/retro/${roomId}` : '';
+
   // Sort participants by nickname alphabetically
   const sortedParticipants = [...participants].sort((a, b) => 
     a.nickname.localeCompare(b.nickname, 'tr', { sensitivity: 'base' })
@@ -48,12 +76,13 @@ const RetroHeader = ({
           {sortedParticipants.map((participant) => (
             <div
               key={participant.userID}
-              className="retro-board__participant"
+              className={`retro-board__participant ${participant.isAfk ? 'retro-board__participant--afk' : ''}`}
               title={participant.nickname}
             >
               {participant.avatarSvg && (
                 <div dangerouslySetInnerHTML={{ __html: participant.avatarSvg }} />
               )}
+              {participant.isAfk && <span className="retro-board__participant-afk">AFK</span>}
             </div>
           ))}
         </div>
@@ -63,7 +92,7 @@ const RetroHeader = ({
       {/* Timer - Show to owner if panel is open, or to everyone if running */}
       {(isOwner && showTimer) || (!isOwner && timer.isRunning) ? (
         <div className="retro-board__timer">
-          <IconClock size={18} />
+          <IconAlarm size={18} />
           <RetroTimerV2
             timer={timer}
             isOwner={isOwner}
@@ -92,7 +121,7 @@ const RetroHeader = ({
               onClick={() => setShowTimer(!showTimer)}
               title="Timer"
             >
-              <IconClock size={20} />
+              <IconAlarm size={20} />
             </button>
             <div className="retro-board__control-wrapper">
               <button
@@ -103,23 +132,70 @@ const RetroHeader = ({
               </button>
               <span className="retro-board__control-tooltip">Soon</span>
             </div>
-            <button
-              className="retro-board__control-btn"
-              onClick={onExportCSV}
-              title="Export to CSV"
-            >
-              <IconDownload size={20} />
-            </button>
+            {/* Export Dropdown */}
+            <div className="retro-board__dropdown-wrapper" ref={exportRef}>
+              <button
+                className={`retro-board__control-btn ${showExportDropdown ? 'active' : ''}`}
+                onClick={() => {
+                  setShowExportDropdown(!showExportDropdown);
+                  setShowInviteDropdown(false);
+                }}
+                title="Export"
+              >
+                <IconDownload size={20} />
+              </button>
+              {showExportDropdown && (
+                <div className="retro-board__dropdown">
+                  <button className="retro-board__dropdown-item" onClick={() => { onExportCSV(); setShowExportDropdown(false); }}>
+                    <IconFileTypeCsv size={18} />
+                    <span>Export CSV</span>
+                  </button>
+                  <button className="retro-board__dropdown-item" onClick={() => { onExportPDF(); setShowExportDropdown(false); }}>
+                    <IconFileTypePdf size={18} />
+                    <span>Export PDF</span>
+                  </button>
+                  <div className="retro-board__dropdown-divider" />
+                  <button className="retro-board__dropdown-item" onClick={() => { onExportActionItemsPDF(); setShowExportDropdown(false); }}>
+                    <IconChecklist size={18} />
+                    <span>Export Action Items</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </>
         )}
 
-        <button
-          className="retro-board__invite-btn"
-          onClick={onCopyInviteLink}
-          title="Copy invite link"
-        >
-          <IconShare size={20} />
-        </button>
+        {/* Invite Dropdown */}
+        <div className="retro-board__dropdown-wrapper" ref={inviteRef}>
+          <button
+            className={`retro-board__invite-btn ${showInviteDropdown ? 'active' : ''}`}
+            onClick={() => {
+              setShowInviteDropdown(!showInviteDropdown);
+              setShowExportDropdown(false);
+            }}
+            title="Invite"
+          >
+            <IconShare size={20} />
+          </button>
+          {showInviteDropdown && (
+            <div className="retro-board__dropdown retro-board__dropdown--invite">
+              <div className="retro-board__dropdown-url">
+                <IconLink size={16} />
+                <input 
+                  type="text" 
+                  value={inviteUrl} 
+                  readOnly 
+                  className="retro-board__dropdown-url-input"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+              </div>
+              <button className="retro-board__dropdown-invite-btn" onClick={() => { onCopyInviteLink(); setShowInviteDropdown(false); }}>
+                <IconUserPlus size={18} />
+                <span>Copy Invite Link</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       </div>
     </div>
