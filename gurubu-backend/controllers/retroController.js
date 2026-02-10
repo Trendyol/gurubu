@@ -3,6 +3,7 @@ const {
   checkRetroExistance,
   handleJoinRetro,
   getRetro,
+  getRetroParticipants,
 } = require("../utils/retros");
 const { getAllTemplates } = require("../config/retroTemplates");
 
@@ -38,6 +39,23 @@ exports.joinRetro = async (req, res) => {
   }
 
   res.status(200).json(result);
+};
+
+exports.checkRetroBatch = async (req, res) => {
+  const retroIds = req.body.retroIds;
+  if (!retroIds || !Array.isArray(retroIds)) {
+    return res.status(400).json({ error: "retroIds array is required" });
+  }
+
+  const existingIds = retroIds.filter(id => checkRetroExistance(id));
+  
+  // Also return participant info for existing retros
+  const participantsMap = {};
+  existingIds.forEach(id => {
+    participantsMap[id] = getRetroParticipants(id);
+  });
+
+  res.status(200).json({ existingIds, participants: participantsMap });
 };
 
 exports.getRetro = async (req, res) => {

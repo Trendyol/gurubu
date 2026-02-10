@@ -17,7 +17,10 @@ const {
   updateColumnHeaderImages,
   voteCard,
   moveRetroCard,
-  updateRetroNickname
+  updateRetroNickname,
+  groupRetroCards,
+  renameCardGroup,
+  ungroupCard
 } = require("../utils/retros");
 
 module.exports = (io) => {
@@ -321,6 +324,48 @@ module.exports = (io) => {
 
       const retroData = moveRetroCard(retroId, data.sourceColumn, data.targetColumn, data.cardId);
 
+      if (retroData) {
+        io.to(retroId).emit("updateRetroCard", retroData);
+      }
+    });
+
+    socket.on("updateAfkStatus", ({ retroId, credentials, isAfk }) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const user = getCurrentRetroUser(credentials, socket);
+      
+      if (user) {
+        const retroData = getRetro(retroId);
+        if (retroData && retroData.participants && retroData.participants[user.userID]) {
+          retroData.participants[user.userID].isAfk = isAfk;
+        }
+        
+        io.to(retroId).emit("afkStatusUpdated", {
+          userID: user.userID,
+          isAfk: isAfk,
+          retroData: getRetro(retroId)
+        });
+      }
+    });
+
+    socket.on("groupRetroCards", (retroId, data, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const retroData = groupRetroCards(retroId, data.column, data.cardId1, data.cardId2);
+      if (retroData) {
+        io.to(retroId).emit("updateRetroCard", retroData);
+      }
+    });
+
+    socket.on("renameCardGroup", (retroId, data, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const retroData = renameCardGroup(retroId, data.groupId, data.name);
+      if (retroData) {
+        io.to(retroId).emit("updateRetroCard", retroData);
+      }
+    });
+
+    socket.on("ungroupCard", (retroId, data, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const retroData = ungroupCard(retroId, data.column, data.cardId);
       if (retroData) {
         io.to(retroId).emit("updateRetroCard", retroData);
       }

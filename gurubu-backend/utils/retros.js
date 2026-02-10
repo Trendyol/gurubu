@@ -50,7 +50,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well') => {
   };
 
   user.isAdmin = true;
-  user.connected = true;
+  user.connected = false; // Will be set to true when user joins via socket
 
   const { credentials, ...userWithoutCredentials } = user;
 
@@ -418,6 +418,67 @@ const moveRetroCard = (retroId, sourceColumn, targetColumn, cardId) => {
   return retro;
 };
 
+const groupRetroCards = (retroId, column, cardId1, cardId2) => {
+  const retro = retros[retroId];
+  if (!retro || !retro.retroCards[column]) return null;
+  
+  if (!retro.cardGroups) retro.cardGroups = {};
+  
+  const cards = retro.retroCards[column];
+  const card1 = cards.find(c => c.id === cardId1);
+  const card2 = cards.find(c => c.id === cardId2);
+  if (!card1 || !card2) return null;
+
+  // Determine target groupId
+  let targetGroupId;
+  if (card2.groupId) {
+    targetGroupId = card2.groupId;
+  } else if (card1.groupId) {
+    targetGroupId = card1.groupId;
+  } else {
+    targetGroupId = uuid.v4();
+    retro.cardGroups[targetGroupId] = { name: '' };
+  }
+
+  card1.groupId = targetGroupId;
+  card2.groupId = targetGroupId;
+  if (!retro.cardGroups[targetGroupId]) {
+    retro.cardGroups[targetGroupId] = { name: '' };
+  }
+
+  return retro;
+};
+
+const renameCardGroup = (retroId, groupId, newName) => {
+  const retro = retros[retroId];
+  if (!retro) return null;
+  if (!retro.cardGroups) retro.cardGroups = {};
+  if (!retro.cardGroups[groupId]) retro.cardGroups[groupId] = {};
+  retro.cardGroups[groupId].name = newName;
+  return retro;
+};
+
+const ungroupCard = (retroId, column, cardId) => {
+  const retro = retros[retroId];
+  if (!retro || !retro.retroCards[column]) return null;
+
+  const cards = retro.retroCards[column];
+  const card = cards.find(c => c.id === cardId);
+  if (!card || !card.groupId) return null;
+
+  const groupId = card.groupId;
+  delete card.groupId;
+
+  // If only 1 card left in group, ungroup it too and remove the group
+  const remaining = cards.filter(c => c.groupId === groupId);
+  if (remaining.length <= 1) {
+    remaining.forEach(c => delete c.groupId);
+    if (retro.cardGroups) delete retro.cardGroups[groupId];
+  }
+
+  return retro;
+};
+
 const updateRetroNickname = (retroId, userID, newNickname) => {
   const retro = retros[retroId];
   if (!retro || !retro.participants || !retro.participants[userID]) {
@@ -439,6 +500,19 @@ const updateRetroNickname = (retroId, userID, newNickname) => {
   return retro;
 };
 
+const getRetroParticipants = (retroId) => {
+  const retro = retros[retroId];
+  if (!retro || !retro.participants) return [];
+
+  return Object.values(retro.participants)
+    .filter(p => p.connected !== false)
+    .map(p => ({
+      nickname: p.nickname,
+      avatarSeed: p.avatarSeed || '',
+      isAfk: p.isAfk || false,
+    }));
+};
+
 module.exports = {
   generateNewRetro,
   handleJoinRetro,
@@ -455,5 +529,9 @@ module.exports = {
   voteCard,
   moveRetroCard,
   updateRetroNickname,
+  groupRetroCards,
+  renameCardGroup,
+  ungroupCard,
+  getRetroParticipants,
   cleanRetros
 };
