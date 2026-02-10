@@ -1,19 +1,25 @@
 .retro-card {
   // background removed - will use inline style or default to transparent
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s;
+  border-radius: 10px;
+  padding: 0.5rem;
+  padding-bottom: 1.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s, transform 0.2s;
   border-left: 3px solid transparent;
   position: relative;
-  min-height: 160px;
-  max-height: 240px;
+  width: 140px;
+  min-height: 100px;
+  height: auto;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-size: 0.8rem;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
+    overflow: visible;
   }
 
   &.stamp-mode {
@@ -26,6 +32,9 @@
 
   &.editing {
     cursor: default;
+    overflow: visible;
+    z-index: 20;
+    padding-bottom: 0.25rem;
   }
 
   &__stamp {
@@ -86,21 +95,17 @@
   &__content {
     flex: 1;
     overflow: hidden;
+    word-break: break-word;
   }
 
   &__text {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 500;
     color: #2d3748;
-    line-height: 1.5;
+    line-height: 1.4;
     margin: 0;
     white-space: pre-wrap;
     word-break: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
   }
 
   &__mention {
@@ -126,13 +131,68 @@
 
   &__footer {
     position: absolute;
-    bottom: 0.5rem;
-    left: 0.5rem;
-    right: 0.5rem;
+    bottom: 0.25rem;
+    left: 0.35rem;
+    right: 0.35rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
+  }
+
+  &__footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  &__author-avatar-wrapper {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+
+    &:hover .retro-card__author-tooltip {
+      opacity: 1;
+    }
+
+    &:hover .retro-card__author-avatar {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  &__author-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.7;
+    
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__author-tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3748;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    z-index: 100;
   }
 
   &__vote-section {
@@ -143,12 +203,12 @@
   &__vote-btn {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
+    gap: 0.15rem;
+    padding: 0.15rem 0.35rem;
     background: rgba(102, 126, 234, 0.1);
     border: 1px solid rgba(102, 126, 234, 0.2);
-    border-radius: 6px;
-    font-size: 0.75rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
     font-weight: 600;
     color: #667eea;
     cursor: pointer;
@@ -176,13 +236,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
     background: transparent;
+    padding: 0;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
   }
 
   &__edit-btn {
@@ -205,16 +271,17 @@
   &__edit-mode {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0;
     flex: 1;
     position: relative;
+    min-height: 0;
   }
 
   &__textarea {
     // Wrapper for mention-textarea component
     position: relative;
     flex: 1;
-    min-height: 90px;
+    min-height: 0;
   }
 
   &__image-upload {
@@ -253,22 +320,24 @@
   }
 
   &__char-count {
-    font-size: 0.75rem;
-    color: #718096;
+    font-size: 0.6rem;
+    color: #a0aec0;
     text-align: right;
-    margin-top: -0.25rem;
+    margin: 0;
+    line-height: 1;
   }
 
   &__actions {
     display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
+    gap: 0.25rem;
+    justify-content: center;
+    margin-top: 0.15rem;
   }
 
   &__icon-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
     border: none;
     display: flex;
     align-items: center;
