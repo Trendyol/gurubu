@@ -1,5 +1,5 @@
 const uuid = require("uuid");
-const { retroUserJoin, getCurrentRetroUser, getCurrentRetroUserWithSocket } = require("../utils/retroUsers");
+const { retroUserJoin, getCurrentRetroUser, getCurrentRetroUserWithSocket, clearRetroUser } = require("../utils/retroUsers");
 const { getTemplate } = require("../config/retroTemplates");
 
 let retros = {};
@@ -35,7 +35,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well') => {
   const currentTime = new Date().getTime();
   const expireTime = currentTime + 24 * 60 * 60 * 1000; // 24 hours
   const retroId = uuid.v4();
-  
+
   console.log("generateNewRetro:", { nickName, title, templateId, retroId, currentTime, expireTime });
 
   const user = retroUserJoin(nickName, retroId);
@@ -109,10 +109,10 @@ const handleJoinRetro = (nickName, retroId) => {
   if(!retros[retroId]?.participants){
     return handleErrors("handleJoinRetro", retroId);
   }
-  
+
   // Check if user is the owner
   user.isAdmin = retros[retroId].owner === user.userID;
-  
+
   retros[retroId].participants[user.userID] = userWithoutCredentials;
 
   const retroRoom = retroRooms.find((retro) => retro.retroId === retroId);
@@ -156,7 +156,7 @@ const leaveUserFromRetro = (user) => {
     console.log(`leaveUserFromRetro: Retro ${user.retroId} not found`);
     return;
   }
-  
+
   const userRetroData = retros[user.retroId].participants[user.userID];
   if (!userRetroData) {
     console.log(`leaveUserFromRetro: User ${user.userID} not found in retro participants`);
@@ -169,7 +169,7 @@ const leaveUserFromRetro = (user) => {
     connected: false,
   };
   console.log(`User ${user.nickname} (${user.userID}) marked as disconnected in retro ${user.retroId}`);
-  
+
   return user.retroId;
 };
 
@@ -190,10 +190,10 @@ const addRetroCard = (data, credentials, retroId, socket) => {
 
   const { column, text, image, color } = data;
   console.log("🎨 addRetroCard - Received color:", color);
-  
+
   // Extract mentions from text
   const mentions = extractMentions(text);
-  
+
   const cardId = uuid.v4();
   const newCard = {
     id: cardId,
@@ -229,7 +229,7 @@ const updateRetroCard = (data, credentials, retroId, socket) => {
   }
 
   const { column, cardId, text, image, stamps, votes, voteCount } = data;
-  
+
   // Extract mentions from updated text if text is provided
   const mentions = text ? extractMentions(text) : undefined;
 
@@ -362,7 +362,8 @@ const cleanRetros = () => {
     // Remove expired retros from retros object
     expiredRetroIds.forEach(retroId => delete retros[retroId]);
 
-    console.log("Retros cleaned!");
+    // Remove users in expired retros
+    expiredRetroIds.forEach(clearRetroUser);
   }, 1000 * 60 * 60 * 12); // work every 12 hours
 };
 
@@ -411,7 +412,7 @@ const moveRetroCard = (retroId, sourceColumn, targetColumn, cardId) => {
   }
 
   const [card] = retro.retroCards[sourceColumn].splice(cardIndex, 1);
-  
+
   // Add card to target column
   retro.retroCards[targetColumn].push(card);
 
@@ -421,9 +422,9 @@ const moveRetroCard = (retroId, sourceColumn, targetColumn, cardId) => {
 const groupRetroCards = (retroId, column, cardId1, cardId2) => {
   const retro = retros[retroId];
   if (!retro || !retro.retroCards[column]) return null;
-  
+
   if (!retro.cardGroups) retro.cardGroups = {};
-  
+
   const cards = retro.retroCards[column];
   const card1 = cards.find(c => c.id === cardId1);
   const card2 = cards.find(c => c.id === cardId2);
