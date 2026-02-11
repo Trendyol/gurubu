@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { RetroCard as RetroCardType } from "@/shared/interfaces";
-import { IconTrash, IconEdit } from "@tabler/icons-react";
+import { IconTrash, IconEdit, IconEyeOff } from "@tabler/icons-react";
 import classNames from "classnames";
 import MentionTextarea from "./mention-textarea";
 
@@ -19,9 +19,10 @@ interface IProps {
   authorAvatarSvg?: string;
   authorName?: string;
   hideAuthorAvatar?: boolean;
+  isBlurred?: boolean;
 }
 
-const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar }: IProps) => {
+const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar, isBlurred }: IProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(card.text);
   const [imagePreview, setImagePreview] = useState<string | null>(card.image);
@@ -124,7 +125,8 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
       ref={cardRef}
       className={classNames("retro-card", {
         editing: isEditing,
-        'stamp-mode': selectedStamp
+        'stamp-mode': selectedStamp,
+        'blurred': isBlurred
       })}
       onClick={handleCardClick}
       style={{
@@ -171,7 +173,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
         </div>
       ) : (
         <div className="retro-card__view-mode">
-          <div className="retro-card__content">
+          <div className={classNames("retro-card__content", { "retro-card__content--blurred": isBlurred })}>
             <p className="retro-card__text">{renderTextWithMentions(card.text)}</p>
             {card.image && (
               <div className="retro-card__image">
@@ -179,9 +181,14 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
               </div>
             )}
           </div>
+          {isBlurred && (
+            <div className="retro-card__blur-overlay">
+              <IconEyeOff size={20} />
+            </div>
+          )}
           <div className="retro-card__footer">
             <div className="retro-card__vote-section">
-              {onVote && (
+              {onVote && !isBlurred && (
                 <button
                   className={classNames("retro-card__vote-btn", {
                     'voted': card.votes?.includes(currentUserId || 0)
@@ -197,7 +204,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
               )}
             </div>
             <div className="retro-card__footer-right">
-              {isOwner && (
+              {isOwner && !isBlurred && (
                 <div className="retro-card__owner-actions">
                   <button
                     className="retro-card__edit-btn"
@@ -216,7 +223,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
                 </div>
               )}
               {/* Author avatar */}
-              {authorAvatarSvg && !hideAuthorAvatar && (
+              {authorAvatarSvg && !hideAuthorAvatar && !isBlurred && (
                 <div className="retro-card__author-avatar-wrapper">
                   <div 
                     className="retro-card__author-avatar"

@@ -72,6 +72,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isAfk, setIsAfk] = useState(false);
   const [draggingCardBetweenColumns, setDraggingCardBetweenColumns] = useState<{cardId: string, sourceColumn: string} | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // Canvas transform-based panning/zoom state
   const boardRef = useRef<HTMLDivElement>(null);
@@ -293,6 +294,14 @@ const RetroBoard = ({ roomId }: IProps) => {
       setRetroInfo(data.retroData);
     };
 
+    const handleCardsRevealed = (retroData: any) => {
+      setRetroInfo(retroData);
+    };
+
+    const handleUserCardsRevealed = (retroData: any) => {
+      setRetroInfo(retroData);
+    };
+
     socket.on("initializeRetro", handleInitializeRetro);
     socket.on("addRetroCard", handleAddRetroCard);
     socket.on("updateRetroCard", handleUpdateRetroCard);
@@ -310,6 +319,8 @@ const RetroBoard = ({ roomId }: IProps) => {
     socket.on("encounteredError", handleEncounteredError);
     socket.on("confettiTriggered", handleConfettiTriggered);
     socket.on("afkStatusUpdated", handleAfkStatusUpdated);
+    socket.on("cardsRevealed", handleCardsRevealed);
+    socket.on("userCardsRevealed", handleUserCardsRevealed);
 
     return () => {
       clearInterval(heartbeatInterval);
@@ -330,6 +341,8 @@ const RetroBoard = ({ roomId }: IProps) => {
       socket.off("encounteredError", handleEncounteredError);
       socket.off("confettiTriggered", handleConfettiTriggered);
       socket.off("afkStatusUpdated", handleAfkStatusUpdated);
+      socket.off("cardsRevealed", handleCardsRevealed);
+      socket.off("userCardsRevealed", handleUserCardsRevealed);
     };
   }, [socket, roomId, avatarSeed]);
 
@@ -405,6 +418,7 @@ const RetroBoard = ({ roomId }: IProps) => {
       authorId: Number(userInfo.lobby.userID),
       createdAt: Date.now(),
       stamps: [],
+      isAnonymous,
     };
 
     socket.emit("addRetroCard", roomId, columnKey, newCard, userInfo.lobby.credentials);
@@ -476,6 +490,17 @@ const RetroBoard = ({ roomId }: IProps) => {
     }
     
     setDraggingCardBetweenColumns(null);
+  };
+
+  // Reveal handlers
+  const handleRevealAllCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("revealAllCards", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleRevealMyCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("revealMyCards", roomId, userInfo.lobby.credentials);
   };
 
   // Card grouping handlers
@@ -1046,6 +1071,9 @@ const RetroBoard = ({ roomId }: IProps) => {
         onSetDraggedCard={setDraggedCard}
         onSetDraggedImage={setDraggedImage}
         onDropImageOnColumn={handleDropImageOnColumn}
+        isAnonymous={isAnonymous}
+        onSetIsAnonymous={setIsAnonymous}
+        cardsRevealed={retroInfo?.cardsRevealed || false}
         onAddCard={handleAddCard}
         onDeleteCard={handleDeleteCard}
         onUpdateCard={handleUpdateCard}
@@ -1153,6 +1181,9 @@ const RetroBoard = ({ roomId }: IProps) => {
             onExportPDF={handleExportPDF}
             onExportActionItemsPDF={handleExportActionItemsPDF}
             onCopyInviteLink={handleCopyInviteLink}
+            cardsRevealed={retroInfo?.cardsRevealed || false}
+            onRevealAllCards={handleRevealAllCards}
+            onRevealMyCards={handleRevealMyCards}
           />
 
           {/* Canvas viewport - transform-based zoom/pan */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { IconAlarm, IconMusic, IconDownload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus } from "@tabler/icons-react";
+import { IconAlarm, IconMusic, IconDownload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus, IconEye } from "@tabler/icons-react";
 import RetroTimerV2 from "./retro-timer-v2";
 import RetroMusicPlayer from "./retro-music-player";
 
@@ -22,6 +22,9 @@ interface RetroHeaderProps {
   onExportPDF: () => void;
   onExportActionItemsPDF: () => void;
   onCopyInviteLink: () => void;
+  cardsRevealed: boolean;
+  onRevealAllCards: () => void;
+  onRevealMyCards: () => void;
 }
 
 const RetroHeader = ({
@@ -41,11 +44,25 @@ const RetroHeader = ({
   onExportPDF,
   onExportActionItemsPDF,
   onCopyInviteLink,
+  cardsRevealed,
+  onRevealAllCards,
+  onRevealMyCards,
 }: RetroHeaderProps) => {
   const [showExportDropdown, setShowExportDropdown] = useState(false);
   const [showInviteDropdown, setShowInviteDropdown] = useState(false);
+  const [showRevealedBadge, setShowRevealedBadge] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
   const inviteRef = useRef<HTMLDivElement>(null);
+
+  // Show "Cards Revealed" badge briefly when cards get revealed
+  useEffect(() => {
+    if (cardsRevealed) {
+      setShowRevealedBadge(true);
+      const timer = setTimeout(() => setShowRevealedBadge(false), 5000);
+      return () => clearTimeout(timer);
+    }
+    setShowRevealedBadge(false);
+  }, [cardsRevealed]);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -114,6 +131,34 @@ const RetroHeader = ({
       )}
 
       <div className="retro-board__controls">
+        {/* Reveal buttons - show to everyone */}
+        {!cardsRevealed && (
+          <button
+            className="retro-board__reveal-btn retro-board__reveal-btn--mine"
+            onClick={onRevealMyCards}
+            title="Reveal my cards"
+          >
+            <IconEye size={16} />
+            <span>Reveal Mine</span>
+          </button>
+        )}
+        {isOwner && !cardsRevealed && (
+          <button
+            className="retro-board__reveal-btn retro-board__reveal-btn--all"
+            onClick={onRevealAllCards}
+            title="Reveal all cards"
+          >
+            <IconEye size={16} />
+            <span>Reveal All</span>
+          </button>
+        )}
+        {cardsRevealed && showRevealedBadge && (
+          <div className="retro-board__revealed-badge">
+            <IconEye size={16} />
+            <span>Cards Revealed</span>
+          </div>
+        )}
+
         {isOwner && (
           <>
             <button
