@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { IconUser, IconNote, IconMoodSmile, IconPhoto, IconRefresh, IconSparkles } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { IconUser, IconNote, IconMoodSmile, IconPhoto, IconRefresh, IconSparkles, IconChevronLeft, IconChevronRight, IconPalette, IconMoon, IconLayoutDashboard } from "@tabler/icons-react";
 import classNames from "classnames";
 
 interface RetroSidebarProps {
@@ -36,6 +37,18 @@ interface RetroSidebarProps {
 
   // Confetti
   onConfetti: () => void;
+
+  // Collapse
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+
+  // Background
+  animatedBackground?: boolean;
+  onToggleBackground?: () => void;
+
+  // AFK
+  isAfk?: boolean;
+  onToggleAfk?: () => void;
 }
 
 const RetroSidebar = ({
@@ -61,7 +74,14 @@ const RetroSidebar = ({
   onBoardImageUpload,
   onImageDragStart,
   onConfetti,
+  collapsed,
+  onToggleCollapse,
+  animatedBackground,
+  onToggleBackground,
+  isAfk,
+  onToggleAfk,
 }: RetroSidebarProps) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'profile' | 'cards' | 'stamps' | 'images' | null>(null);
 
   // Close panel when clicking outside
@@ -91,9 +111,40 @@ const RetroSidebar = ({
     setActiveTab(null);
   };
 
+  if (collapsed) {
+    return (
+      <div className="retro-sidebar retro-sidebar--collapsed">
+        <button
+          className="retro-sidebar__expand-edge"
+          onClick={onToggleCollapse}
+          title="Expand sidebar"
+        >
+          <IconChevronRight size={14} />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="retro-sidebar">
+      {/* Thin collapse arrow on the right edge of the sidebar */}
+      <button
+        className="retro-sidebar__collapse-edge"
+        onClick={onToggleCollapse}
+        title="Collapse sidebar"
+      >
+        <IconChevronLeft size={12} />
+      </button>
+
       <div className="retro-sidebar__icons">
+        <button
+          className="retro-sidebar__icon retro-sidebar__icon--dashboard"
+          onClick={() => router.push('/retro/dashboard')}
+          title="Dashboard"
+        >
+          <IconLayoutDashboard size={20} />
+        </button>
+
         <button
           className={classNames("retro-sidebar__icon", { active: activeTab === 'cards' })}
           onClick={() => setActiveTab(activeTab === 'cards' ? null : 'cards')}
@@ -127,6 +178,17 @@ const RetroSidebar = ({
           <IconSparkles size={20} />
         </button>
 
+        <div className="retro-sidebar__divider"></div>
+
+        {/* AFK toggle */}
+        <button
+          className={classNames("retro-sidebar__icon", { active: isAfk })}
+          onClick={onToggleAfk}
+          title={isAfk ? "You are AFK - Click to return" : "Go AFK"}
+        >
+          <IconMoon size={20} />
+        </button>
+
         <div className="retro-sidebar__spacer"></div>
 
         <button
@@ -139,7 +201,7 @@ const RetroSidebar = ({
       </div>
 
       {activeTab === 'profile' && (
-        <div className="retro-sidebar__panel retro-sidebar__panel--small">
+        <div className="retro-sidebar__panel retro-sidebar__panel--profile">
           <div className="retro-sidebar__section">
             <h3 className="retro-sidebar__title">Profile</h3>
             <div className="retro-profile">
@@ -205,6 +267,24 @@ const RetroSidebar = ({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+
+          <div className="retro-sidebar__section">
+            <h3 className="retro-sidebar__title">Settings</h3>
+            <div className="retro-profile__settings">
+              <label className="retro-profile__setting">
+                <span className="retro-profile__setting-label">
+                  <IconPalette size={16} />
+                  Animated Background
+                </span>
+                <button
+                  className={classNames("retro-profile__toggle", { active: animatedBackground })}
+                  onClick={onToggleBackground}
+                >
+                  <span className="retro-profile__toggle-knob" />
+                </button>
+              </label>
             </div>
           </div>
         </div>

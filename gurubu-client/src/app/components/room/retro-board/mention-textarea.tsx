@@ -8,6 +8,7 @@ interface IProps {
   participants: Array<{ nickname: string }>;
   placeholder?: string;
   maxLength?: number;
+  maxNewlines?: number;
   autoFocus?: boolean;
   className?: string;
 }
@@ -17,7 +18,8 @@ const MentionTextarea = ({
   onChange, 
   participants, 
   placeholder = "Enter your thoughts...",
-  maxLength = 120,
+  maxLength = 500,
+  maxNewlines = 999,
   autoFocus = false,
   className = ""
 }: IProps) => {
@@ -99,6 +101,15 @@ const MentionTextarea = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Block Enter key if max newlines reached (but still allow all other input)
+    if (e.key === 'Enter' && !showSuggestions) {
+      const newlineCount = (value.match(/\n/g) || []).length;
+      if (newlineCount >= maxNewlines) {
+        e.preventDefault();
+        return;
+      }
+    }
+
     if (!showSuggestions) return;
 
     if (e.key === 'ArrowDown') {

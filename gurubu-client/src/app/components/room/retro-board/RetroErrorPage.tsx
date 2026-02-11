@@ -76,6 +76,12 @@ const RetroErrorPage = ({
           </button>
           <button
             className="retro-error__button retro-error__button--secondary"
+            onClick={() => router.push('/retro/dashboard')}
+          >
+            My Retrospectives
+          </button>
+          <button
+            className="retro-error__button retro-error__button--secondary"
             onClick={() => router.push('/')}
           >
             Go Home

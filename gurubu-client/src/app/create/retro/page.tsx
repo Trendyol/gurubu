@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { RetroService } from "@/services/retroService";
+import { saveRetroToHistory } from "@/shared/helpers/lobbyStorage";
 import "@/styles/room/style.scss";
 
 interface RetroTemplate {
@@ -102,7 +103,10 @@ const CreateRetro = () => {
     lobby.state.retros[response.retroId] = response;
     localStorage.setItem("retroLobby", JSON.stringify(lobby));
 
-    window.location.assign(`/retro/${response.retroId}`);
+    // Save to retro history for dashboard
+    saveRetroToHistory(response.retroId, title.trim() || "Team Retrospective", selectedTemplate, false);
+
+    window.location.assign(`/retro/dashboard`);
   };
 
   return (
