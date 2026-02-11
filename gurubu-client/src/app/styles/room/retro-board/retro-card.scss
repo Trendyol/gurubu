@@ -37,6 +37,35 @@
     padding-bottom: 0.25rem;
   }
 
+  &.blurred {
+    cursor: default;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  &__content--blurred {
+    filter: blur(6px);
+    user-select: none;
+    pointer-events: none;
+    transition: filter 0.3s ease;
+  }
+
+  &__blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 2;
+  }
+
   &__stamp {
     position: absolute;
     font-size: 1.5rem;

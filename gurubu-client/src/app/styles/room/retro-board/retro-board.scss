@@ -1371,6 +1371,63 @@
   gap: 0.5rem;
 }
 
+.retro-board__reveal-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &--mine {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.2);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--all {
+    background: #667eea;
+    color: white;
+
+    &:hover {
+      background: #5a6fd6;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.retro-board__revealed-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  animation: revealedFadeOut 5s ease forwards;
+}
+
+@keyframes revealedFadeOut {
+  0%, 70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 // Participants
 .retro-participants {
   position: relative;
@@ -2279,12 +2336,48 @@
     }
   }
 
+  &__card-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
   &__char-count {
     font-size: 0.75rem;
     color: rgba(0, 0, 0, 0.4);
     text-align: right;
-    margin-top: 0.25rem;
-    margin-bottom: 0.5rem;
+  }
+
+  &__anonymous-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: #a0aec0;
+    transition: all 0.2s;
+    white-space: nowrap;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+      color: #667eea;
+      border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    &.active {
+      opacity: 1;
+      background: #667eea;
+      border-color: #667eea;
+      color: white;
+    }
   }
 
   &__actions {
