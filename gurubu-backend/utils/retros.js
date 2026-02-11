@@ -80,6 +80,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well') => {
     },
     boardImages: [],
     columnHeaderImages: columnHeaderImages,
+    cardsRevealed: false,
     status: "ongoing"
   };
 
@@ -188,12 +189,12 @@ const addRetroCard = (data, credentials, retroId, socket) => {
     return handleErrors("addRetroCard", retroId, socket, isRetroExpired);
   }
 
-  const { column, text, image, color } = data;
+  const { column, text, image, color, isAnonymous } = data;
   console.log("🎨 addRetroCard - Received color:", color);
-
+  
   // Extract mentions from text
   const mentions = extractMentions(text);
-
+  
   const cardId = uuid.v4();
   const newCard = {
     id: cardId,
@@ -204,6 +205,7 @@ const addRetroCard = (data, credentials, retroId, socket) => {
     authorId: user.userID,
     createdAt: new Date().getTime(),
     mentions: mentions,
+    isAnonymous: isAnonymous || false,
   };
   console.log("🎨 addRetroCard - Created card with color:", newCard.color);
   console.log("👥 addRetroCard - Mentions found:", mentions);
@@ -514,6 +516,44 @@ const getRetroParticipants = (retroId) => {
     }));
 };
 
+const revealAllCards = (retroId, credentials, socket) => {
+  const user = getCurrentRetroUser(credentials, socket);
+  const isRetroExpired = checkIsRetroExpired(retroId);
+  if (!user || isRetroExpired) {
+    return handleErrors("revealAllCards", retroId, socket, isRetroExpired);
+  }
+
+  // Only owner can reveal all cards
+  if (retros[retroId].owner !== user.userID) {
+    return {
+      isSuccess: false,
+      message: "Only the retro owner can reveal all cards"
+    };
+  }
+
+  retros[retroId].cardsRevealed = true;
+  return retros[retroId];
+};
+
+const revealUserCards = (retroId, credentials, socket) => {
+  const user = getCurrentRetroUser(credentials, socket);
+  const isRetroExpired = checkIsRetroExpired(retroId);
+  if (!user || isRetroExpired) {
+    return handleErrors("revealUserCards", retroId, socket, isRetroExpired);
+  }
+
+  // Mark all cards by this user as revealed
+  Object.keys(retros[retroId].retroCards).forEach(columnKey => {
+    retros[retroId].retroCards[columnKey].forEach(card => {
+      if (card.authorId === user.userID) {
+        card.isRevealed = true;
+      }
+    });
+  });
+
+  return retros[retroId];
+};
+
 module.exports = {
   generateNewRetro,
   handleJoinRetro,
@@ -534,5 +574,7 @@ module.exports = {
   renameCardGroup,
   ungroupCard,
   getRetroParticipants,
-  cleanRetros
+  cleanRetros,
+  revealAllCards,
+  revealUserCards
 };

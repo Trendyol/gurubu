@@ -20,7 +20,9 @@ const {
   updateRetroNickname,
   groupRetroCards,
   renameCardGroup,
-  ungroupCard
+  ungroupCard,
+  revealAllCards,
+  revealUserCards
 } = require("../utils/retros");
 
 module.exports = (io) => {
@@ -369,6 +371,26 @@ module.exports = (io) => {
       if (retroData) {
         io.to(retroId).emit("updateRetroCard", retroData);
       }
+    });
+
+    socket.on("revealAllCards", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const result = revealAllCards(retroId, credentials, socket);
+      if (result?.isSuccess === false) {
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(retroId).emit("cardsRevealed", result);
+    });
+
+    socket.on("revealMyCards", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const result = revealUserCards(retroId, credentials, socket);
+      if (result?.isSuccess === false) {
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(retroId).emit("userCardsRevealed", result);
     });
 
     socket.on("triggerConfetti", (retroId, credentials) => {
