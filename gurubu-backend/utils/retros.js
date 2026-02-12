@@ -31,9 +31,17 @@ const handleErrors = (errorFunctionName, retroId, socket, isRetroExpired) => {
   }
 };
 
-const generateNewRetro = (nickName, title, templateId = 'what-went-well') => {
+const RETENTION_OPTIONS = {
+  1: 1 * 24 * 60 * 60 * 1000,
+  5: 5 * 24 * 60 * 60 * 1000,
+  7: 7 * 24 * 60 * 60 * 1000,
+  30: 30 * 24 * 60 * 60 * 1000,
+};
+
+const generateNewRetro = (nickName, title, templateId = 'what-went-well', retentionDays = 5) => {
   const currentTime = new Date().getTime();
-  const expireTime = currentTime + 24 * 60 * 60 * 1000; // 24 hours
+  const retention = RETENTION_OPTIONS[retentionDays] || RETENTION_OPTIONS[5];
+  const expireTime = currentTime + retention;
   const retroId = uuid.v4();
 
   console.log("generateNewRetro:", { nickName, title, templateId, retroId, currentTime, expireTime });
@@ -364,7 +372,7 @@ const cleanRetros = () => {
 
     // Remove users in expired retros
     expiredRetroIds.forEach(clearRetroUser);
-  }, 1000 * 60 * 60 * 12); // work every 12 hours
+  }, 1000 * 60 * 60 * 24 * 4); // work every 4 days
 };
 
 const voteCard = (retroId, column, cardId, userId) => {

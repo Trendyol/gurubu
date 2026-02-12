@@ -270,3 +270,47 @@
     }
   }
 }
+
+// Retention Selector
+.retro-retention-selector {
+  width: 100%;
+  margin: 0.75rem 0;
+  text-align: left;
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+  }
+
+  &__options {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__option {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    color: #4a5568;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+      border-color: rgba(102, 126, 234, 0.3);
+      background: rgba(102, 126, 234, 0.04);
+    }
+
+    &.selected {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.08);
+      color: #667eea;
+    }
+  }
+}

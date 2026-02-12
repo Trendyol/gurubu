@@ -23,6 +23,7 @@ const CreateRetro = () => {
   const [nickname, setNickname] = useState("");
   const [title, setTitle] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("what-went-well");
+  const [retentionDays, setRetentionDays] = useState(5);
   const [templates, setTemplates] = useState<RetroTemplate[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
@@ -77,6 +78,7 @@ const CreateRetro = () => {
       nickName: trimmedNickName,
       title: title.trim() || "Team Retrospective",
       templateId: selectedTemplate,
+      retentionDays,
     };
 
     const response = await retroService.createRetro(payload);
@@ -231,6 +233,28 @@ const CreateRetro = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* Retention Selection */}
+              <div className="retro-retention-selector">
+                <h3 className="retro-retention-selector__title">Expires in</h3>
+                <div className="retro-retention-selector__options">
+                  {[
+                    { days: 1, label: "1 day" },
+                    { days: 5, label: "5 days" },
+                    { days: 7, label: "7 days" },
+                    { days: 30, label: "30 days" },
+                  ].map((option) => (
+                    <button
+                      key={option.days}
+                      type="button"
+                      className={`retro-retention-selector__option ${retentionDays === option.days ? 'selected' : ''}`}
+                      onClick={() => setRetentionDays(option.days)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <button
