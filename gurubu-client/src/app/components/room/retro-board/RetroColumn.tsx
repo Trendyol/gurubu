@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { IconPlus, IconPhoto, IconInfoCircle, IconUnlink } from "@tabler/icons-react";
+import { IconPlus, IconPhoto, IconInfoCircle, IconUnlink, IconUserOff } from "@tabler/icons-react";
 import classNames from "classnames";
 import RetroCard from "./retro-card";
 import MentionTextarea from "./mention-textarea";
@@ -46,6 +46,9 @@ interface RetroColumnProps {
   onRenameGroup?: (groupId: string, name: string) => void;
   onUngroupCard?: (column: string, cardId: string) => void;
   isSideColumn?: boolean;
+  isAnonymous?: boolean;
+  onSetIsAnonymous?: (val: boolean) => void;
+  cardsRevealed?: boolean;
 }
 
 const RetroColumn = ({
@@ -88,6 +91,9 @@ const RetroColumn = ({
   onRenameGroup,
   onUngroupCard,
   isSideColumn,
+  isAnonymous,
+  onSetIsAnonymous,
+  cardsRevealed,
 }: RetroColumnProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const dragOverCountRef = useRef(0);
@@ -289,8 +295,10 @@ const RetroColumn = ({
           // Render a single card (used in both grouped and ungrouped)
           const renderSingleCard = (card: any, isInGroup = false) => {
             const authorParticipant = participants.find((p: any) => p.userID === card.authorId);
-            const authorAvatarSvg = authorParticipant?.avatarSvg || (createAvatarSvg && authorParticipant?.avatarSeed ? createAvatarSvg(authorParticipant.avatarSeed) : undefined);
             const isCardAuthor = currentUserId !== undefined && card.authorId === currentUserId;
+            const isBlurred = !cardsRevealed && !card.isRevealed && !isCardAuthor;
+            const showAnonymousAuthor = card.isAnonymous === true;
+            const authorAvatarSvg = showAnonymousAuthor ? undefined : (authorParticipant?.avatarSvg || (createAvatarSvg && authorParticipant?.avatarSeed ? createAvatarSvg(authorParticipant.avatarSeed) : undefined));
             const isGroupTarget = dragOverCardId === card.id && groupHoverReady;
 
             return (
@@ -346,8 +354,9 @@ const RetroColumn = ({
                   onStampClick={() => onSetSelectedStamp(null)}
                   participants={participants}
                   authorAvatarSvg={authorAvatarSvg}
-                  authorName={authorParticipant?.nickname}
+                  authorName={showAnonymousAuthor ? "Anonymous" : authorParticipant?.nickname}
                   hideAuthorAvatar={isCardAuthor}
+                  isBlurred={isBlurred}
                 />
                 {isInGroup && onUngroupCard && (
                   <button
@@ -457,7 +466,18 @@ const RetroColumn = ({
               autoFocus
               className="retro-column__textarea"
             />
-            <div className="retro-column__char-count">{newCardText.length}/200</div>
+            <div className="retro-column__card-bottom-row">
+              <div className="retro-column__char-count">{newCardText.length}/200</div>
+              <button
+                className={classNames("retro-column__anonymous-toggle", { active: isAnonymous })}
+                onClick={() => onSetIsAnonymous?.(!isAnonymous)}
+                title={isAnonymous ? "This card will be posted anonymously" : "Post anonymously"}
+                type="button"
+              >
+                <IconUserOff size={14} />
+                <span>Anonymous</span>
+              </button>
+            </div>
             <div className="retro-column__actions">
               <button
                 className="retro-column__icon-btn retro-column__icon-btn--save"

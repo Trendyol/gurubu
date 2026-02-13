@@ -95,6 +95,8 @@ export interface RetroCard {
   mentions?: string[];
   votes?: number[];
   voteCount?: number;
+  isAnonymous?: boolean;
+  isRevealed?: boolean;
 }
 
 export interface RetroCards {
@@ -131,6 +133,7 @@ export interface RetroInfo {
     }>;
   };
   status: string;
+  cardsRevealed?: boolean;
 }
 
 export interface GroomingInfo {
