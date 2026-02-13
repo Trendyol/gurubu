@@ -1,6 +1,6 @@
 const uuid = require("uuid");
 const { retroUserJoin, getCurrentRetroUser, getCurrentRetroUserWithSocket, clearRetroUser } = require("../utils/retroUsers");
-const { getTemplate } = require("../config/retroTemplates");
+const { getTemplate, buildCustomTemplate } = require("../config/retroTemplates");
 
 let retros = {};
 let retroRooms = [];
@@ -38,7 +38,7 @@ const RETENTION_OPTIONS = {
   30: 30 * 24 * 60 * 60 * 1000,
 };
 
-const generateNewRetro = (nickName, title, templateId = 'what-went-well', retentionDays = 5) => {
+const generateNewRetro = (nickName, title, templateId = 'what-went-well', retentionDays = 5, customColumns = null) => {
   const currentTime = new Date().getTime();
   const retention = RETENTION_OPTIONS[retentionDays] || RETENTION_OPTIONS[5];
   const expireTime = currentTime + retention;
@@ -47,7 +47,9 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well', retent
   console.log("generateNewRetro:", { nickName, title, templateId, retroId, currentTime, expireTime });
 
   const user = retroUserJoin(nickName, retroId);
-  const template = getTemplate(templateId);
+  const template = (templateId === 'custom' && customColumns && customColumns.length > 0)
+    ? buildCustomTemplate(customColumns)
+    : getTemplate(templateId);
 
   const newRetroRoom = {
     retroId,
@@ -88,6 +90,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well', retent
     },
     boardImages: [],
     columnHeaderImages: columnHeaderImages,
+    cardsRevealed: false,
     status: "ongoing"
   };
 
@@ -196,7 +199,7 @@ const addRetroCard = (data, credentials, retroId, socket) => {
     return handleErrors("addRetroCard", retroId, socket, isRetroExpired);
   }
 
-  const { column, text, image, color } = data;
+  const { column, text, image, color, isAnonymous } = data;
   console.log("🎨 addRetroCard - Received color:", color);
 
   // Extract mentions from text
@@ -212,6 +215,7 @@ const addRetroCard = (data, credentials, retroId, socket) => {
     authorId: user.userID,
     createdAt: new Date().getTime(),
     mentions: mentions,
+    isAnonymous: isAnonymous || false,
   };
   console.log("🎨 addRetroCard - Created card with color:", newCard.color);
   console.log("👥 addRetroCard - Mentions found:", mentions);
@@ -522,6 +526,54 @@ const getRetroParticipants = (retroId) => {
     }));
 };
 
+const revealAllCards = (retroId) => {
+  const retro = retros[retroId];
+  if (!retro) return null;
+
+  retro.cardsRevealed = true;
+
+  // Mark all cards in all columns as revealed
+  for (const column of Object.values(retro.retroCards)) {
+    for (const card of column) {
+      card.isRevealed = true;
+    }
+  }
+
+  return retro;
+};
+
+const revealUserCards = (retroId, userId) => {
+  const retro = retros[retroId];
+  if (!retro) return null;
+
+  // Mark only cards by this user as revealed (skip anonymous cards)
+  for (const column of Object.values(retro.retroCards)) {
+    for (const card of column) {
+      if (card.authorId === userId && !card.isAnonymous) {
+        card.isRevealed = true;
+      }
+    }
+  }
+
+  return retro;
+};
+
+const hideAllCards = (retroId) => {
+  const retro = retros[retroId];
+  if (!retro) return null;
+
+  retro.cardsRevealed = false;
+
+  // Mark all cards as not revealed
+  for (const column of Object.values(retro.retroCards)) {
+    for (const card of column) {
+      card.isRevealed = false;
+    }
+  }
+
+  return retro;
+};
+
 module.exports = {
   generateNewRetro,
   handleJoinRetro,
@@ -542,5 +594,8 @@ module.exports = {
   renameCardGroup,
   ungroupCard,
   getRetroParticipants,
-  cleanRetros
+  cleanRetros,
+  revealAllCards,
+  revealUserCards,
+  hideAllCards
 };

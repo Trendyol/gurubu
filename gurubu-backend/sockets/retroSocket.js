@@ -20,7 +20,10 @@ const {
   updateRetroNickname,
   groupRetroCards,
   renameCardGroup,
-  ungroupCard
+  ungroupCard,
+  revealAllCards,
+  revealUserCards,
+  hideAllCards
 } = require("../utils/retros");
 
 module.exports = (io) => {
@@ -368,6 +371,33 @@ module.exports = (io) => {
       const retroData = ungroupCard(retroId, data.column, data.cardId);
       if (retroData) {
         io.to(retroId).emit("updateRetroCard", retroData);
+      }
+    });
+
+    socket.on("revealAllCards", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const retroData = revealAllCards(retroId);
+      if (retroData) {
+        io.to(retroId).emit("cardsRevealed", getRetro(retroId));
+      }
+    });
+
+    socket.on("revealMyCards", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const user = getCurrentRetroUser(credentials, socket);
+      if (user) {
+        const retroData = revealUserCards(retroId, user.userID);
+        if (retroData) {
+          io.to(retroId).emit("userCardsRevealed", getRetro(retroId));
+        }
+      }
+    });
+
+    socket.on("hideAllCards", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const retroData = hideAllCards(retroId);
+      if (retroData) {
+        io.to(retroId).emit("cardsHidden", getRetro(retroId));
       }
     });
 
