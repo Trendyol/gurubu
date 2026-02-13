@@ -12,12 +12,13 @@ exports.createRetro = async (req, res) => {
   const title = req.body.title;
   const templateId = req.body.templateId || 'what-went-well';
   const retentionDays = req.body.retentionDays || 5;
+  const customColumns = req.body.customColumns || null;
 
   if (!nickName) {
     return res.status(400).json({ error: "nickName is required" });
   }
 
-  const result = generateNewRetro(nickName, title, templateId, retentionDays);
+  const result = generateNewRetro(nickName, title, templateId, retentionDays, customColumns);
   console.log("Retro created:", result);
 
   res.status(201).json(result);

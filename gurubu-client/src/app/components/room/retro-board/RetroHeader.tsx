@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { IconAlarm, IconMusic, IconDownload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus } from "@tabler/icons-react";
+import { IconAlarm, IconMusic, IconDownload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus, IconEye, IconEyeOff } from "@tabler/icons-react";
 import RetroTimerV2 from "./retro-timer-v2";
 import RetroMusicPlayer from "./retro-music-player";
 
@@ -22,6 +22,11 @@ interface RetroHeaderProps {
   onExportPDF: () => void;
   onExportActionItemsPDF: () => void;
   onCopyInviteLink: () => void;
+  cardsRevealed?: boolean;
+  onRevealAllCards?: () => void;
+  onRevealMyCards?: () => void;
+  onHideAllCards?: () => void;
+  hasCards?: boolean;
 }
 
 const RetroHeader = ({
@@ -41,8 +46,14 @@ const RetroHeader = ({
   onExportPDF,
   onExportActionItemsPDF,
   onCopyInviteLink,
+  cardsRevealed,
+  onRevealAllCards,
+  onRevealMyCards,
+  onHideAllCards,
+  hasCards,
 }: RetroHeaderProps) => {
   const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [showRevealedBadge, setShowRevealedBadge] = useState(false);
   const [showInviteDropdown, setShowInviteDropdown] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
   const inviteRef = useRef<HTMLDivElement>(null);
@@ -60,6 +71,15 @@ const RetroHeader = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Show revealed badge when cards are revealed, auto-hide after 5 seconds
+  useEffect(() => {
+    if (cardsRevealed) {
+      setShowRevealedBadge(true);
+      const timer = setTimeout(() => setShowRevealedBadge(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [cardsRevealed]);
 
   const inviteUrl = typeof window !== 'undefined' ? `${window.location.origin}/retro/${roomId}` : '';
 
@@ -92,7 +112,6 @@ const RetroHeader = ({
       {/* Timer - Show to owner if panel is open, or to everyone if running */}
       {(isOwner && showTimer) || (!isOwner && timer.isRunning) ? (
         <div className="retro-board__timer">
-          <IconAlarm size={18} />
           <RetroTimerV2
             timer={timer}
             isOwner={isOwner}
@@ -114,6 +133,58 @@ const RetroHeader = ({
       )}
 
       <div className="retro-board__controls">
+        {/* Divider between timer and reveal */}
+        {((isOwner && showTimer) || (!isOwner && timer.isRunning)) && hasCards && (
+          <div className="retro-board__divider" />
+        )}
+
+        {/* Reveal/Hide buttons - only show when there are cards */}
+        {hasCards && !cardsRevealed && (
+          <button
+            className="retro-board__reveal-btn retro-board__reveal-btn--mine"
+            onClick={onRevealMyCards}
+            title="Reveal my cards"
+          >
+            <IconEye size={16} />
+            <span>Reveal Mine</span>
+          </button>
+        )}
+        {hasCards && isOwner && !cardsRevealed && (
+          <button
+            className="retro-board__reveal-btn retro-board__reveal-btn--all"
+            onClick={onRevealAllCards}
+            title="Reveal all cards"
+          >
+            <IconEye size={16} />
+            <span>Reveal All</span>
+          </button>
+        )}
+        {hasCards && cardsRevealed && (
+          <>
+            {isOwner && (
+              <button
+                className="retro-board__reveal-btn retro-board__reveal-btn--hide"
+                onClick={onHideAllCards}
+                title="Hide all cards"
+              >
+                <IconEyeOff size={16} />
+                <span>Hide Cards</span>
+              </button>
+            )}
+            {showRevealedBadge && (
+              <div className="retro-board__revealed-badge">
+                <IconEye size={16} />
+                <span>Cards Revealed</span>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Divider between reveal and controls */}
+        {isOwner && hasCards && (
+          <div className="retro-board__divider" />
+        )}
+
         {isOwner && (
           <>
             <button

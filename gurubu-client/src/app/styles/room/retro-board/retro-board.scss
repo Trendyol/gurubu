@@ -1371,6 +1371,73 @@
   gap: 0.5rem;
 }
 
+.retro-board__divider {
+  width: 1px;
+  height: 24px;
+  background: #cbd5e1;
+  margin: 0 0.25rem;
+  flex-shrink: 0;
+}
+
+// Reveal buttons
+.retro-board__reveal-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &--mine {
+    background: #ebf5ff;
+    color: #3182ce;
+
+    &:hover {
+      background: #bee3f8;
+    }
+  }
+
+  &--all {
+    background: #fefcbf;
+    color: #b7791f;
+
+    &:hover {
+      background: #faf089;
+    }
+  }
+
+  &--hide {
+    background: #fed7d7;
+    color: #c53030;
+
+    &:hover {
+      background: #feb2b2;
+    }
+  }
+}
+
+.retro-board__revealed-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: #c6f6d5;
+  color: #276749;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  animation: revealedFadeOut 5s ease-in-out forwards;
+}
+
+@keyframes revealedFadeOut {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 // Participants
 .retro-participants {
   position: relative;
@@ -2028,6 +2095,26 @@
     border-top: 3px solid #3b82f6;
   }
 
+  &--orange {
+    border-top: 3px solid #f59e0b;
+  }
+
+  &--pink {
+    border-top: 3px solid #ec4899;
+  }
+
+  &--purple {
+    border-top: 3px solid #8b5cf6;
+  }
+
+  &--teal {
+    border-top: 3px solid #14b8a6;
+  }
+
+  &--yellow {
+    border-top: 3px solid #eab308;
+  }
+
   &--drag-over {
     border: 2px dashed #667eea;
     background: rgba(102, 126, 234, 0.05) !important;
@@ -2282,9 +2369,41 @@
   &__char-count {
     font-size: 0.75rem;
     color: rgba(0, 0, 0, 0.4);
-    text-align: right;
+  }
+
+  &__card-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-top: 0.25rem;
     margin-bottom: 0.5rem;
+  }
+
+  &__anonymous-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: transparent;
+    font-size: 0.7rem;
+    color: #a0aec0;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.6;
+
+    &:hover {
+      opacity: 1;
+      border-color: #a0aec0;
+    }
+
+    &.active {
+      opacity: 1;
+      background: #4a5568;
+      color: white;
+      border-color: #4a5568;
+    }
   }
 
   &__actions {

@@ -17,7 +17,7 @@ export class RetroService {
     }
   }
 
-  async createRetro(payload: { nickName: string; title?: string; templateId?: string; retentionDays?: number }) {
+  async createRetro(payload: { nickName: string; title?: string; templateId?: string; retentionDays?: number; customColumns?: string[] }) {
     try {
       const response = await axios.post(`${this.baseUrl}/retro/create`, payload);
       return response.data;

@@ -72,6 +72,7 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isAfk, setIsAfk] = useState(false);
   const [draggingCardBetweenColumns, setDraggingCardBetweenColumns] = useState<{cardId: string, sourceColumn: string} | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // Canvas transform-based panning/zoom state
   const boardRef = useRef<HTMLDivElement>(null);
@@ -293,6 +294,18 @@ const RetroBoard = ({ roomId }: IProps) => {
       setRetroInfo(data.retroData);
     };
 
+    const handleCardsRevealed = (data: any) => {
+      setRetroInfo(data);
+    };
+
+    const handleUserCardsRevealed = (data: any) => {
+      setRetroInfo(data);
+    };
+
+    const handleCardsHidden = (data: any) => {
+      setRetroInfo(data);
+    };
+
     socket.on("initializeRetro", handleInitializeRetro);
     socket.on("addRetroCard", handleAddRetroCard);
     socket.on("updateRetroCard", handleUpdateRetroCard);
@@ -310,6 +323,9 @@ const RetroBoard = ({ roomId }: IProps) => {
     socket.on("encounteredError", handleEncounteredError);
     socket.on("confettiTriggered", handleConfettiTriggered);
     socket.on("afkStatusUpdated", handleAfkStatusUpdated);
+    socket.on("cardsRevealed", handleCardsRevealed);
+    socket.on("userCardsRevealed", handleUserCardsRevealed);
+    socket.on("cardsHidden", handleCardsHidden);
 
     return () => {
       clearInterval(heartbeatInterval);
@@ -330,6 +346,9 @@ const RetroBoard = ({ roomId }: IProps) => {
       socket.off("encounteredError", handleEncounteredError);
       socket.off("confettiTriggered", handleConfettiTriggered);
       socket.off("afkStatusUpdated", handleAfkStatusUpdated);
+      socket.off("cardsRevealed", handleCardsRevealed);
+      socket.off("userCardsRevealed", handleUserCardsRevealed);
+      socket.off("cardsHidden", handleCardsHidden);
     };
   }, [socket, roomId, avatarSeed]);
 
@@ -405,6 +424,7 @@ const RetroBoard = ({ roomId }: IProps) => {
       authorId: Number(userInfo.lobby.userID),
       createdAt: Date.now(),
       stamps: [],
+      isAnonymous,
     };
 
     socket.emit("addRetroCard", roomId, columnKey, newCard, userInfo.lobby.credentials);
@@ -413,6 +433,7 @@ const RetroBoard = ({ roomId }: IProps) => {
     setNewCardText("");
     setNewCardImage(null);
     setNewCardColor(null);
+    setIsAnonymous(false);
   };
 
   // Double-click on column area to add a default yellow card
@@ -420,6 +441,22 @@ const RetroBoard = ({ roomId }: IProps) => {
     if (activeColumn) return; // Don't open if already adding
     setActiveColumn(columnKey);
     setNewCardColor('#FFF9E5'); // Default yellow
+  };
+
+  // Reveal cards
+  const handleRevealAllCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("revealAllCards", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleRevealMyCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("revealMyCards", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleHideAllCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("hideAllCards", roomId, userInfo.lobby.credentials);
   };
 
   // AFK toggle
@@ -1062,6 +1099,9 @@ const RetroBoard = ({ roomId }: IProps) => {
         onRenameGroup={handleRenameGroup}
         onUngroupCard={handleUngroupCard}
         isSideColumn={isSideColumn}
+        isAnonymous={isAnonymous}
+        onSetIsAnonymous={setIsAnonymous}
+        cardsRevealed={retroInfo?.cardsRevealed}
       />
     );
   };
@@ -1153,6 +1193,11 @@ const RetroBoard = ({ roomId }: IProps) => {
             onExportPDF={handleExportPDF}
             onExportActionItemsPDF={handleExportActionItemsPDF}
             onCopyInviteLink={handleCopyInviteLink}
+            cardsRevealed={retroInfo?.cardsRevealed}
+            onRevealAllCards={handleRevealAllCards}
+            onRevealMyCards={handleRevealMyCards}
+            onHideAllCards={handleHideAllCards}
+            hasCards={Object.values(retroCards).some(col => col.length > 0)}
           />
 
           {/* Canvas viewport - transform-based zoom/pan */}

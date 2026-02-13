@@ -120,12 +120,6 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
     setShowCustomInput(false);
   };
 
-  const getProgressPercentage = () => {
-    if (!timer.startTime || !timer.isRunning) return 100;
-    const totalSeconds = timer.timeLeft;
-    return (displayTime / totalSeconds) * 100;
-  };
-
   const isWarning = displayTime <= 10 && displayTime > 0;
   const isFinished = displayTime === 0;
 
@@ -140,49 +134,12 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
   if (isOwner) {
     return (
       <div className="retro-timer-v2 retro-timer-v2--owner">
-        {/* Show user view if timer is running */}
-        {timer.isRunning && (
+        {/* Show time display only when timer has been set */}
+        {displayTime > 0 && (
           <div className={`retro-timer-v2__user-display retro-timer-v2__user-display--inline ${isWarning ? 'retro-timer-v2__user-display--warning' : ''} ${isFinished ? 'retro-timer-v2__user-display--finished' : ''}`}>
-            <IconAlarm size={20} className="retro-timer-v2__icon" />
             <span className="retro-timer-v2__user-time">{formatTime(displayTime)}</span>
           </div>
         )}
-        
-        <div className={`retro-timer-v2__display ${isWarning ? 'retro-timer-v2__display--warning' : ''} ${isFinished ? 'retro-timer-v2__display--finished' : ''}`}>
-          <svg className="retro-timer-v2__circle" viewBox="0 0 120 120">
-            <defs>
-              <linearGradient id="timer-gradient-v2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor={isWarning ? "#ef4444" : "#667eea"} />
-                <stop offset="100%" stopColor={isWarning ? "#dc2626" : "#764ba2"} />
-              </linearGradient>
-            </defs>
-            <circle
-              className="retro-timer-v2__circle-bg"
-              cx="60"
-              cy="60"
-              r="54"
-            />
-            <circle
-              className="retro-timer-v2__circle-progress"
-              cx="60"
-              cy="60"
-              r="54"
-              style={{
-                strokeDasharray: `${2 * Math.PI * 54}`,
-                strokeDashoffset: `${2 * Math.PI * 54 * (1 - getProgressPercentage() / 100)}`,
-              }}
-            />
-            <text
-              x="60"
-              y="60"
-              className={`retro-timer-v2__time ${isWarning ? 'retro-timer-v2__time--warning' : ''}`}
-              textAnchor="middle"
-              dominantBaseline="middle"
-            >
-              {formatTime(displayTime)}
-            </text>
-          </svg>
-        </div>
 
         <div className="retro-timer-v2__controls">
           <div className="retro-timer-v2__buttons">
@@ -192,7 +149,7 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
                 onClick={handlePause}
                 title="Pause"
               >
-                <IconPlayerPause size={18} />
+                <IconPlayerPause size={16} />
               </button>
             ) : (
               <button 
@@ -201,7 +158,7 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
                 disabled={displayTime === 0}
                 title="Start"
               >
-                <IconPlayerPlay size={18} />
+                <IconPlayerPlay size={16} />
               </button>
             )}
             <button 
@@ -209,7 +166,7 @@ const RetroTimerV2 = ({ timer, isOwner, onTimerUpdate }: IProps) => {
               onClick={handleReset}
               title="Reset"
             >
-              <IconRefresh size={18} />
+              <IconRefresh size={16} />
             </button>
           </div>
 

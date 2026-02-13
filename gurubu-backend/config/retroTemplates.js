@@ -230,6 +230,8 @@ const RETRO_TEMPLATES = {
   }
 };
 
+const COLUMN_COLORS = ['green', 'red', 'blue', 'orange', 'pink', 'purple', 'teal', 'yellow'];
+
 const getTemplate = (templateId) => {
   return RETRO_TEMPLATES[templateId] || RETRO_TEMPLATES['what-went-well'];
 };
@@ -242,9 +244,42 @@ const getPopularTemplates = () => {
   return Object.values(RETRO_TEMPLATES).filter(t => t.popular);
 };
 
+/**
+ * Build a custom template from user-provided column names.
+ * Always adds an "Action Items" side column automatically.
+ */
+const buildCustomTemplate = (columnNames) => {
+  const columns = columnNames.map((name, index) => ({
+    key: `custom_${index}`,
+    title: name,
+    color: COLUMN_COLORS[index % COLUMN_COLORS.length],
+    description: '',
+    isMain: true,
+  }));
+
+  // Always add Action Items as side panel
+  columns.push({
+    key: 'actionItems',
+    title: 'Action Items 🎯',
+    color: 'purple',
+    description: 'Define concrete next steps and commitments.',
+    isMain: false,
+  });
+
+  return {
+    id: 'custom',
+    name: 'Custom',
+    icon: '🛠️',
+    description: 'Custom template with your own columns.',
+    popular: false,
+    columns,
+  };
+};
+
 module.exports = {
   RETRO_TEMPLATES,
   getTemplate,
   getAllTemplates,
-  getPopularTemplates
+  getPopularTemplates,
+  buildCustomTemplate
 };
