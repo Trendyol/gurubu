@@ -1,5 +1,5 @@
-const { 
-  updateRetroUserSocket, 
+const {
+  updateRetroUserSocket,
   retroUserLeave,
   getCurrentRetroUser,
   getCurrentRetroUserWithSocket,
@@ -15,6 +15,7 @@ const {
   updateRetroMusic,
   updateBoardImages,
   updateColumnHeaderImages,
+  updateColumnHeaderImagePosition,
   voteCard,
   moveRetroCard,
   updateRetroNickname,
@@ -23,7 +24,9 @@ const {
   ungroupCard,
   revealAllCards,
   revealUserCards,
-  hideAllCards
+  hideAllCards,
+  endRetro,
+  importCardsToRetro
 } = require("../utils/retros");
 
 module.exports = (io) => {
@@ -36,22 +39,22 @@ module.exports = (io) => {
 
   // Heartbeat tracking
   const heartbeats = new Map();
-  const HEARTBEAT_TIMEOUT = 35000; // 35 seconds
+  const HEARTBEAT_TIMEOUT = 15 * 60 * 1000; // 15 minutes
 
-  // Check for stale connections every 10 seconds
+  // Check for stale connections every 60 seconds
   setInterval(() => {
     const now = Date.now();
     heartbeats.forEach((lastBeat, socketId) => {
       if (now - lastBeat > HEARTBEAT_TIMEOUT) {
         const socket = io.sockets.get(socketId);
         if (socket) {
-          console.log(`Force disconnecting stale socket: ${socketId}`);
+          console.log(`Force disconnecting stale socket after 15min inactivity: ${socketId}`);
           socket.disconnect(true);
         }
         heartbeats.delete(socketId);
       }
     });
-  }, 10000);
+  }, 60000);
 
   io.on("connection", (socket) => {
     heartbeats.set(socket.id, Date.now());
@@ -79,6 +82,9 @@ module.exports = (io) => {
 
     socket.on("addRetroCard", (retroId, column, cardData, credentials) => {
       joinRetroMiddleware(socket, retroId, credentials);
+      // Prevent adding cards to completed retros
+      const retroCheck = getRetro(retroId);
+      if (retroCheck && retroCheck.status === 'completed') return;
       const data = { column, ...cardData };
       const result = addRetroCard(data, credentials, retroId, socket);
       if(result?.isSuccess === false){
@@ -212,10 +218,10 @@ module.exports = (io) => {
 
     socket.on("updateNickname", ({ retroId, credentials, newNickname }) => {
       joinRetroMiddleware(socket, retroId, credentials);
-      
+
       // Update in retroUsers
       const userUpdateResult = updateRetroUserNickname(credentials, newNickname);
-      
+
       if (!userUpdateResult) {
         io.to(socket.id).emit("encounteredError", {
           isSuccess: false,
@@ -226,7 +232,7 @@ module.exports = (io) => {
 
       // Update in retro data
       const retroData = updateRetroNickname(retroId, userUpdateResult.userID, newNickname);
-      
+
       if (!retroData) {
         io.to(socket.id).emit("encounteredError", {
           isSuccess: false,
@@ -262,6 +268,27 @@ module.exports = (io) => {
         return;
       }
       io.to(retroId).emit("columnHeaderImagesUpdated", result);
+    });
+
+    socket.on("updateColumnHeaderImagePosition", (retroId, columnKey, position, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const result = updateColumnHeaderImagePosition(columnKey, position, credentials, retroId, socket);
+      if(result?.isSuccess === false){
+        io.to(socket.id).emit("encounteredError", result);
+        return;
+      }
+      io.to(retroId).emit("columnHeaderImagePositionUpdated", result);
+    });
+
+    socket.on("importCards", (retroId, columnKey, cards, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const user = getCurrentRetroUser(credentials, socket);
+      if (!user) return;
+
+      const result = importCardsToRetro(retroId, columnKey, cards, user);
+      if (result) {
+        io.to(retroId).emit("cardsImported", result);
+      }
     });
 
     socket.on("heartbeat", () => {
@@ -335,13 +362,13 @@ module.exports = (io) => {
     socket.on("updateAfkStatus", ({ retroId, credentials, isAfk }) => {
       joinRetroMiddleware(socket, retroId, credentials);
       const user = getCurrentRetroUser(credentials, socket);
-      
+
       if (user) {
         const retroData = getRetro(retroId);
         if (retroData && retroData.participants && retroData.participants[user.userID]) {
           retroData.participants[user.userID].isAfk = isAfk;
         }
-        
+
         io.to(retroId).emit("afkStatusUpdated", {
           userID: user.userID,
           isAfk: isAfk,
@@ -401,10 +428,35 @@ module.exports = (io) => {
       }
     });
 
+    socket.on("endRetro", (retroId, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const user = getCurrentRetroUser(credentials, socket);
+      if (!user) return;
+
+      // Only admin can end retro
+      const retroData = getRetro(retroId);
+      if (!retroData || retroData.owner !== user.userID) return;
+
+      const result = endRetro(retroId);
+      if (result) {
+        io.to(retroId).emit("retroEnded", result);
+      }
+    });
+
     socket.on("triggerConfetti", (retroId, credentials) => {
       joinRetroMiddleware(socket, retroId, credentials);
-      // Broadcast confetti trigger to all users in the room
       io.to(retroId).emit("confettiTriggered");
+    });
+
+    socket.on("emoteReaction", (retroId, data, credentials) => {
+      joinRetroMiddleware(socket, retroId, credentials);
+      const user = getCurrentRetroUser(credentials, socket);
+      io.to(retroId).emit("emoteReaction", {
+        emoji: data.emoji,
+        nickname: user?.nickname || "Anonymous",
+        avatarSeed: user?.avatarSeed || "",
+        userId: user?.userID || socket.id,
+      });
     });
   });
 };

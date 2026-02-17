@@ -67,9 +67,11 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well', retent
   // Initialize retroCards based on template columns
   const retroCards = {};
   const columnHeaderImages = {};
+  const columnHeaderImagePositions = {};
   template.columns.forEach(column => {
     retroCards[column.key] = [];
     columnHeaderImages[column.key] = null;
+    columnHeaderImagePositions[column.key] = { x: 50, y: 50 };
   });
 
   retros[retroId] = {
@@ -90,6 +92,7 @@ const generateNewRetro = (nickName, title, templateId = 'what-went-well', retent
     },
     boardImages: [],
     columnHeaderImages: columnHeaderImages,
+    columnHeaderImagePositions: columnHeaderImagePositions,
     cardsRevealed: false,
     status: "ongoing"
   };
@@ -211,8 +214,10 @@ const addRetroCard = (data, credentials, retroId, socket) => {
     text,
     image: image || null,
     color: color || null,
-    author: user.nickname,
+    author: isAnonymous ? "Anonymous" : user.nickname,
     authorId: user.userID,
+    isAnonymous: !!isAnonymous,
+    isRevealed: false,
     createdAt: new Date().getTime(),
     mentions: mentions,
     isAnonymous: isAnonymous || false,
@@ -359,6 +364,20 @@ const updateColumnHeaderImages = (data, credentials, retroId, socket) => {
 
   retros[user.retroId].columnHeaderImages = data;
   return retros[user.retroId];
+};
+
+const updateColumnHeaderImagePosition = (columnKey, position, credentials, retroId, socket) => {
+  const user = getCurrentRetroUser(credentials, retroId, socket);
+  const isRetroExpired = checkIsRetroExpired(retroId);
+  if (!user || isRetroExpired) {
+    return handleErrors("updateColumnHeaderImagePosition", retroId, socket, isRetroExpired);
+  }
+
+  if (!retros[user.retroId].columnHeaderImagePositions) {
+    retros[user.retroId].columnHeaderImagePositions = {};
+  }
+  retros[user.retroId].columnHeaderImagePositions[columnKey] = position;
+  return { columnKey, position, columnHeaderImagePositions: retros[user.retroId].columnHeaderImagePositions };
 };
 
 const cleanRetros = () => {
@@ -574,6 +593,146 @@ const hideAllCards = (retroId) => {
   return retro;
 };
 
+const endRetro = (retroId) => {
+  const retro = retros[retroId];
+  if (!retro) return null;
+
+  retro.status = "completed";
+  retro.completedAt = new Date().getTime();
+
+  // Generate markdown report
+  const template = retro.template;
+  if (!template) return { retroData: retro, report: "No template found." };
+
+  let report = `# ${retro.title}\n\n`;
+  report += `**Completed at:** ${new Date(retro.completedAt).toLocaleString('tr-TR')}\n`;
+  report += `**Participants:** ${Object.values(retro.participants).filter(p => p.connected !== false).map(p => p.nickname).join(', ')}\n\n`;
+
+  // Main columns
+  const mainCols = template.columns.filter(col => col.isMain !== false);
+  const sideCols = template.columns.filter(col => col.isMain === false);
+
+  mainCols.forEach(col => {
+    const cards = retro.retroCards[col.key] || [];
+    report += `## ${col.title} (${cards.length} cards)\n\n`;
+    if (cards.length === 0) {
+      report += `- No cards\n\n`;
+    } else {
+      cards.forEach(card => {
+        const date = new Date(card.createdAt).toLocaleString('tr-TR');
+        const author = card.isAnonymous ? 'Anonymous' : (card.author || 'Unknown');
+        report += `- **${author}** (${date}): ${card.text}\n`;
+        if (card.voteCount > 0) {
+          report += `  - Votes: ${card.voteCount}\n`;
+        }
+      });
+      report += `\n`;
+    }
+  });
+
+  // Action items (side columns)
+  if (sideCols.length > 0) {
+    report += `## Action Items\n\n`;
+    sideCols.forEach(col => {
+      const cards = retro.retroCards[col.key] || [];
+      report += `### ${col.title} (${cards.length} items)\n\n`;
+      if (cards.length === 0) {
+        report += `- No items\n\n`;
+      } else {
+        cards.forEach(card => {
+          const date = new Date(card.createdAt).toLocaleString('tr-TR');
+          const author = card.isAnonymous ? 'Anonymous' : (card.author || 'Unknown');
+          report += `- **${author}** (${date}): ${card.text}\n`;
+        });
+        report += `\n`;
+      }
+    });
+  }
+
+  return { retroData: retro, report };
+};
+
+const getRetroActionItems = (retroId) => {
+  const retro = retros[retroId];
+  if (!retro || !retro.template) return null;
+
+  const sideColumns = retro.template.columns.filter(col => col.isMain === false);
+  const actionItems = {};
+
+  sideColumns.forEach(col => {
+    const cards = retro.retroCards[col.key] || [];
+    actionItems[col.key] = {
+      title: col.title,
+      cards: cards.map(card => ({
+        id: card.id,
+        text: card.text,
+        author: card.author,
+        createdAt: card.createdAt,
+      })),
+    };
+  });
+
+  return {
+    retroId,
+    title: retro.title,
+    actionItems,
+  };
+};
+
+const getRetroSummaryForImport = (retroId) => {
+  const retro = retros[retroId];
+  if (!retro || !retro.template) return null;
+
+  const result = {
+    retroId,
+    title: retro.title,
+    templateId: retro.templateId,
+    columns: {},
+  };
+
+  retro.template.columns.forEach(col => {
+    const cards = retro.retroCards[col.key] || [];
+    result.columns[col.key] = {
+      title: col.title,
+      isMain: col.isMain !== false,
+      cards: cards.map(card => ({
+        text: card.text,
+        author: card.author,
+        voteCount: card.voteCount || 0,
+        createdAt: card.createdAt,
+      })),
+    };
+  });
+
+  return result;
+};
+
+const importCardsToRetro = (retroId, columnKey, cards, user) => {
+  const retro = retros[retroId];
+  if (!retro) return null;
+
+  if (!retro.retroCards[columnKey]) {
+    retro.retroCards[columnKey] = [];
+  }
+
+  const importedCards = cards.map(card => ({
+    id: uuid.v4(),
+    text: card.text || '',
+    image: null,
+    color: card.color || null,
+    author: user.nickname,
+    authorId: user.userID,
+    createdAt: new Date().getTime(),
+    mentions: [],
+    isAnonymous: false,
+    imported: true,
+  }));
+
+  retro.retroCards[columnKey].push(...importedCards);
+
+  return retro;
+};
+
 module.exports = {
   generateNewRetro,
   handleJoinRetro,
@@ -587,6 +746,7 @@ module.exports = {
   updateRetroMusic,
   updateBoardImages,
   updateColumnHeaderImages,
+  updateColumnHeaderImagePosition,
   voteCard,
   moveRetroCard,
   updateRetroNickname,
@@ -597,5 +757,9 @@ module.exports = {
   cleanRetros,
   revealAllCards,
   revealUserCards,
-  hideAllCards
+  hideAllCards,
+  endRetro,
+  getRetroActionItems,
+  getRetroSummaryForImport,
+  importCardsToRetro
 };

@@ -5,6 +5,7 @@ const retroController = require("../controllers/retroController");
 router.get("/templates", retroController.getTemplates);
 router.post("/create", retroController.createRetro);
 router.post("/check-batch", retroController.checkRetroBatch);
+router.get("/:retroId/action-items", retroController.getRetroActionItems);
 router.post("/:retroId", retroController.joinRetro);
 router.get("/:retroId", retroController.getRetro);
 

@@ -4,6 +4,7 @@ const {
   handleJoinRetro,
   getRetro,
   getRetroParticipants,
+  getRetroActionItems,
 } = require("../utils/retros");
 const { getAllTemplates } = require("../config/retroTemplates");
 
@@ -51,13 +52,32 @@ exports.checkRetroBatch = async (req, res) => {
 
   const existingIds = retroIds.filter(id => checkRetroExistance(id));
   
-  // Also return participant info for existing retros
+  // Also return participant info and status for existing retros
   const participantsMap = {};
+  const statusMap = {};
   existingIds.forEach(id => {
     participantsMap[id] = getRetroParticipants(id);
+    const retro = getRetro(id);
+    statusMap[id] = retro?.status || 'ongoing';
   });
 
-  res.status(200).json({ existingIds, participants: participantsMap });
+  res.status(200).json({ existingIds, participants: participantsMap, statuses: statusMap });
+};
+
+exports.getRetroActionItems = async (req, res) => {
+  const retroId = req.params.retroId;
+
+  const retroExist = checkRetroExistance(retroId);
+  if (!retroExist) {
+    return res.status(404).json({ message: "Retro not found or expired" });
+  }
+
+  const actionItems = getRetroActionItems(retroId);
+  if (actionItems) {
+    return res.status(200).json(actionItems);
+  }
+
+  res.status(404).json({ message: "No action items found" });
 };
 
 exports.getRetro = async (req, res) => {
