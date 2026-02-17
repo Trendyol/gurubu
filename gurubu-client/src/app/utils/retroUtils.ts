@@ -197,3 +197,189 @@ export const exportActionItemsToPDF = (
     icon: '📋',
   });
 };
+
+/**
+ * Parse imported retro data from various tools (MetroRetro, Ludi, Zoom Retro, generic CSV/JSON)
+ * Returns an array of { column: string, cards: { text: string, author?: string }[] }
+ */
+export interface ImportedColumn {
+  column: string;
+  cards: { text: string; author?: string; color?: string }[];
+}
+
+export const parseImportedRetroFile = (
+  content: string,
+  fileName: string
+): ImportedColumn[] => {
+  const ext = fileName.toLowerCase().split('.').pop();
+
+  if (ext === 'json') {
+    return parseRetroJSON(content);
+  } else if (ext === 'csv') {
+    return parseRetroCSV(content);
+  } else if (ext === 'txt') {
+    return parseRetroTXT(content);
+  }
+
+  throw new Error('Unsupported file format. Please use JSON, CSV, or TXT files.');
+};
+
+function parseRetroJSON(content: string): ImportedColumn[] {
+  const data = JSON.parse(content);
+
+  // MetroRetro format: { columns: [{ name: string, cards: [{ text: string }] }] }
+  if (data.columns && Array.isArray(data.columns)) {
+    return data.columns.map((col: any) => ({
+      column: col.name || col.title || col.label || 'Unnamed',
+      cards: (col.cards || col.items || []).map((card: any) => ({
+        text: typeof card === 'string' ? card : (card.text || card.content || card.body || ''),
+        author: card.author || card.user || card.createdBy || undefined,
+        color: card.color || undefined,
+      })).filter((c: any) => c.text.trim()),
+    }));
+  }
+
+  // Ludi format: { boards: [{ name: string, notes: [{ text: string }] }] }
+  if (data.boards && Array.isArray(data.boards)) {
+    return data.boards.map((board: any) => ({
+      column: board.name || board.title || 'Unnamed',
+      cards: (board.notes || board.cards || board.items || []).map((note: any) => ({
+        text: typeof note === 'string' ? note : (note.text || note.content || ''),
+        author: note.author || note.user || undefined,
+      })).filter((c: any) => c.text.trim()),
+    }));
+  }
+
+  // Zoom Retro / Generic format: { "Column Name": ["card1", "card2"] } or { "Column Name": [{ text: "..." }] }
+  if (typeof data === 'object' && !Array.isArray(data)) {
+    const columns: ImportedColumn[] = [];
+    for (const [key, value] of Object.entries(data)) {
+      if (Array.isArray(value)) {
+        columns.push({
+          column: key,
+          cards: (value as any[]).map((item: any) => ({
+            text: typeof item === 'string' ? item : (item.text || item.content || ''),
+            author: typeof item === 'object' ? (item.author || item.user || undefined) : undefined,
+          })).filter((c: any) => c.text.trim()),
+        });
+      }
+    }
+    if (columns.length > 0) return columns;
+  }
+
+  // Array of columns
+  if (Array.isArray(data)) {
+    return data.map((col: any) => ({
+      column: col.column || col.name || col.title || 'Unnamed',
+      cards: (col.cards || col.items || col.notes || []).map((card: any) => ({
+        text: typeof card === 'string' ? card : (card.text || card.content || ''),
+        author: typeof card === 'object' ? (card.author || undefined) : undefined,
+      })).filter((c: any) => c.text.trim()),
+    }));
+  }
+
+  throw new Error('Could not parse JSON format. Please use a supported format.');
+}
+
+function parseRetroCSV(content: string): ImportedColumn[] {
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l);
+  if (lines.length < 2) throw new Error('CSV file is empty or has no data rows.');
+
+  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+  const columnIndex = headers.findIndex(h => /column|category|group|board/i.test(h));
+  const textIndex = headers.findIndex(h => /text|card|content|note|item|body/i.test(h));
+  const authorIndex = headers.findIndex(h => /author|user|creator|name/i.test(h));
+
+  if (textIndex === -1) {
+    // Fallback: first column is category, second is text
+    const columnsMap: Record<string, ImportedColumn> = {};
+    for (let i = 1; i < lines.length; i++) {
+      const parts = parseCSVLine(lines[i]);
+      if (parts.length < 2) continue;
+      const col = parts[0] || 'General';
+      const text = parts[1] || '';
+      if (!text.trim()) continue;
+      if (!columnsMap[col]) columnsMap[col] = { column: col, cards: [] };
+      columnsMap[col].cards.push({ text, author: parts[2] || undefined });
+    }
+    return Object.values(columnsMap);
+  }
+
+  const columnsMap: Record<string, ImportedColumn> = {};
+  for (let i = 1; i < lines.length; i++) {
+    const parts = parseCSVLine(lines[i]);
+    const col = columnIndex >= 0 ? (parts[columnIndex] || 'General') : 'General';
+    const text = parts[textIndex] || '';
+    if (!text.trim()) continue;
+    if (!columnsMap[col]) columnsMap[col] = { column: col, cards: [] };
+    columnsMap[col].cards.push({
+      text,
+      author: authorIndex >= 0 ? parts[authorIndex] || undefined : undefined,
+    });
+  }
+
+  return Object.values(columnsMap);
+}
+
+function parseRetroTXT(content: string): ImportedColumn[] {
+  const lines = content.split('\n');
+  const columns: ImportedColumn[] = [];
+  let currentColumn: ImportedColumn | null = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // Section headers: "## Column Name" or "# Column Name" or "Column Name:" or "=== Column Name ==="
+    const headerMatch = trimmed.match(/^(?:#{1,3}\s+|===\s*)(.+?)(?:\s*===)?$/) ||
+                         trimmed.match(/^(.+):$/);
+    if (headerMatch && !trimmed.startsWith('-') && !trimmed.startsWith('*')) {
+      currentColumn = { column: headerMatch[1].trim(), cards: [] };
+      columns.push(currentColumn);
+      continue;
+    }
+
+    // Card items: "- text" or "* text" or "• text" or just plain text under a column
+    const itemMatch = trimmed.match(/^[-*•]\s+(.+)$/);
+    if (currentColumn) {
+      currentColumn.cards.push({
+        text: itemMatch ? itemMatch[1] : trimmed,
+      });
+    }
+  }
+
+  if (columns.length === 0 && lines.some(l => l.trim())) {
+    columns.push({
+      column: 'Imported',
+      cards: lines.filter(l => l.trim()).map(l => ({
+        text: l.trim().replace(/^[-*•]\s+/, ''),
+      })),
+    });
+  }
+
+  return columns;
+}
+
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}

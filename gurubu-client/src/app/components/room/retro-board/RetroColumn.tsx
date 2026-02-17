@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { IconPlus, IconPhoto, IconInfoCircle, IconUnlink, IconUserOff } from "@tabler/icons-react";
+import { IconPlus, IconPhoto, IconInfoCircle, IconUnlink, IconUserOff, IconArrowsMove, IconCheck } from "@tabler/icons-react";
 import classNames from "classnames";
 import RetroCard from "./retro-card";
 import MentionTextarea from "./mention-textarea";
@@ -19,6 +19,7 @@ interface RetroColumnProps {
   draggedImage: any;
   selectedStamp: string | null;
   columnHeaderImages: Record<string, string | null>;
+  columnHeaderImagePositions: Record<string, { x: number; y: number }>;
   participants: any[];
   userInfo: any;
   draggingCardBetweenColumns?: { cardId: string; sourceColumn: string } | null;
@@ -36,6 +37,7 @@ interface RetroColumnProps {
   onVoteCard: (columnKey: string, cardId: string) => void;
   onColumnHeaderImageUpload: (columnKey: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveColumnHeaderImage: (columnKey: string) => void;
+  onColumnHeaderImagePositionUpdate: (columnKey: string, position: { x: number; y: number }) => void;
   onDoubleClick?: (columnKey: string) => void;
   onCardDragBetweenStart?: (cardId: string, sourceColumn: string) => void;
   onCardDropOnColumn?: (targetColumn: string) => void;
@@ -47,8 +49,9 @@ interface RetroColumnProps {
   onUngroupCard?: (column: string, cardId: string) => void;
   isSideColumn?: boolean;
   isAnonymous?: boolean;
-  onSetIsAnonymous?: (val: boolean) => void;
+  onToggleAnonymous?: () => void;
   cardsRevealed?: boolean;
+  isReadonly?: boolean;
 }
 
 const RetroColumn = ({
@@ -64,6 +67,7 @@ const RetroColumn = ({
   draggedImage,
   selectedStamp,
   columnHeaderImages,
+  columnHeaderImagePositions,
   participants,
   userInfo,
   draggingCardBetweenColumns,
@@ -81,6 +85,7 @@ const RetroColumn = ({
   onVoteCard,
   onColumnHeaderImageUpload,
   onRemoveColumnHeaderImage,
+  onColumnHeaderImagePositionUpdate,
   onDoubleClick,
   onCardDragBetweenStart,
   onCardDropOnColumn,
@@ -92,8 +97,9 @@ const RetroColumn = ({
   onUngroupCard,
   isSideColumn,
   isAnonymous,
-  onSetIsAnonymous,
+  onToggleAnonymous,
   cardsRevealed,
+  isReadonly,
 }: RetroColumnProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const dragOverCountRef = useRef(0);
@@ -102,6 +108,55 @@ const RetroColumn = ({
   const groupTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
   const [groupNameInput, setGroupNameInput] = useState("");
+
+  // Header image drag-to-reposition state
+  const [isRepositioning, setIsRepositioning] = useState(false);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const dragStartRef = useRef<{ x: number; y: number; startPosX: number; startPosY: number } | null>(null);
+  const headerImageRef = useRef<HTMLDivElement>(null);
+
+  const imagePosition = columnHeaderImagePositions[columnKey] || { x: 50, y: 50 };
+
+  const handleImageMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!isRepositioning) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(true);
+    dragStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      startPosX: imagePosition.x,
+      startPosY: imagePosition.y,
+    };
+  }, [isRepositioning, imagePosition]);
+
+  useEffect(() => {
+    if (!isDraggingImage) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dragStartRef.current || !headerImageRef.current) return;
+      const rect = headerImageRef.current.getBoundingClientRect();
+      const deltaX = e.clientX - dragStartRef.current.x;
+      const deltaY = e.clientY - dragStartRef.current.y;
+      const sensitivityX = 100 / rect.width;
+      const sensitivityY = 100 / rect.height;
+      const newX = Math.max(0, Math.min(100, dragStartRef.current.startPosX - deltaX * sensitivityX));
+      const newY = Math.max(0, Math.min(100, dragStartRef.current.startPosY - deltaY * sensitivityY));
+      onColumnHeaderImagePositionUpdate(columnKey, { x: newX, y: newY });
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingImage(false);
+      dragStartRef.current = null;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDraggingImage, columnKey, onColumnHeaderImagePositionUpdate]);
 
   // Force reset drag highlight when no drag is active
   useEffect(() => {
@@ -116,7 +171,7 @@ const RetroColumn = ({
 
   const handleCardDragOverCard = useCallback((targetCardId: string) => {
     if (dragOverCardId === targetCardId) return;
-    
+
     // Clear previous timer
     if (groupTimerRef.current) clearTimeout(groupTimerRef.current);
     setGroupHoverReady(false);
@@ -167,7 +222,7 @@ const RetroColumn = ({
       // This works correctly with CSS transforms unlike native D&D hit testing
       const elements = document.elementsFromPoint(e.clientX, e.clientY);
       let targetCardId: string | null = null;
-      
+
       for (const el of elements) {
         // Check the element itself or walk up to find a card wrapper
         const wrapper = (el as HTMLElement).closest?.('[data-card-id]') as HTMLElement | null;
@@ -179,7 +234,7 @@ const RetroColumn = ({
           }
         }
       }
-      
+
       if (targetCardId && draggingCardBetweenColumns.sourceColumn === columnKey && onGroupCards) {
         // Same column + dropped on a different card → GROUP
         onGroupCards(columnKey, draggingCardBetweenColumns.cardId, targetCardId);
@@ -235,15 +290,49 @@ const RetroColumn = ({
       }}
     >
       {columnHeaderImages[columnKey] && (
-        <div className="retro-column__header-image">
-          <img src={columnHeaderImages[columnKey]!} alt={`${columnConfig.title} header`} />
-          <button
-            className="retro-column__header-image-remove"
-            onClick={() => onRemoveColumnHeaderImage(columnKey)}
-            title="Remove header image"
-          >
-            ×
-          </button>
+        <div
+          ref={headerImageRef}
+          className={classNames("retro-column__header-image", {
+            "retro-column__header-image--repositioning": isRepositioning,
+            "retro-column__header-image--dragging": isDraggingImage,
+          })}
+          onMouseDown={handleImageMouseDown}
+        >
+          <img
+            src={columnHeaderImages[columnKey]!}
+            alt={`${columnConfig.title} header`}
+            style={{ objectPosition: `${imagePosition.x}% ${imagePosition.y}%` }}
+            draggable={false}
+          />
+          {isRepositioning && (
+            <div className="retro-column__header-image-reposition-hint">
+              Drag to reposition
+            </div>
+          )}
+          <div className="retro-column__header-image-actions">
+            <button
+              className={classNames("retro-column__header-image-btn", {
+                "retro-column__header-image-btn--active": isRepositioning,
+              })}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsRepositioning(!isRepositioning);
+              }}
+              title={isRepositioning ? "Done repositioning" : "Reposition image"}
+            >
+              {isRepositioning ? <IconCheck size={14} /> : <IconArrowsMove size={14} />}
+            </button>
+            <button
+              className="retro-column__header-image-btn retro-column__header-image-btn--remove"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemoveColumnHeaderImage(columnKey);
+              }}
+              title="Remove header image"
+            >
+              ×
+            </button>
+          </div>
         </div>
       )}
 
@@ -252,7 +341,7 @@ const RetroColumn = ({
           <div className="retro-column__title-wrapper">
             <h2 className="retro-column__title">{columnConfig.title}</h2>
             {columnConfig.description && (
-              <div 
+              <div
                 className="retro-column__info"
                 title={columnConfig.description}
               >
@@ -278,11 +367,11 @@ const RetroColumn = ({
       <div className="retro-column__cards">
         {(() => {
           const currentUserId = userInfo.lobby ? Number(userInfo.lobby.userID) : undefined;
-          
+
           // Group cards by groupId
           const ungroupedCards: any[] = [];
           const groupedCards: Record<string, any[]> = {};
-          
+
           cards.forEach((card: any) => {
             if (card.groupId) {
               if (!groupedCards[card.groupId]) groupedCards[card.groupId] = [];
@@ -353,10 +442,11 @@ const RetroColumn = ({
                   selectedStamp={selectedStamp}
                   onStampClick={() => onSetSelectedStamp(null)}
                   participants={participants}
-                  authorAvatarSvg={authorAvatarSvg}
+                  authorAvatarSvg={showAnonymousAuthor ? undefined : authorAvatarSvg}
                   authorName={showAnonymousAuthor ? "Anonymous" : authorParticipant?.nickname}
-                  hideAuthorAvatar={isCardAuthor}
+                  hideAuthorAvatar={isCardAuthor || showAnonymousAuthor}
                   isBlurred={isBlurred}
+                  isReadonly={isReadonly}
                 />
                 {isInGroup && onUngroupCard && (
                   <button
@@ -382,14 +472,14 @@ const RetroColumn = ({
             if (card.groupId) {
               if (renderedGroupIds.has(card.groupId)) return;
               renderedGroupIds.add(card.groupId);
-              
+
               const group = groupedCards[card.groupId];
               const groupMeta = cardGroups[card.groupId];
               const groupName = groupMeta?.name || '';
 
               allItems.push(
-                <div 
-                  key={`group-${card.groupId}`} 
+                <div
+                  key={`group-${card.groupId}`}
                   className="retro-column__card-group"
                   draggable
                   onDragStart={(e) => {
@@ -445,14 +535,14 @@ const RetroColumn = ({
           return allItems;
         })()}
 
-        {showAddButton && !isAddingCard && (
+        {showAddButton && !isAddingCard && !isReadonly && (
           <button className="retro-column__add-btn" onClick={() => onSetActiveColumn(columnKey)}>
             <IconPlus size={20} />
             Add Card
           </button>
         )}
 
-        {isAddingCard ? (
+        {isAddingCard && !isReadonly ? (
           <div
             className="retro-column__new-card"
             style={{ backgroundColor: newCardColor || "white" }}
@@ -466,40 +556,41 @@ const RetroColumn = ({
               autoFocus
               className="retro-column__textarea"
             />
+            <div className="retro-column__char-count">{newCardText.length}/200</div>
+            <button
+              className={classNames("retro-column__anonymous-toggle", {
+                "retro-column__anonymous-toggle--active": isAnonymous,
+              })}
+              onClick={() => onToggleAnonymous?.()}
+              title="Add card anonymously"
+            >
+              <IconUserOff size={12} />
+              Anonymous
+            </button>
             <div className="retro-column__card-bottom-row">
-              <div className="retro-column__char-count">{newCardText.length}/200</div>
-              <button
-                className={classNames("retro-column__anonymous-toggle", { active: isAnonymous })}
-                onClick={() => onSetIsAnonymous?.(!isAnonymous)}
-                title={isAnonymous ? "This card will be posted anonymously" : "Post anonymously"}
-                type="button"
-              >
-                <IconUserOff size={14} />
-                <span>Anonymous</span>
-              </button>
-            </div>
-            <div className="retro-column__actions">
-              <button
-                className="retro-column__icon-btn retro-column__icon-btn--save"
-                onClick={() => {
-                  onAddCard(columnKey);
-                }}
-                title="Save"
-              >
-                ✓
-              </button>
-              <button
-                className="retro-column__icon-btn retro-column__icon-btn--cancel"
-                onClick={() => {
-                  onSetActiveColumn(null);
-                  onSetNewCardText("");
-                  onSetNewCardImage(null);
-                  onSetNewCardColor(null);
-                }}
-                title="Cancel"
-              >
-                ✕
-              </button>
+              <div className="retro-column__actions">
+                <button
+                  className="retro-column__icon-btn retro-column__icon-btn--save"
+                  onClick={() => {
+                    onAddCard(columnKey);
+                  }}
+                  title="Save"
+                >
+                  ✓
+                </button>
+                <button
+                  className="retro-column__icon-btn retro-column__icon-btn--cancel"
+                  onClick={() => {
+                    onSetActiveColumn(null);
+                    onSetNewCardText("");
+                    onSetNewCardImage(null);
+                    onSetNewCardColor(null);
+                  }}
+                  title="Cancel"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           </div>
         ) : null}

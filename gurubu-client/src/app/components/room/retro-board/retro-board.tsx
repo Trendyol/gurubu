@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useRetroRoom } from "@/contexts/RetroRoomContext";
 import { useRetroSocket } from "@/contexts/RetroSocketContext";
 import { createAvatar } from "@dicebear/core";
@@ -13,11 +13,17 @@ import RetroHeader from "./RetroHeader";
 import RetroErrorPopup from "./RetroErrorPopup";
 import RetroOnboarding from "./RetroOnboarding";
 import RetroLoadingScreen from "./RetroLoadingScreen";
-import { getCurrentRetroLobby, saveRetroToHistory, markRetroStarted } from "@/shared/helpers/lobbyStorage";
+import RetroBottomBar from "./RetroBottomBar";
+import RetroModals from "./RetroModals";
 import { RetroParticipant, User } from "@/shared/interfaces";
 import { RETRO_STAMPS, RETRO_CARD_TEMPLATES } from "@/constants/retroConstants";
-import { copyRetroInviteLink, exportRetroToCSV, exportRetroToPDF, exportActionItemsToPDF } from "@/utils/retroUtils";
+import { copyRetroInviteLink, exportRetroToCSV, exportRetroToPDF, exportActionItemsToPDF, parseImportedRetroFile, ImportedColumn } from "@/utils/retroUtils";
+import { RetroService } from "@/services/retroService";
+import { getRetroHistory } from "@/shared/helpers/lobbyStorage";
 import toast from "react-hot-toast";
+import { useRetroSocketEvents } from "./hooks/useRetroSocketEvents";
+import { useCanvasControls } from "./hooks/useCanvasControls";
+import { useBoardImages } from "./hooks/useBoardImages";
 
 interface IProps {
   roomId: string;
@@ -28,17 +34,18 @@ type ColumnType = string;
 const RetroBoard = ({ roomId }: IProps) => {
   const socket = useRetroSocket();
   const { retroInfo, userInfo, setRetroInfo, setShowErrorPopup } = useRetroRoom();
-  
+
   const template = retroInfo?.template;
-  const mainColumns = useMemo(() => 
-    template?.columns?.filter((col: any) => col.isMain !== false) || [], 
+  const mainColumns = useMemo(() =>
+    template?.columns?.filter((col: any) => col.isMain !== false) || [],
     [template]
   );
-  const sideColumns = useMemo(() => 
-    template?.columns?.filter((col: any) => col.isMain === false) || [], 
+  const sideColumns = useMemo(() =>
+    template?.columns?.filter((col: any) => col.isMain === false) || [],
     [template]
   );
-  
+
+  // ─── Local State ───────────────────────────────────────────────
   const [mounted, setMounted] = useState(false);
   const [avatarSeed, setAvatarSeed] = useState<string>("");
   const [avatarCache, setAvatarCache] = useState<Record<string, string>>({});
@@ -56,16 +63,9 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [newNickname, setNewNickname] = useState(userInfo.nickname || "");
   const [customStamps, setCustomStamps] = useState<string[]>([]);
   const [cursors, setCursors] = useState<Record<string, { x: number; y: number; nickname: string; avatarSeed?: string }>>({});
-  const [boardImages, setBoardImages] = useState<Array<{id: string, src: string, x: number, y: number, width: number, height: number}>>([]);
-  const [draggingImage, setDraggingImage] = useState<string | null>(null);
-  const [resizingImage, setResizingImage] = useState<{id: string, startX: number, startY: number, startWidth: number, startHeight: number} | null>(null);
-  const [dragOffset, setDragOffset] = useState<{x: number, y: number} | null>(null);
   const [confettiElements, setConfettiElements] = useState<Array<{id: string, x: number, y: number, color: string, rotation: number, delay: number, randomX: number, size: number}>>([]);
-  const [columnHeaderImages, setColumnHeaderImages] = useState<Record<string, string | null>>({});
   const [deleteConfirm, setDeleteConfirm] = useState<{show: boolean, cardId: string | null, column: ColumnType | null}>({
-    show: false,
-    cardId: null,
-    column: null
+    show: false, cardId: null, column: null
   });
   const [showActionItems, setShowActionItems] = useState(false);
   const [animatedBackground, setAnimatedBackground] = useState(false);
@@ -73,24 +73,124 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [isAfk, setIsAfk] = useState(false);
   const [draggingCardBetweenColumns, setDraggingCardBetweenColumns] = useState<{cardId: string, sourceColumn: string} | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
-
-  // Canvas transform-based panning/zoom state
+  const [sidebarMode, setSidebarMode] = useState<'sidebar' | 'bottombar'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('retroSidebarMode') as 'sidebar' | 'bottombar') || 'sidebar';
+    }
+    return 'sidebar';
+  });
+  const [floatingEmotes, setFloatingEmotes] = useState<Array<{id: string, emoji: string, nickname: string, x: number}>>([]);
+  const [showEndRetroModal, setShowEndRetroModal] = useState(false);
+  const [endRetroReport, setEndRetroReport] = useState<string | null>(null);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importData, setImportData] = useState<ImportedColumn[] | null>(null);
+  const [importColumnMapping, setImportColumnMapping] = useState<Record<string, string>>({});
+  const [showPreviousActions, setShowPreviousActions] = useState(false);
+  const [previousActionItems, setPreviousActionItems] = useState<any>(null);
+  const [previousRetroTitle, setPreviousRetroTitle] = useState<string>('');
+  const importFileRef = useRef<HTMLInputElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
-  const canvasViewportRef = useRef<HTMLDivElement>(null);
-  const [isPanning, setIsPanning] = useState(false);
-  const panStartRef = useRef({ x: 0, y: 0 });
-  const panOriginRef = useRef({ x: 0, y: 0 });
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
 
+  // ─── Hooks ─────────────────────────────────────────────────────
+  const canvasReady = !!(retroInfo && retroInfo.template);
+
+  const {
+    canvasViewportRef,
+    isPanning,
+    zoomLevel,
+    pan,
+    panRef,
+    zoomRef,
+    isPanningRef,
+    handleZoomIn,
+    handleZoomOut,
+    handleZoomReset,
+    handleCanvasMouseDown,
+  } = useCanvasControls({ templateReady: canvasReady });
+
+  const {
+    boardImages,
+    setBoardImages,
+    draggingImage,
+    setDraggingImage,
+    resizingImage,
+    columnHeaderImages,
+    setColumnHeaderImages,
+    columnHeaderImagePositions,
+    setColumnHeaderImagePositions,
+    handleImageMouseDown,
+    handleRemoveBoardImage,
+    handleResizeStart,
+    handleBoardImageUpload,
+    handleImageDragStart: hookImageDragStart,
+    handleDropImageOnColumn,
+    handleColumnHeaderImageUpload,
+    handleRemoveColumnHeaderImage,
+    handleColumnHeaderImagePositionUpdate,
+  } = useBoardImages({ socket, roomId, userInfo, canvasViewportRef, pan, zoomLevel });
+
+  const triggerConfettiAnimation = useCallback(() => {
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52C7B8',
+      '#FF85A1', '#FFD93D', '#6BCF7F', '#A29BFE', '#FD79A8',
+      '#FDCB6E', '#74B9FF', '#A29BFE', '#FF7675', '#00B894'
+    ];
+    const newConfetti: Array<{id: string, x: number, y: number, color: string, rotation: number, delay: number, randomX: number, size: number}> = [];
+    const burstCount = 5 + Math.floor(Math.random() * 3);
+
+    for (let burst = 0; burst < burstCount; burst++) {
+      const x = 100 + Math.random() * (window.innerWidth - 200);
+      const y = window.innerHeight * (0.5 + Math.random() * 0.3);
+      const confettiPerBurst = 10 + Math.floor(Math.random() * 6);
+
+      for (let i = 0; i < confettiPerBurst; i++) {
+        newConfetti.push({
+          id: `confetti-${Date.now()}-${burst}-${i}-${Math.random()}`,
+          x: x + (Math.random() - 0.5) * 100,
+          y: y,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          delay: burst * 0.08 + Math.random() * 0.12,
+          randomX: Math.random(),
+          size: 8 + Math.random() * 6,
+        });
+      }
+    }
+
+    setConfettiElements(prev => [...prev, ...newConfetti]);
+    setTimeout(() => {
+      setConfettiElements(prev => prev.filter(c => !newConfetti.find(nc => nc.id === c.id)));
+    }, 4500);
+  }, []);
+
+  useRetroSocketEvents({
+    socket,
+    roomId,
+    avatarSeed,
+    userInfo,
+    setRetroInfo,
+    setShowErrorPopup,
+    setBoardImages,
+    setColumnHeaderImages,
+    setColumnHeaderImagePositions,
+    setCurrentNickname,
+    setNewNickname,
+    setCursors,
+    setEndRetroReport,
+    setShowEndRetroModal,
+    setFloatingEmotes,
+    triggerConfettiAnimation,
+  });
+
+  // ─── Derived Values ────────────────────────────────────────────
   const stamps = RETRO_STAMPS;
   const cardTemplates = RETRO_CARD_TEMPLATES;
-
   const retroCards: Record<string, any[]> = retroInfo?.retroCards || {};
   const timer = retroInfo?.timer || { timeLeft: 0, isRunning: false, startTime: null };
   const music = retroInfo?.music || { isPlaying: false, url: null };
 
-  const participants = retroInfo?.participants 
+  const participants = retroInfo?.participants
     ? (Object.values(retroInfo.participants) as Array<RetroParticipant | User>)
         .filter((p): p is RetroParticipant | User => (p as any).connected !== false)
         .map(p => ({
@@ -103,27 +203,20 @@ const RetroBoard = ({ roomId }: IProps) => {
     : [];
 
   const isOwner = userInfo.lobby && retroInfo?.owner === Number(userInfo.lobby.userID);
+  const isReadonly = retroInfo?.status === 'completed';
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // ─── Effects ───────────────────────────────────────────────────
+  useEffect(() => { setMounted(true); }, []);
 
-  // Close action items when clicking outside
   useEffect(() => {
     if (!showActionItems) return;
-
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.retro-action-panel')) {
-        setShowActionItems(false);
-      }
+      if (!target.closest('.retro-action-panel')) setShowActionItems(false);
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showActionItems]);
-
-  // Timer panel is now a toggle switch - no auto-close behavior
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -143,12 +236,50 @@ const RetroBoard = ({ roomId }: IProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (retroInfo?.boardImages) setBoardImages(retroInfo.boardImages);
+    if (retroInfo?.columnHeaderImages) setColumnHeaderImages(retroInfo.columnHeaderImages);
+    if (retroInfo?.columnHeaderImagePositions) setColumnHeaderImagePositions(retroInfo.columnHeaderImagePositions);
+  }, [retroInfo]);
+
+  // Cursor tracking refs and effect
+  const lobbyRef = useRef(userInfo.lobby);
+  useEffect(() => { lobbyRef.current = userInfo.lobby; }, [userInfo.lobby]);
+
+  useEffect(() => {
+    if (!canvasReady || !canvasViewportRef.current) return;
+    let lastEmit = 0;
+    const THROTTLE_MS = 50;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isPanningRef.current) return;
+      if (!lobbyRef.current) return;
+      const now = Date.now();
+      if (now - lastEmit < THROTTLE_MS) return;
+      lastEmit = now;
+
+      const vp = canvasViewportRef.current;
+      if (!vp) return;
+      const vpRect = vp.getBoundingClientRect();
+      const viewportX = e.clientX - vpRect.left;
+      const viewportY = e.clientY - vpRect.top;
+      const canvasX = (viewportX - panRef.current.x) / zoomRef.current;
+      const canvasY = (viewportY - panRef.current.y) / zoomRef.current;
+
+      socket.emit("cursorMove", roomId, { x: canvasX, y: canvasY }, lobbyRef.current?.credentials);
+    };
+
+    const el = canvasViewportRef.current;
+    el.addEventListener('mousemove', handleMouseMove);
+    return () => { el.removeEventListener('mousemove', handleMouseMove); };
+  }, [socket, roomId, canvasReady]);
+
+  // ─── Avatar ────────────────────────────────────────────────────
   const createAvatarSvg = useMemo(() => {
     return (seed: string) => {
       if (!seed) return '';
       if (avatarCache[seed]) return avatarCache[seed];
-      
-      const avatar = createAvatar(avataaars, { 
+      const avatar = createAvatar(avataaars, {
         seed,
         mouth: ["smile"],
         backgroundColor: ["transparent"],
@@ -163,249 +294,30 @@ const RetroBoard = ({ roomId }: IProps) => {
     const newSeed = Math.random().toString(36).substring(2);
     setAvatarSeed(newSeed);
     localStorage.setItem("retroAvatarOptions", JSON.stringify({ seed: newSeed }));
-    
     if (userInfo.lobby) {
-      socket.emit("updateAvatar", {
-        retroId: roomId,
-        credentials: userInfo.lobby.credentials,
-        avatarSeed: newSeed,
-      });
+      socket.emit("updateAvatar", { retroId: roomId, credentials: userInfo.lobby.credentials, avatarSeed: newSeed });
     }
   };
 
-  useEffect(() => {
-    const nickname = localStorage.getItem("retroNickname");
-    const lobby = getCurrentRetroLobby(roomId);
-    
-    if (nickname && lobby) {
-      socket.emit("joinRetro", {
-        nickname,
-        retroId: roomId,
-        lobby,
-        avatarSeed,
-      });
+  // ─── Nickname ──────────────────────────────────────────────────
+  const handleSaveNickname = () => {
+    if (!newNickname.trim() || newNickname === currentNickname) {
+      setEditingNickname(false);
+      return;
     }
-
-    const heartbeatInterval = setInterval(() => {
-      socket.emit("heartbeat");
-    }, 30000);
-
-    const handleInitializeRetro = (data: any) => {
-      setRetroInfo(data);
-      if (data.boardImages) {
-        setBoardImages(data.boardImages);
-      }
-      if (data.columnHeaderImages) {
-        setColumnHeaderImages(data.columnHeaderImages);
-      }
-      // Save to history for dashboard access and mark as started
-      if (data?.title) {
-        saveRetroToHistory(roomId, data.title, data.templateId, true);
-        markRetroStarted(roomId);
-      }
-    };
-    const handleAddRetroCard = (data: any) => setRetroInfo(data);
-    const handleUpdateRetroCard = (data: any) => setRetroInfo(data);
-    const handleDeleteRetroCard = (data: any) => setRetroInfo(data);
-    const handleUpdateRetroTimer = (data: any) => setRetroInfo(data);
-    const handleUpdateRetroMusic = (data: any) => setRetroInfo(data);
-    const handleUserDisconnected = (data: any) => {
-      setRetroInfo(data);
-      // Clean up cursor for disconnected user
-      handleUserDisconnectedCursor(data);
-    };
-    const handleAvatarUpdated = (data: any) => setRetroInfo(data.retroData);
-
-    const handleCursorMove = (data: { userId: string; x: number; y: number; nickname: string; avatarSeed?: string }) => {
-      // Don't show own cursor
-      if (userInfo.lobby && String(data.userId) === String(userInfo.lobby.userID)) return;
-      
-      setCursors(prev => ({
-        ...prev,
-        [data.userId]: { x: data.x, y: data.y, nickname: data.nickname, avatarSeed: data.avatarSeed }
-      }));
-    };
-
-    const handleCursorLeave = (data: { userId: string }) => {
-      setCursors(prev => {
-        const newCursors = { ...prev };
-        delete newCursors[data.userId];
-        return newCursors;
-      });
-    };
-
-    // Clean up stale cursors from disconnected users
-    const handleUserDisconnectedCursor = (data: any) => {
-      if (data?.participants) {
-        setCursors(prev => {
-          const activeCursors = { ...prev };
-          const activeUserIds = new Set(
-            Object.values(data.participants)
-              .filter((p: any) => p.connected !== false)
-              .map((p: any) => String(p.userID))
-          );
-          Object.keys(activeCursors).forEach(userId => {
-            if (!activeUserIds.has(userId)) {
-              delete activeCursors[userId];
-            }
-          });
-          return activeCursors;
-        });
-      }
-    };
-
-    const handleNicknameUpdated = (data: { userID: number; oldNickname: string; newNickname: string; retroData: any }) => {
-      setRetroInfo(data.retroData);
-      
-      // If it's the current user, update local nickname
-      if (userInfo.lobby && data.userID === userInfo.lobby.userID) {
-        setCurrentNickname(data.newNickname);
-        setNewNickname(data.newNickname);
-      }
-      
-      // No toast notification for nickname changes
-    };
-
-    const handleBoardImagesUpdated = (data: any) => {
-      setBoardImages(data.boardImages || []);
-    };
-
-    const handleColumnHeaderImagesUpdated = (data: any) => {
-      setColumnHeaderImages(data.columnHeaderImages || {});
-    };
-
-    const handleMentioned = (data: { cardId: string; mentionedBy: string }) => {
-      toast.success(`${data.mentionedBy} mentioned you in a card!`, {
-        duration: 4000,
-        icon: '👋',
-      });
-    };
-
-    const handleEncounteredError = (data: any) => {
-      console.error("Retro error:", data);
-      setShowErrorPopup(true);
-    };
-
-    const handleConfettiTriggered = () => {
-      triggerConfettiAnimation();
-    };
-
-    const handleAfkStatusUpdated = (data: any) => {
-      setRetroInfo(data.retroData);
-    };
-
-    const handleCardsRevealed = (data: any) => {
-      setRetroInfo(data);
-    };
-
-    const handleUserCardsRevealed = (data: any) => {
-      setRetroInfo(data);
-    };
-
-    const handleCardsHidden = (data: any) => {
-      setRetroInfo(data);
-    };
-
-    socket.on("initializeRetro", handleInitializeRetro);
-    socket.on("addRetroCard", handleAddRetroCard);
-    socket.on("updateRetroCard", handleUpdateRetroCard);
-    socket.on("deleteRetroCard", handleDeleteRetroCard);
-    socket.on("updateRetroTimer", handleUpdateRetroTimer);
-    socket.on("updateRetroMusic", handleUpdateRetroMusic);
-    socket.on("cursorMove", handleCursorMove);
-    socket.on("cursorLeave", handleCursorLeave);
-    socket.on("userDisconnectedRetro", handleUserDisconnected);
-    socket.on("avatarUpdated", handleAvatarUpdated);
-    socket.on("nicknameUpdated", handleNicknameUpdated);
-    socket.on("boardImagesUpdated", handleBoardImagesUpdated);
-    socket.on("columnHeaderImagesUpdated", handleColumnHeaderImagesUpdated);
-    socket.on("mentioned", handleMentioned);
-    socket.on("encounteredError", handleEncounteredError);
-    socket.on("confettiTriggered", handleConfettiTriggered);
-    socket.on("afkStatusUpdated", handleAfkStatusUpdated);
-    socket.on("cardsRevealed", handleCardsRevealed);
-    socket.on("userCardsRevealed", handleUserCardsRevealed);
-    socket.on("cardsHidden", handleCardsHidden);
-
-    return () => {
-      clearInterval(heartbeatInterval);
-      socket.off("initializeRetro", handleInitializeRetro);
-      socket.off("addRetroCard", handleAddRetroCard);
-      socket.off("updateRetroCard", handleUpdateRetroCard);
-      socket.off("deleteRetroCard", handleDeleteRetroCard);
-      socket.off("updateRetroTimer", handleUpdateRetroTimer);
-      socket.off("updateRetroMusic", handleUpdateRetroMusic);
-      socket.off("cursorMove", handleCursorMove);
-      socket.off("cursorLeave", handleCursorLeave);
-      socket.off("userDisconnectedRetro", handleUserDisconnected);
-      socket.off("avatarUpdated", handleAvatarUpdated);
-      socket.off("nicknameUpdated", handleNicknameUpdated);
-      socket.off("boardImagesUpdated", handleBoardImagesUpdated);
-      socket.off("columnHeaderImagesUpdated", handleColumnHeaderImagesUpdated);
-      socket.off("mentioned", handleMentioned);
-      socket.off("encounteredError", handleEncounteredError);
-      socket.off("confettiTriggered", handleConfettiTriggered);
-      socket.off("afkStatusUpdated", handleAfkStatusUpdated);
-      socket.off("cardsRevealed", handleCardsRevealed);
-      socket.off("userCardsRevealed", handleUserCardsRevealed);
-      socket.off("cardsHidden", handleCardsHidden);
-    };
-  }, [socket, roomId, avatarSeed]);
-
-  useEffect(() => {
-    if (retroInfo?.boardImages) {
-      setBoardImages(retroInfo.boardImages);
+    if (userInfo.lobby) {
+      socket.emit("updateNickname", { retroId: roomId, credentials: userInfo.lobby.credentials, newNickname: newNickname.trim() });
+      localStorage.setItem("retroNickname", newNickname.trim());
+      setCurrentNickname(newNickname.trim());
+      setEditingNickname(false);
+      toast.success("Nickname updated successfully!");
     }
-    if (retroInfo?.columnHeaderImages) {
-      setColumnHeaderImages(retroInfo.columnHeaderImages);
-    }
-  }, [retroInfo]);
+  };
 
-  // Cursor tracking - emit cursor position in CANVAS-SPACE so it stays correct when others pan
-  useEffect(() => {
-    if (!userInfo.lobby || !canvasViewportRef.current) return;
-
-    let lastEmit = 0;
-    const THROTTLE_MS = 50; // Throttle cursor updates to ~20fps
-
-    const handleMouseMove = (e: MouseEvent) => {
-      // Don't emit during panning
-      if (isPanning) return;
-      
-      const now = Date.now();
-      if (now - lastEmit < THROTTLE_MS) return;
-      lastEmit = now;
-      
-      const vp = canvasViewportRef.current;
-      if (!vp) return;
-      const vpRect = vp.getBoundingClientRect();
-      
-      // Convert screen coords to canvas-space (accounting for viewport offset, pan, zoom)
-      const viewportX = e.clientX - vpRect.left;
-      const viewportY = e.clientY - vpRect.top;
-      const canvasX = (viewportX - pan.x) / zoomLevel;
-      const canvasY = (viewportY - pan.y) / zoomLevel;
-      
-      // Backend expects: (retroId, data, credentials)
-      socket.emit("cursorMove", roomId, {
-        x: canvasX,
-        y: canvasY,
-      }, userInfo.lobby?.credentials);
-    };
-
-    const el = canvasViewportRef.current;
-    el.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      el.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [socket, roomId, userInfo.lobby, avatarSeed, isPanning, currentNickname, pan, zoomLevel]);
-
+  // ─── Card Actions ──────────────────────────────────────────────
   const sanitizeCardText = (text: string): string => {
-    // Trim leading/trailing whitespace and newlines
     let sanitized = text.trim();
-    // Collapse 3+ consecutive newlines into 2
     sanitized = sanitized.replace(/\n{3,}/g, '\n\n');
-    // Remove lines that are only whitespace
     sanitized = sanitized.split('\n').map(line => line.trimEnd()).join('\n');
     return sanitized;
   };
@@ -413,7 +325,6 @@ const RetroBoard = ({ roomId }: IProps) => {
   const handleAddCard = (columnKey: string) => {
     const sanitized = sanitizeCardText(newCardText);
     if (!sanitized || !userInfo.lobby) return;
-
     const newCard = {
       id: Date.now().toString(),
       text: sanitized,
@@ -424,11 +335,9 @@ const RetroBoard = ({ roomId }: IProps) => {
       authorId: Number(userInfo.lobby.userID),
       createdAt: Date.now(),
       stamps: [],
-      isAnonymous,
+      isAnonymous: isAnonymous,
     };
-
     socket.emit("addRetroCard", roomId, columnKey, newCard, userInfo.lobby.credentials);
-    
     setActiveColumn(null);
     setNewCardText("");
     setNewCardImage(null);
@@ -436,99 +345,10 @@ const RetroBoard = ({ roomId }: IProps) => {
     setIsAnonymous(false);
   };
 
-  // Double-click on column area to add a default yellow card
   const handleColumnDoubleClick = (columnKey: string) => {
-    if (activeColumn) return; // Don't open if already adding
+    if (isReadonly || activeColumn) return;
     setActiveColumn(columnKey);
-    setNewCardColor('#FFF9E5'); // Default yellow
-  };
-
-  // Reveal cards
-  const handleRevealAllCards = () => {
-    if (!userInfo.lobby) return;
-    socket.emit("revealAllCards", roomId, userInfo.lobby.credentials);
-  };
-
-  const handleRevealMyCards = () => {
-    if (!userInfo.lobby) return;
-    socket.emit("revealMyCards", roomId, userInfo.lobby.credentials);
-  };
-
-  const handleHideAllCards = () => {
-    if (!userInfo.lobby) return;
-    socket.emit("hideAllCards", roomId, userInfo.lobby.credentials);
-  };
-
-  // AFK toggle
-  const handleToggleAfk = () => {
-    const newAfk = !isAfk;
-    setIsAfk(newAfk);
-    if (userInfo.lobby) {
-      socket.emit("updateAfkStatus", {
-        retroId: roomId,
-        credentials: userInfo.lobby.credentials,
-        isAfk: newAfk,
-      });
-    }
-  };
-
-  // Drag card between columns
-  const handleCardDragBetweenStart = (cardId: string, sourceColumn: string) => {
-    setDraggingCardBetweenColumns({ cardId, sourceColumn });
-  };
-
-  const handleCardDragEnd = () => {
-    setDraggingCardBetweenColumns(null);
-    setDraggedCard(null);
-    setDraggedImage(null);
-  };
-
-  const handleCardDropOnColumn = (targetColumn: string) => {
-    if (!draggingCardBetweenColumns || !userInfo.lobby) return;
-    if (draggingCardBetweenColumns.sourceColumn === targetColumn) {
-      setDraggingCardBetweenColumns(null);
-      return;
-    }
-    
-    // Check if this card is part of a group - if so, move ALL cards in the group
-    const sourceCards: any[] = retroInfo?.retroCards?.[draggingCardBetweenColumns.sourceColumn] || [];
-    const draggedCardData = sourceCards.find((c: any) => c.id === draggingCardBetweenColumns.cardId);
-    
-    if (draggedCardData?.groupId) {
-      // Move all cards in this group
-      const groupCards = sourceCards.filter((c: any) => c.groupId === draggedCardData.groupId);
-      groupCards.forEach((c: any) => {
-        socket.emit("moveRetroCard", roomId, {
-          sourceColumn: draggingCardBetweenColumns.sourceColumn,
-          targetColumn,
-          cardId: c.id,
-        }, userInfo.lobby.credentials);
-      });
-    } else {
-      socket.emit("moveRetroCard", roomId, {
-        sourceColumn: draggingCardBetweenColumns.sourceColumn,
-        targetColumn,
-        cardId: draggingCardBetweenColumns.cardId,
-      }, userInfo.lobby.credentials);
-    }
-    
-    setDraggingCardBetweenColumns(null);
-  };
-
-  // Card grouping handlers
-  const handleGroupCards = (column: string, cardId1: string, cardId2: string) => {
-    if (!userInfo.lobby) return;
-    socket.emit("groupRetroCards", roomId, { column, cardId1, cardId2 }, userInfo.lobby.credentials);
-  };
-
-  const handleRenameGroup = (groupId: string, name: string) => {
-    if (!userInfo.lobby) return;
-    socket.emit("renameCardGroup", roomId, { groupId, name }, userInfo.lobby.credentials);
-  };
-
-  const handleUngroupCard = (column: string, cardId: string) => {
-    if (!userInfo.lobby) return;
-    socket.emit("ungroupCard", roomId, { column, cardId }, userInfo.lobby.credentials);
+    setNewCardColor('#FFF9E5');
   };
 
   const handleDeleteCard = (columnKey: string, cardId: string) => {
@@ -537,6 +357,15 @@ const RetroBoard = ({ roomId }: IProps) => {
 
   const confirmDelete = () => {
     if (deleteConfirm.cardId && deleteConfirm.column && userInfo.lobby) {
+      if (retroInfo && retroInfo.retroCards && retroInfo.retroCards[deleteConfirm.column]) {
+        const updatedRetroCards = {
+          ...retroInfo.retroCards,
+          [deleteConfirm.column]: retroInfo.retroCards[deleteConfirm.column].filter(
+            (card: any) => card.id !== deleteConfirm.cardId
+          ),
+        };
+        setRetroInfo({ ...retroInfo, retroCards: updatedRetroCards } as any);
+      }
       socket.emit("deleteRetroCard", roomId, deleteConfirm.column, deleteConfirm.cardId, userInfo.lobby.credentials);
     }
     setDeleteConfirm({ show: false, cardId: null, column: null });
@@ -554,74 +383,230 @@ const RetroBoard = ({ roomId }: IProps) => {
 
   const handleVoteCard = (columnKey: string, cardId: string) => {
     if (!userInfo.lobby) return;
-    
     const userId = Number(userInfo.lobby.userID);
     const card = retroCards[columnKey]?.find((c: any) => c.id === cardId);
-    
     if (!card) return;
-    
     const currentVotes = Array.isArray(card.votes) ? card.votes : [];
     const hasVoted = currentVotes.includes(userId);
-    const newVotes = hasVoted 
+    const newVotes = hasVoted
       ? currentVotes.filter((id: number) => id !== userId)
       : [...currentVotes, userId];
-    
-    socket.emit("updateRetroCard", roomId, columnKey, cardId, { 
-      votes: newVotes,
-      voteCount: newVotes.length 
-    }, userInfo.lobby.credentials);
+    socket.emit("updateRetroCard", roomId, columnKey, cardId, { votes: newVotes, voteCount: newVotes.length }, userInfo.lobby.credentials);
   };
 
-  const handleTimerUpdate = (timer: { timeLeft: number; isRunning: boolean; startTime: number | null }) => {
-    if (userInfo.lobby) {
-      socket.emit("updateRetroTimer", roomId, timer, userInfo.lobby.credentials);
-    }
+  // ─── Card Grouping ─────────────────────────────────────────────
+  const handleGroupCards = (column: string, cardId1: string, cardId2: string) => {
+    if (!userInfo.lobby) return;
+    socket.emit("groupRetroCards", roomId, { column, cardId1, cardId2 }, userInfo.lobby.credentials);
   };
 
-  const handleMusicUpdate = (music: { isPlaying: boolean; url: string | null }) => {
-    if (userInfo.lobby) {
-      socket.emit("updateRetroMusic", roomId, music, userInfo.lobby.credentials);
-    }
+  const handleRenameGroup = (groupId: string, name: string) => {
+    if (!userInfo.lobby) return;
+    socket.emit("renameCardGroup", roomId, { groupId, name }, userInfo.lobby.credentials);
   };
 
-  const handleCopyInviteLink = () => {
-    copyRetroInviteLink(roomId);
+  const handleUngroupCard = (column: string, cardId: string) => {
+    if (!userInfo.lobby) return;
+    socket.emit("ungroupCard", roomId, { column, cardId }, userInfo.lobby.credentials);
   };
 
-  const handleExportCSV = () => {
-    exportRetroToCSV(mainColumns, retroCards, participants);
+  // ─── Card Drag Between Columns ─────────────────────────────────
+  const handleCardDragBetweenStart = (cardId: string, sourceColumn: string) => {
+    setDraggingCardBetweenColumns({ cardId, sourceColumn });
   };
 
-  const handleExportPDF = () => {
-    exportRetroToPDF(mainColumns, retroCards, participants, retroInfo?.title || "Retrospective");
+  const handleCardDragEnd = () => {
+    setDraggingCardBetweenColumns(null);
+    setDraggedCard(null);
+    setDraggedImage(null);
   };
 
-  const handleExportActionItemsPDF = () => {
-    exportActionItemsToPDF(sideColumns, retroCards, participants, retroInfo?.title || "Retrospective");
-  };
-
-  const handleSaveNickname = () => {
-    if (!newNickname.trim() || newNickname === currentNickname) {
-      setEditingNickname(false);
+  const handleCardDropOnColumn = (targetColumn: string) => {
+    if (!draggingCardBetweenColumns || !userInfo.lobby) return;
+    if (draggingCardBetweenColumns.sourceColumn === targetColumn) {
+      setDraggingCardBetweenColumns(null);
       return;
     }
+    const sourceCards: any[] = retroInfo?.retroCards?.[draggingCardBetweenColumns.sourceColumn] || [];
+    const draggedCardData = sourceCards.find((c: any) => c.id === draggingCardBetweenColumns.cardId);
 
-    if (userInfo.lobby) {
-      socket.emit("updateNickname", {
-        retroId: roomId,
-        credentials: userInfo.lobby.credentials,
-        newNickname: newNickname.trim(),
+    if (draggedCardData?.groupId) {
+      const groupCards = sourceCards.filter((c: any) => c.groupId === draggedCardData.groupId);
+      groupCards.forEach((c: any) => {
+        socket.emit("moveRetroCard", roomId, {
+          sourceColumn: draggingCardBetweenColumns.sourceColumn,
+          targetColumn,
+          cardId: c.id,
+        }, userInfo.lobby.credentials);
       });
-      
-      // Update local storage
-      localStorage.setItem("retroNickname", newNickname.trim());
-      
-      setCurrentNickname(newNickname.trim());
-      setEditingNickname(false);
-      toast.success("Nickname updated successfully!");
+    } else {
+      socket.emit("moveRetroCard", roomId, {
+        sourceColumn: draggingCardBetweenColumns.sourceColumn,
+        targetColumn,
+        cardId: draggingCardBetweenColumns.cardId,
+      }, userInfo.lobby.credentials);
+    }
+    setDraggingCardBetweenColumns(null);
+  };
+
+  // ─── Reveal / End / Confetti / Emote ───────────────────────────
+  const handleRevealAllCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("revealAllCards", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleRevealMyCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("revealMyCards", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleHideAllCards = () => {
+    if (!userInfo.lobby) return;
+    socket.emit("hideAllCards", roomId, userInfo.lobby.credentials);
+  };
+
+  const handleConfetti = () => {
+    if (socket && userInfo.lobby?.credentials) {
+      socket.emit("triggerConfetti", roomId, userInfo.lobby.credentials);
     }
   };
 
+  const handleEndRetro = () => {
+    if (socket && userInfo.lobby?.credentials) {
+      socket.emit("endRetro", roomId, userInfo.lobby.credentials);
+    }
+  };
+
+  const handleEndRetroConfirm = () => {
+    setShowEndRetroModal(false);
+    setEndRetroReport(null);
+    if (typeof window !== 'undefined') {
+      window.location.href = '/retro/dashboard';
+    }
+  };
+
+  const handleEmoteSend = (emoji: string) => {
+    if (socket && userInfo.lobby?.credentials) {
+      socket.emit("emoteReaction", roomId, { emoji }, userInfo.lobby.credentials);
+    }
+  };
+
+  // ─── AFK / Sidebar Mode ───────────────────────────────────────
+  const handleToggleAfk = () => {
+    const newAfk = !isAfk;
+    setIsAfk(newAfk);
+    if (userInfo.lobby) {
+      socket.emit("updateAfkStatus", { retroId: roomId, credentials: userInfo.lobby.credentials, isAfk: newAfk });
+    }
+  };
+
+  const handleToggleSidebarMode = () => {
+    const next = sidebarMode === 'sidebar' ? 'bottombar' : 'sidebar';
+    setSidebarMode(next);
+    localStorage.setItem('retroSidebarMode', next);
+  };
+
+  // ─── Timer / Music ─────────────────────────────────────────────
+  const handleTimerUpdate = (timerData: { timeLeft: number; isRunning: boolean; startTime: number | null }) => {
+    if (userInfo.lobby) {
+      socket.emit("updateRetroTimer", roomId, timerData, userInfo.lobby.credentials);
+    }
+  };
+
+  const handleMusicUpdate = (musicData: { isPlaying: boolean; url: string | null }) => {
+    if (userInfo.lobby) {
+      socket.emit("updateRetroMusic", roomId, musicData, userInfo.lobby.credentials);
+    }
+  };
+
+  // ─── Export ────────────────────────────────────────────────────
+  const handleCopyInviteLink = () => copyRetroInviteLink(roomId);
+  const handleExportCSV = () => exportRetroToCSV(mainColumns, retroCards, participants);
+  const handleExportPDF = () => exportRetroToPDF(mainColumns, retroCards, participants, retroInfo?.title || "Retrospective");
+  const handleExportActionItemsPDF = () => exportActionItemsToPDF(sideColumns, retroCards, participants, retroInfo?.title || "Retrospective");
+
+  // ─── Import ────────────────────────────────────────────────────
+  const handleImportCards = () => { importFileRef.current?.click(); };
+
+  const handleImportFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const parsed = parseImportedRetroFile(content, file.name);
+        if (parsed.length === 0) {
+          toast.error("No cards found in the imported file.");
+          return;
+        }
+        setImportData(parsed);
+        const mapping: Record<string, string> = {};
+        parsed.forEach((importCol) => {
+          const matchedColumn = mainColumns.find(
+            (mc: any) => mc.title.toLowerCase().replace(/[^a-z0-9]/g, '') ===
+              importCol.column.toLowerCase().replace(/[^a-z0-9]/g, '')
+          );
+          mapping[importCol.column] = matchedColumn ? matchedColumn.key : (mainColumns[0]?.key || '');
+        });
+        setImportColumnMapping(mapping);
+        setShowImportModal(true);
+      } catch (err: any) {
+        toast.error(err.message || "Failed to parse import file.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const handleConfirmImport = () => {
+    if (!importData || !userInfo.lobby) return;
+    importData.forEach((importCol) => {
+      const targetColumn = importColumnMapping[importCol.column];
+      if (targetColumn && importCol.cards.length > 0) {
+        socket.emit("importCards", roomId, targetColumn, importCol.cards, userInfo.lobby.credentials);
+      }
+    });
+    setShowImportModal(false);
+    setImportData(null);
+    setImportColumnMapping({});
+  };
+
+  // ─── Previous Action Items ─────────────────────────────────────
+  const hasPreviousRetro = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const history = getRetroHistory();
+    return history.filter(h => h.retroId !== roomId).length > 0;
+  }, [roomId]);
+
+  const handleShowPreviousActionItems = async () => {
+    if (showPreviousActions) { setShowPreviousActions(false); return; }
+    const history = getRetroHistory();
+    const previousRetros = history.filter(h => h.retroId !== roomId);
+    if (previousRetros.length === 0) { toast.error("No previous retros found."); return; }
+
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const retroService = new RetroService(baseUrl);
+    for (const prev of previousRetros) {
+      try {
+        const data = await retroService.getRetroActionItems(prev.retroId);
+        if (data && data.actionItems) {
+          const hasItems = Object.values(data.actionItems).some((col: any) => col.cards && col.cards.length > 0);
+          if (hasItems) {
+            setPreviousActionItems(data.actionItems);
+            setPreviousRetroTitle(data.title || prev.title || 'Previous Retro');
+            setShowPreviousActions(true);
+            return;
+          }
+        }
+      } catch {
+        // Try the next one
+      }
+    }
+    toast("No action items found in previous retros.", { icon: 'ℹ️' });
+  };
+
+  // ─── Stamps ────────────────────────────────────────────────────
   const handleRemoveCustomStamp = (index: number) => {
     setCustomStamps(prev => prev.filter((_, i) => i !== index));
   };
@@ -629,7 +614,6 @@ const RetroBoard = ({ roomId }: IProps) => {
   const handleCustomStampUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result as string;
@@ -638,410 +622,16 @@ const RetroBoard = ({ roomId }: IProps) => {
     reader.readAsDataURL(file);
   };
 
-  const triggerConfettiAnimation = () => {
-    const colors = [
-      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#52C7B8',
-      '#FF85A1', '#FFD93D', '#6BCF7F', '#A29BFE', '#FD79A8',
-      '#FDCB6E', '#74B9FF', '#A29BFE', '#FF7675', '#00B894'
-    ];
-    const newConfetti: Array<{id: string, x: number, y: number, color: string, rotation: number, delay: number, randomX: number, size: number}> = [];
-    
-    // 5-7 farklı noktadan konfeti fırlat (daha dağınık)
-    const burstCount = 5 + Math.floor(Math.random() * 3); // 5-7 burst
-    
-    for (let burst = 0; burst < burstCount; burst++) {
-      // Tamamen rastgele konumlar (ekranın her yerinden)
-      const x = 100 + Math.random() * (window.innerWidth - 200);
-      const y = window.innerHeight * (0.5 + Math.random() * 0.3); // 50-80% yükseklikte
-      
-      // Her burst'ten 10-15 konfeti (daha az yoğun)
-      const confettiPerBurst = 10 + Math.floor(Math.random() * 6);
-      
-      for (let i = 0; i < confettiPerBurst; i++) {
-        newConfetti.push({
-          id: `confetti-${Date.now()}-${burst}-${i}-${Math.random()}`,
-          x: x + (Math.random() - 0.5) * 100,
-          y: y,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          rotation: Math.random() * 360,
-          delay: burst * 0.08 + Math.random() * 0.12, // Daha hızlı art arda
-          randomX: Math.random(),
-          size: 8 + Math.random() * 6, // 8-14px arası (daha küçük)
-        });
-      }
-    }
-    
-    setConfettiElements(prev => [...prev, ...newConfetti]);
-    
-    // Remove confetti after animation
-    setTimeout(() => {
-      setConfettiElements(prev => prev.filter(c => !newConfetti.find(nc => nc.id === c.id)));
-    }, 4500);
-  };
-
-  const handleConfetti = () => {
-    // Emit to socket to trigger for all users
-    if (socket && userInfo.lobby?.credentials) {
-      socket.emit("triggerConfetti", roomId, userInfo.lobby.credentials);
-    }
-  };
-
+  // ─── Drag Handlers ─────────────────────────────────────────────
   const handleImageDragStart = (image: any, e: React.DragEvent) => {
     setDraggedImage(image);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', image.id);
+    hookImageDragStart(image, e);
   };
-
-  const handleDropImageOnColumn = (e: React.DragEvent, image: any) => {
-    // Convert screen coords to canvas-space (accounting for viewport offset, pan/zoom)
-    const vpRect = canvasViewportRef.current?.getBoundingClientRect();
-    if (!vpRect) return;
-    const viewportX = e.clientX - vpRect.left;
-    const viewportY = e.clientY - vpRect.top;
-    const canvasX = (viewportX - pan.x) / zoomLevel;
-    const canvasY = (viewportY - pan.y) / zoomLevel;
-    const x = canvasX - image.width / 2;
-    const y = canvasY - image.height / 2;
-    
-    const updatedImages = boardImages.map(img => 
-      img.id === image.id 
-        ? { ...img, x, y }
-        : img
-    );
-    
-    setBoardImages(updatedImages);
-    
-    if (userInfo.lobby) {
-      socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
-    }
-    
-    setDraggedImage(null);
-  };
-
-  const handleBoardImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      
-      const img = new Image();
-      img.onload = () => {
-        const maxSize = 300;
-        let width = img.naturalWidth;
-        let height = img.naturalHeight;
-        
-        if (width > maxSize || height > maxSize) {
-          const ratio = Math.min(maxSize / width, maxSize / height);
-          width = width * ratio;
-          height = height * ratio;
-        }
-        
-        const newImage = {
-          id: Date.now().toString(),
-          src: result,
-          x: -99999, // Sentinel value: in sidebar, not placed on canvas
-          y: -99999,
-          width,
-          height
-        };
-        
-        const updatedImages = [...boardImages, newImage];
-        setBoardImages(updatedImages);
-        
-        if (userInfo.lobby) {
-          socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
-        }
-      };
-      img.src = result;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleImageMouseDown = (e: React.MouseEvent, imageId: string) => {
-    if ((e.target as HTMLElement).closest('.retro-board-image__remove') || 
-        (e.target as HTMLElement).closest('.retro-board-image__resize-handle')) {
-      return;
-    }
-
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const image = boardImages.find(img => img.id === imageId);
-    if (image) {
-      setDraggingImage(imageId);
-      // Calculate offset in canvas-space (accounting for viewport offset, pan/zoom)
-      const vpRect = canvasViewportRef.current?.getBoundingClientRect();
-      const vpLeft = vpRect?.left || 0;
-      const vpTop = vpRect?.top || 0;
-      const canvasX = (e.clientX - vpLeft - pan.x) / zoomLevel;
-      const canvasY = (e.clientY - vpTop - pan.y) / zoomLevel;
-      setDragOffset({
-        x: canvasX - image.x,
-        y: canvasY - image.y
-      });
-    }
-  };
-
-  const handleImageMouseMove = (e: MouseEvent) => {
-    if (!draggingImage || !dragOffset) return;
-
-    // Convert screen coords to canvas-space (accounting for viewport offset)
-    const vpRect = canvasViewportRef.current?.getBoundingClientRect();
-    const vpLeft = vpRect?.left || 0;
-    const vpTop = vpRect?.top || 0;
-    const canvasX = (e.clientX - vpLeft - pan.x) / zoomLevel;
-    const canvasY = (e.clientY - vpTop - pan.y) / zoomLevel;
-    const newX = canvasX - dragOffset.x;
-    const newY = canvasY - dragOffset.y;
-
-    setBoardImages(prevImages => {
-      const updatedImages = prevImages.map(img => 
-        img.id === draggingImage 
-          ? { ...img, x: newX, y: newY }
-          : img
-      );
-      return updatedImages;
-    });
-  };
-
-  const handleImageMouseUp = () => {
-    if (draggingImage && userInfo.lobby) {
-      // Use the latest boardImages state
-      setBoardImages(prevImages => {
-        socket.emit("updateBoardImages", roomId, prevImages, userInfo.lobby.credentials);
-        return prevImages;
-      });
-    }
-    setDraggingImage(null);
-    setDragOffset(null);
-  };
-
-  useEffect(() => {
-    if (draggingImage) {
-      window.addEventListener('mousemove', handleImageMouseMove);
-      window.addEventListener('mouseup', handleImageMouseUp);
-      
-      return () => {
-        window.removeEventListener('mousemove', handleImageMouseMove);
-        window.removeEventListener('mouseup', handleImageMouseUp);
-      };
-    }
-  }, [draggingImage, dragOffset, boardImages, pan, zoomLevel]);
-
-  const handleRemoveBoardImage = (imageId: string) => {
-    const updatedImages = boardImages.filter(img => img.id !== imageId);
-    setBoardImages(updatedImages);
-    
-    if (userInfo.lobby) {
-      socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
-    }
-  };
-
-  const handleResizeStart = (e: React.MouseEvent, imageId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const image = boardImages.find(img => img.id === imageId);
-    if (image) {
-      setResizingImage({
-        id: imageId,
-        startX: e.clientX,
-        startY: e.clientY,
-        startWidth: image.width,
-        startHeight: image.height
-      });
-    }
-  };
-
-  const handleResizeMove = (e: MouseEvent) => {
-    if (!resizingImage) return;
-
-    // Divide by zoomLevel so resize feels consistent at any zoom
-    const deltaX = (e.clientX - resizingImage.startX) / zoomLevel;
-    const aspectRatio = resizingImage.startWidth / resizingImage.startHeight;
-    const newWidth = Math.max(100, resizingImage.startWidth + deltaX);
-    const newHeight = newWidth / aspectRatio;
-
-    setBoardImages(prevImages => {
-      const updatedImages = prevImages.map(img => 
-        img.id === resizingImage.id 
-          ? { ...img, width: newWidth, height: newHeight }
-          : img
-      );
-      return updatedImages;
-    });
-  };
-
-  const handleResizeEnd = () => {
-    if (resizingImage && userInfo.lobby) {
-      // Use the latest boardImages state
-      setBoardImages(prevImages => {
-        socket.emit("updateBoardImages", roomId, prevImages, userInfo.lobby.credentials);
-        return prevImages;
-      });
-    }
-    setResizingImage(null);
-  };
-
-  useEffect(() => {
-    if (resizingImage) {
-      window.addEventListener('mousemove', handleResizeMove);
-      window.addEventListener('mouseup', handleResizeEnd);
-      
-      return () => {
-        window.removeEventListener('mousemove', handleResizeMove);
-        window.removeEventListener('mouseup', handleResizeEnd);
-      };
-    }
-  }, [resizingImage, boardImages]);
-
-  const handleColumnHeaderImageUpload = (columnKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      const updatedImages = { ...columnHeaderImages, [columnKey]: result };
-      setColumnHeaderImages(updatedImages);
-      
-      if (userInfo.lobby) {
-        socket.emit("updateColumnHeaderImages", roomId, updatedImages, userInfo.lobby.credentials);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveColumnHeaderImage = (columnKey: string) => {
-    const updatedImages = { ...columnHeaderImages };
-    delete updatedImages[columnKey];
-    setColumnHeaderImages(updatedImages);
-    
-    if (userInfo.lobby) {
-      socket.emit("updateColumnHeaderImages", roomId, updatedImages, userInfo.lobby.credentials);
-    }
-  };
-
-  // Zoom handlers (zoom toward center of viewport)
-  const zoomTowardCenter = (newZoom: number) => {
-    const vp = canvasViewportRef.current;
-    if (!vp) { setZoomLevel(newZoom); return; }
-    const rect = vp.getBoundingClientRect();
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    const sf = newZoom / zoomLevel;
-    setPan(prev => ({
-      x: cx - sf * (cx - prev.x),
-      y: cy - sf * (cy - prev.y),
-    }));
-    setZoomLevel(newZoom);
-  };
-
-  const handleZoomIn = () => zoomTowardCenter(Math.min(zoomLevel * 1.2, 3));
-  const handleZoomOut = () => zoomTowardCenter(Math.max(zoomLevel / 1.2, 0.2));
-  const handleZoomReset = () => {
-    setZoomLevel(1);
-    setPan({ x: 0, y: 0 });
-  };
-
-  // Mouse/trackpad wheel handler:
-  // - Two-finger scroll on Mac trackpad → PAN the canvas
-  // - Pinch-to-zoom on Mac trackpad (sends ctrlKey) → ZOOM
-  // - Ctrl+scroll on mouse → ZOOM
-  // - Regular scroll wheel → PAN
-  useEffect(() => {
-    const vp = canvasViewportRef.current;
-    if (!vp) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-
-      if (e.ctrlKey || e.metaKey) {
-        // Pinch-to-zoom or Ctrl+scroll → ZOOM toward cursor
-        const rect = vp.getBoundingClientRect();
-        const cx = e.clientX - rect.left;
-        const cy = e.clientY - rect.top;
-        const delta = -e.deltaY * 0.01;
-        
-        setZoomLevel(prevZoom => {
-          const newZoom = Math.min(3, Math.max(0.2, prevZoom * (1 + delta)));
-          const sf = newZoom / prevZoom;
-          setPan(prevPan => ({
-            x: cx - sf * (cx - prevPan.x),
-            y: cy - sf * (cy - prevPan.y),
-          }));
-          return newZoom;
-        });
-      } else {
-        // Regular scroll / two-finger trackpad → PAN
-        setPan(prev => ({
-          x: prev.x - e.deltaX,
-          y: prev.y - e.deltaY,
-        }));
-      }
-    };
-
-    vp.addEventListener('wheel', handleWheel, { passive: false });
-    return () => vp.removeEventListener('wheel', handleWheel);
-  }, [retroInfo?.template]); // Re-attach when template loads and viewport renders
-
-  // Canvas panning via mouse drag
-  const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    // Only start panning on empty space (not on interactive elements or columns)
-    if (
-      target.closest('.retro-column') ||
-      target.closest('.retro-card') ||
-      target.closest('button') ||
-      target.closest('.retro-column__new-card') ||
-      target.closest('.retro-sidebar') ||
-      target.closest('.retro-action-panel') ||
-      target.closest('input') ||
-      target.closest('textarea') ||
-      target.closest('.retro-board-image') ||
-      target.closest('.retro-column__header') ||
-      target.closest('.retro-column__add-btn')
-    ) {
-      return;
-    }
-
-    setIsPanning(true);
-    panStartRef.current = { x: e.clientX, y: e.clientY };
-    panOriginRef.current = { x: pan.x, y: pan.y };
-    e.preventDefault();
-  };
-
-  useEffect(() => {
-    if (!isPanning) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setPan({
-        x: panOriginRef.current.x + (e.clientX - panStartRef.current.x),
-        y: panOriginRef.current.y + (e.clientY - panStartRef.current.y),
-      });
-    };
-
-    const handleMouseUp = () => {
-      setIsPanning(false);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isPanning]);
 
   const handleCardDragStart = (template: any, e: React.DragEvent) => {
     setDraggedCard(template);
     e.dataTransfer.effectAllowed = 'copy';
     e.dataTransfer.setData('text/plain', template.name);
-    
-    // Clean up on drag end (handles drops outside valid targets)
     const cleanup = () => {
       setDraggedCard(null);
       setDraggedImage(null);
@@ -1051,11 +641,58 @@ const RetroBoard = ({ roomId }: IProps) => {
     e.target.addEventListener('dragend', cleanup);
   };
 
+  // ─── Canvas Drop Handler ───────────────────────────────────────
+  const handleCanvasDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedCard) {
+      const elements = document.elementsFromPoint(e.clientX, e.clientY);
+      let found = false;
+      for (const el of elements) {
+        const col = (el as HTMLElement).closest?.('[data-column-key]') as HTMLElement | null;
+        if (col) {
+          const colKey = col.getAttribute('data-column-key');
+          if (colKey) { setActiveColumn(colKey); setNewCardColor(draggedCard.color); found = true; }
+          break;
+        }
+      }
+      if (!found) {
+        const allColumns = document.querySelectorAll('[data-column-key]');
+        let closestCol: Element | null = null;
+        let closestDist = Infinity;
+        allColumns.forEach(col => {
+          const rect = col.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dist = Math.sqrt((e.clientX - cx) ** 2 + (e.clientY - cy) ** 2);
+          if (dist < closestDist) { closestDist = dist; closestCol = col; }
+        });
+        if (closestCol) {
+          const colKey = (closestCol as HTMLElement).getAttribute('data-column-key');
+          if (colKey) { setActiveColumn(colKey); setNewCardColor(draggedCard.color); }
+        }
+      }
+      requestAnimationFrame(() => setDraggedCard(null));
+    } else if (draggedImage) {
+      const vpRect = canvasViewportRef.current?.getBoundingClientRect();
+      if (!vpRect) return;
+      const viewportX = e.clientX - vpRect.left;
+      const viewportY = e.clientY - vpRect.top;
+      const canvasX = (viewportX - pan.x) / zoomLevel;
+      const canvasY = (viewportY - pan.y) / zoomLevel;
+      const x = canvasX - draggedImage.width / 2;
+      const y = canvasY - draggedImage.height / 2;
+      const updatedImages = boardImages.map(img => img.id === draggedImage.id ? { ...img, x, y } : img);
+      setBoardImages(updatedImages);
+      if (userInfo.lobby) {
+        socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
+      }
+      setDraggedImage(null);
+    }
+  };
+
+  // ─── Render Column ─────────────────────────────────────────────
   const renderColumn = (columnKey: string, columnConfig: any, showAddButton: boolean, isSideColumn: boolean = false) => {
-    // Cards maintain their original order (by creation time) - votes don't change position
-    const cards = (retroCards[columnKey] || []).sort((a: any, b: any) => {
-      return a.createdAt - b.createdAt;
-    });
+    const cards = (retroCards[columnKey] || []).sort((a: any, b: any) => a.createdAt - b.createdAt);
 
     return (
       <RetroColumn
@@ -1072,6 +709,7 @@ const RetroBoard = ({ roomId }: IProps) => {
         draggedImage={draggedImage}
         selectedStamp={selectedStamp}
         columnHeaderImages={columnHeaderImages}
+        columnHeaderImagePositions={columnHeaderImagePositions}
         participants={participantsWithAvatars}
         userInfo={userInfo}
         draggingCardBetweenColumns={draggingCardBetweenColumns}
@@ -1089,6 +727,7 @@ const RetroBoard = ({ roomId }: IProps) => {
         onVoteCard={handleVoteCard}
         onColumnHeaderImageUpload={handleColumnHeaderImageUpload}
         onRemoveColumnHeaderImage={handleRemoveColumnHeaderImage}
+        onColumnHeaderImagePositionUpdate={handleColumnHeaderImagePositionUpdate}
         onDoubleClick={handleColumnDoubleClick}
         onCardDragBetweenStart={handleCardDragBetweenStart}
         onCardDropOnColumn={handleCardDropOnColumn}
@@ -1100,18 +739,16 @@ const RetroBoard = ({ roomId }: IProps) => {
         onUngroupCard={handleUngroupCard}
         isSideColumn={isSideColumn}
         isAnonymous={isAnonymous}
-        onSetIsAnonymous={setIsAnonymous}
+        onToggleAnonymous={() => setIsAnonymous(!isAnonymous)}
         cardsRevealed={retroInfo?.cardsRevealed}
+        isReadonly={isReadonly}
       />
     );
   };
 
+  // ─── Loading ───────────────────────────────────────────────────
   if (!mounted) return null;
-  
-  // Show loading if retroInfo hasn't loaded yet
-  if (!retroInfo || !retroInfo.template) {
-    return <RetroLoadingScreen />;
-  }
+  if (!retroInfo || !retroInfo.template) return <RetroLoadingScreen />;
 
   const avatarSvg = createAvatarSvg(avatarSeed);
   const participantsWithAvatars = participants.map(p => ({
@@ -1119,9 +756,9 @@ const RetroBoard = ({ roomId }: IProps) => {
     avatarSvg: createAvatarSvg(p.avatarSeed || '')
   }));
 
+  // ─── JSX ───────────────────────────────────────────────────────
   return (
     <div className="retro-board-container">
-      {/* Confetti */}
       {confettiElements.map(confetti => (
         <div
           key={confetti.id}
@@ -1140,40 +777,44 @@ const RetroBoard = ({ roomId }: IProps) => {
         />
       ))}
 
-      <RetroSidebar
-        currentNickname={currentNickname}
-        newNickname={newNickname}
-        setNewNickname={setNewNickname}
-        editingNickname={editingNickname}
-        setEditingNickname={setEditingNickname}
-        avatarSvg={avatarSvg}
-        onRegenerateAvatar={handleRegenerateAvatar}
-        onSaveNickname={handleSaveNickname}
-        cardTemplates={cardTemplates}
-        draggedCard={draggedCard}
-        onCardDragStart={handleCardDragStart}
-        stamps={stamps}
-        customStamps={customStamps}
-        selectedStamp={selectedStamp}
-        onStampSelect={setSelectedStamp}
-        onRemoveCustomStamp={handleRemoveCustomStamp}
-        onCustomStampUpload={handleCustomStampUpload}
-        boardImages={boardImages.filter(img => img.x <= -99990 && img.y <= -99990)}
-        onRemoveBoardImage={handleRemoveBoardImage}
-        onBoardImageUpload={handleBoardImageUpload}
-        onImageDragStart={handleImageDragStart}
-        onConfetti={handleConfetti}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        animatedBackground={animatedBackground}
-        onToggleBackground={() => setAnimatedBackground(!animatedBackground)}
-        isAfk={isAfk}
-        onToggleAfk={handleToggleAfk}
-      />
+      {sidebarMode === 'sidebar' ? (
+        <RetroSidebar
+          currentNickname={currentNickname}
+          newNickname={newNickname}
+          setNewNickname={setNewNickname}
+          editingNickname={editingNickname}
+          setEditingNickname={setEditingNickname}
+          avatarSvg={avatarSvg}
+          onRegenerateAvatar={handleRegenerateAvatar}
+          onSaveNickname={handleSaveNickname}
+          cardTemplates={cardTemplates}
+          draggedCard={draggedCard}
+          onCardDragStart={handleCardDragStart}
+          stamps={stamps}
+          customStamps={customStamps}
+          selectedStamp={selectedStamp}
+          onStampSelect={setSelectedStamp}
+          onRemoveCustomStamp={handleRemoveCustomStamp}
+          onCustomStampUpload={handleCustomStampUpload}
+          boardImages={boardImages.filter(img => img.x <= -99990 && img.y <= -99990)}
+          onRemoveBoardImage={handleRemoveBoardImage}
+          onBoardImageUpload={handleBoardImageUpload}
+          onImageDragStart={handleImageDragStart}
+          onConfetti={handleConfetti}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          animatedBackground={animatedBackground}
+          onToggleBackground={() => setAnimatedBackground(!animatedBackground)}
+          isAfk={isAfk}
+          onToggleAfk={handleToggleAfk}
+          sidebarMode={sidebarMode}
+          onToggleSidebarMode={handleToggleSidebarMode}
+        />
+      ) : null}
 
-      <div 
+      <div
         ref={boardRef}
-        className={`retro-board ${!animatedBackground ? 'retro-board--plain' : ''} ${sidebarCollapsed ? 'retro-board--sidebar-collapsed' : ''} ${isPanning ? 'retro-board--panning' : ''}`}
+        className={`retro-board ${!animatedBackground ? 'retro-board--plain' : ''} ${sidebarCollapsed || sidebarMode === 'bottombar' ? 'retro-board--sidebar-collapsed' : ''} ${isPanning ? 'retro-board--panning' : ''}`}
       >
         <div className="retro-board__main">
           <RetroHeader
@@ -1193,104 +834,31 @@ const RetroBoard = ({ roomId }: IProps) => {
             onExportPDF={handleExportPDF}
             onExportActionItemsPDF={handleExportActionItemsPDF}
             onCopyInviteLink={handleCopyInviteLink}
+            onImportCards={handleImportCards}
+            onShowPreviousActionItems={handleShowPreviousActionItems}
+            hasPreviousRetro={hasPreviousRetro}
             cardsRevealed={retroInfo?.cardsRevealed}
             onRevealAllCards={handleRevealAllCards}
             onRevealMyCards={handleRevealMyCards}
             onHideAllCards={handleHideAllCards}
             hasCards={Object.values(retroCards).some(col => col.length > 0)}
+            onEndRetro={handleEndRetro}
+            isReadonly={isReadonly}
           />
 
-          {/* Canvas viewport - transform-based zoom/pan */}
-          <div 
+          <div
             ref={canvasViewportRef}
             className="retro-board__canvas-viewport"
             onMouseDown={handleCanvasMouseDown}
-            onDrop={(e) => {
-              e.preventDefault();
-              if (draggedCard) {
-                // Sidebar card template dropped - find which column using elementsFromPoint
-                const elements = document.elementsFromPoint(e.clientX, e.clientY);
-                let found = false;
-                for (const el of elements) {
-                  const col = (el as HTMLElement).closest?.('[data-column-key]') as HTMLElement | null;
-                  if (col) {
-                    const colKey = col.getAttribute('data-column-key');
-                    if (colKey) {
-                      setActiveColumn(colKey);
-                      setNewCardColor(draggedCard.color);
-                      found = true;
-                    }
-                    break;
-                  }
-                }
-                // Fallback: find closest column by checking all column elements
-                if (!found) {
-                  const allColumns = document.querySelectorAll('[data-column-key]');
-                  let closestCol: Element | null = null;
-                  let closestDist = Infinity;
-                  allColumns.forEach(col => {
-                    const rect = col.getBoundingClientRect();
-                    const cx = rect.left + rect.width / 2;
-                    const cy = rect.top + rect.height / 2;
-                    const dist = Math.sqrt((e.clientX - cx) ** 2 + (e.clientY - cy) ** 2);
-                    if (dist < closestDist) {
-                      closestDist = dist;
-                      closestCol = col;
-                    }
-                  });
-                  if (closestCol) {
-                    const colKey = (closestCol as HTMLElement).getAttribute('data-column-key');
-                    if (colKey) {
-                      setActiveColumn(colKey);
-                      setNewCardColor(draggedCard.color);
-                    }
-                  }
-                }
-                requestAnimationFrame(() => setDraggedCard(null));
-              } else if (draggedImage) {
-                // Convert screen coords to canvas-space (account for viewport offset)
-                const vpRect = canvasViewportRef.current?.getBoundingClientRect();
-                if (!vpRect) return;
-                const viewportX = e.clientX - vpRect.left;
-                const viewportY = e.clientY - vpRect.top;
-                const canvasX = (viewportX - pan.x) / zoomLevel;
-                const canvasY = (viewportY - pan.y) / zoomLevel;
-                const x = canvasX - draggedImage.width / 2;
-                const y = canvasY - draggedImage.height / 2;
-                
-                const updatedImages = boardImages.map(img => 
-                  img.id === draggedImage.id 
-                    ? { ...img, x, y }
-                    : img
-                );
-                
-                setBoardImages(updatedImages);
-                
-                if (userInfo.lobby) {
-                  socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
-                }
-                
-                setDraggedImage(null);
-              }
-            }}
+            onDrop={handleCanvasDrop}
             onDragOver={(e) => {
               e.preventDefault();
-              if (draggedCard) {
-                e.dataTransfer.dropEffect = 'copy';
-              } else {
-                e.dataTransfer.dropEffect = 'move';
-              }
+              e.dataTransfer.dropEffect = draggedCard ? 'copy' : 'move';
             }}
           >
-            {/* Background layers */}
             <div className="retro-board__gradient-bg" />
-            <div 
-              className="retro-board__grid-bg"
-              style={{ backgroundPosition: `${pan.x % 24}px ${pan.y % 24}px` }}
-            />
-
-            {/* Transform layer - pans and zooms */}
-            <div 
+            <div className="retro-board__grid-bg" style={{ backgroundPosition: `${pan.x % 24}px ${pan.y % 24}px` }} />
+            <div
               className="retro-board__canvas"
               style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoomLevel})`, transformOrigin: '0 0' }}
             >
@@ -1311,13 +879,8 @@ const RetroBoard = ({ roomId }: IProps) => {
                 onResizeStart={handleResizeStart}
               />
 
-              {/* Remote cursors - positioned in canvas-space, move with pan/zoom */}
               {Object.entries(cursors).map(([userId, cursor]) => (
-                <div 
-                  key={userId}
-                  className="retro-cursor"
-                  style={{ left: cursor.x, top: cursor.y }}
-                >
+                <div key={userId} className="retro-cursor" style={{ left: cursor.x, top: cursor.y }}>
                   <div className="retro-cursor__avatar">
                     {cursor.avatarSeed && (
                       <div dangerouslySetInnerHTML={{ __html: createAvatarSvg(cursor.avatarSeed) }} />
@@ -1331,7 +894,6 @@ const RetroBoard = ({ roomId }: IProps) => {
         </div>
       </div>
 
-      {/* Zoom controls */}
       <div className="retro-board__zoom-controls">
         <button className="retro-board__zoom-controls__btn" onClick={handleZoomOut} title="Zoom out">−</button>
         <span className="retro-board__zoom-controls__level" onClick={handleZoomReset} title="Reset zoom" style={{ cursor: 'pointer' }}>
@@ -1342,34 +904,94 @@ const RetroBoard = ({ roomId }: IProps) => {
 
       {mounted && sideColumns.length > 0 && (
         <div className={`retro-action-panel ${showActionItems ? 'expanded' : ''}`}>
-          <button 
+          <button
             className="retro-action-panel__toggle"
             onClick={() => setShowActionItems(!showActionItems)}
             title={sideColumns[0]?.title || "Action Items"}
           >
             {sideColumns[0]?.title?.match(/[\p{Emoji}]/u)?.[0] || '🎯'}
           </button>
-
           {showActionItems && (
             <div className="retro-action-panel__content">
               {sideColumns.map((col: any) => (
-                <div key={col.key}>
-                  {renderColumn(col.key, col, true, true)}
-                </div>
+                <div key={col.key}>{renderColumn(col.key, col, true, true)}</div>
               ))}
             </div>
           )}
         </div>
       )}
 
-      <RetroDeleteConfirm
-        show={deleteConfirm.show}
-        onConfirm={confirmDelete}
-        onCancel={cancelDelete}
+      <RetroDeleteConfirm show={deleteConfirm.show} onConfirm={confirmDelete} onCancel={cancelDelete} />
+
+      <input ref={importFileRef} type="file" accept=".json,.csv,.txt" style={{ display: 'none' }} onChange={handleImportFileChange} />
+
+      <RetroModals
+        showImportModal={showImportModal}
+        importData={importData}
+        importColumnMapping={importColumnMapping}
+        mainColumns={mainColumns}
+        sideColumns={sideColumns}
+        onImportColumnMappingChange={setImportColumnMapping}
+        onConfirmImport={handleConfirmImport}
+        onCloseImportModal={() => setShowImportModal(false)}
+        showPreviousActions={showPreviousActions}
+        previousActionItems={previousActionItems}
+        previousRetroTitle={previousRetroTitle}
+        onClosePreviousActions={() => setShowPreviousActions(false)}
+        showEndRetroModal={showEndRetroModal}
+        endRetroReport={endRetroReport}
+        retroTitle={retroInfo?.title || "Retrospective"}
+        isOwner={!!isOwner}
+        onEndRetroConfirm={handleEndRetroConfirm}
       />
 
       <RetroErrorPopup title="Connection Error" retroId={roomId} />
       <RetroOnboarding isOwner={isOwner} onTriggerConfetti={handleConfetti} />
+
+      <div className="retro-floating-emotes">
+        {floatingEmotes.map((emote) => (
+          <div key={emote.id} className="retro-floating-emote" style={{ left: `${emote.x}%` }}>
+            <span className="retro-floating-emote__emoji">{emote.emoji}</span>
+            <span className="retro-floating-emote__name">{emote.nickname}</span>
+          </div>
+        ))}
+      </div>
+
+      {sidebarMode === 'bottombar' && !isReadonly && (
+        <RetroBottomBar
+          cardTemplates={cardTemplates}
+          stamps={stamps}
+          customStamps={customStamps}
+          selectedStamp={selectedStamp}
+          onStampSelect={setSelectedStamp}
+          onCardDragStart={handleCardDragStart}
+          onConfetti={handleConfetti}
+          isAfk={isAfk}
+          onToggleAfk={handleToggleAfk}
+          onEmoteSend={handleEmoteSend}
+          currentNickname={currentNickname}
+          avatarSvg={avatarSvg}
+          sidebarMode={sidebarMode}
+          onToggleSidebarMode={handleToggleSidebarMode}
+          animatedBackground={animatedBackground}
+          onToggleBackground={() => setAnimatedBackground(!animatedBackground)}
+        />
+      )}
+
+      {sidebarMode === 'sidebar' && !isReadonly && (
+        <div className="retro-emote-bar">
+          {['👍', '❤️', '😂', '🎉', '🔥', '👏', '💡', '😍', '🚀', '👀'].map((emoji) => (
+            <button
+              key={emoji}
+              className="retro-emote-bar__btn"
+              onClick={() => handleEmoteSend(emoji)}
+              title={emoji}
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

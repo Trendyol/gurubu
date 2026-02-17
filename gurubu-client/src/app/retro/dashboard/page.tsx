@@ -6,7 +6,7 @@ import { getRetroHistory, removeRetroFromHistory, markRetroStarted, RetroHistory
 import { RetroService } from "@/services/retroService";
 import { createAvatar } from "@dicebear/core";
 import { avataaars } from "@dicebear/collection";
-import { IconPlus, IconTrash, IconClock, IconPlayerPlay, IconLogin, IconArrowLeft, IconLayoutColumns, IconSearch, IconMoodEmpty } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconClock, IconPlayerPlay, IconLogin, IconArrowLeft, IconLayoutColumns, IconSearch, IconMoodEmpty, IconLock, IconEye } from "@tabler/icons-react";
 import "@/styles/room/retro-board/retro-dashboard.scss";
 
 const TEMPLATE_COLORS: Record<string, { gradient: string; accent: string; icon: string }> = {
@@ -31,6 +31,7 @@ const RetroDashboard = () => {
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [validating, setValidating] = useState(true);
   const [retroParticipants, setRetroParticipants] = useState<Record<string, Array<{ nickname: string; avatarSeed: string; isAfk: boolean }>>>({});
+  const [retroStatuses, setRetroStatuses] = useState<Record<string, string>>({});
   const [loadingRetroId, setLoadingRetroId] = useState<string | null>(null);
 
   const createAvatarSvg = useMemo(() => {
@@ -66,6 +67,7 @@ const RetroDashboard = () => {
         }));
         setHistory(validated as any);
         setRetroParticipants(result.participants);
+        setRetroStatuses(result.statuses || {});
       } catch {
         // If validation fails, just show all items
       } finally {
@@ -190,8 +192,12 @@ const RetroDashboard = () => {
             <span className="retro-dashboard__stat-label">Total</span>
           </div>
           <div className="retro-dashboard__stat">
-            <span className="retro-dashboard__stat-value">{history.filter(h => h.started).length}</span>
+            <span className="retro-dashboard__stat-value">{history.filter(h => h.started && retroStatuses[h.retroId] !== 'completed').length}</span>
             <span className="retro-dashboard__stat-label">Active</span>
+          </div>
+          <div className="retro-dashboard__stat">
+            <span className="retro-dashboard__stat-value">{history.filter(h => retroStatuses[h.retroId] === 'completed').length}</span>
+            <span className="retro-dashboard__stat-label">Completed</span>
           </div>
           <div className="retro-dashboard__stat">
             <span className="retro-dashboard__stat-value">{history.filter(h => !h.started).length}</span>
@@ -210,10 +216,11 @@ const RetroDashboard = () => {
             {filteredHistory.map((item: any, index: number) => {
               const style = getTemplateStyle(item.templateId);
               const isExpired = !validating && item._exists === false;
+              const isCompleted = retroStatuses[item.retroId] === 'completed';
               return (
                 <div
                   key={item.retroId}
-                  className={`retro-dashboard__card ${removingId === item.retroId ? 'retro-dashboard__card--removing' : ''} ${isExpired ? 'retro-dashboard__card--expired' : ''}`}
+                  className={`retro-dashboard__card ${removingId === item.retroId ? 'retro-dashboard__card--removing' : ''} ${isExpired ? 'retro-dashboard__card--expired' : ''} ${isCompleted ? 'retro-dashboard__card--completed' : ''}`}
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   {/* Color accent bar */}
@@ -277,6 +284,11 @@ const RetroDashboard = () => {
                         <span className="retro-dashboard__card-status retro-dashboard__card-status--expired">
                           Expired
                         </span>
+                      ) : isCompleted ? (
+                        <span className="retro-dashboard__card-status retro-dashboard__card-status--completed">
+                          <IconLock size={12} />
+                          Completed
+                        </span>
                       ) : item.started ? (
                         <span className="retro-dashboard__card-status retro-dashboard__card-status--active">
                           <span className="retro-dashboard__card-status-dot" />
@@ -294,6 +306,24 @@ const RetroDashboard = () => {
                         >
                           <IconTrash size={16} />
                           Remove
+                        </button>
+                      ) : isCompleted ? (
+                        <button
+                          className={`retro-dashboard__card-btn retro-dashboard__card-btn--view ${loadingRetroId === item.retroId ? 'retro-dashboard__card-btn--loading' : ''}`}
+                          onClick={() => handleStartOrJoin(item)}
+                          disabled={loadingRetroId === item.retroId}
+                        >
+                          {loadingRetroId === item.retroId ? (
+                            <>
+                              <span className="retro-dashboard__spinner" />
+                              Loading...
+                            </>
+                          ) : (
+                            <>
+                              <IconEye size={16} />
+                              View
+                            </>
+                          )}
                         </button>
                       ) : (
                         <button

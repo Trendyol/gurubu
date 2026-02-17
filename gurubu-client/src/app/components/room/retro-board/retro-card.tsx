@@ -20,9 +20,10 @@ interface IProps {
   authorName?: string;
   hideAuthorAvatar?: boolean;
   isBlurred?: boolean;
+  isReadonly?: boolean;
 }
 
-const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar, isBlurred }: IProps) => {
+const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar, isBlurred, isReadonly }: IProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(card.text);
   const [imagePreview, setImagePreview] = useState<string | null>(card.image);
@@ -126,7 +127,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
       className={classNames("retro-card", {
         editing: isEditing,
         'stamp-mode': selectedStamp,
-        'blurred': isBlurred
+        'retro-card--blurred': isBlurred,
       })}
       onClick={handleCardClick}
       style={{
@@ -134,6 +135,9 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
         ...(isEditing && editSize ? { minWidth: editSize.width, minHeight: editSize.height } : {}),
       }}
     >
+      {isBlurred && (
+        <div className="retro-card__blur-overlay" />
+      )}
       {stamps.map((stamp, index) => (
         <div
           key={index}
@@ -202,7 +206,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
               )}
             </div>
             <div className="retro-card__footer-right">
-              {isOwner && !isBlurred && (
+              {isOwner && !isReadonly && (
                 <div className="retro-card__owner-actions">
                   <button
                     className="retro-card__edit-btn"
@@ -223,7 +227,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
               {/* Author avatar - hide if blurred or card is anonymous */}
               {authorAvatarSvg && !hideAuthorAvatar && !isBlurred && (
                 <div className="retro-card__author-avatar-wrapper">
-                  <div 
+                  <div
                     className="retro-card__author-avatar"
                     dangerouslySetInnerHTML={{ __html: authorAvatarSvg }}
                   />

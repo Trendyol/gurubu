@@ -117,6 +117,8 @@ export interface RetroInfo {
   music: RetroMusic;
   boardImages?: Array<{id: string, src: string, x: number, y: number, width: number, height: number}>;
   columnHeaderImages?: Record<string, string | null>;
+  columnHeaderImagePositions?: Record<string, { x: number; y: number }>;
+  cardsRevealed?: boolean;
   cardGroups?: Record<string, { name: string }>;
   template?: {
     id: string;
