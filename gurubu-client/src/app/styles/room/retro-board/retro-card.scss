@@ -15,6 +15,7 @@
   overflow: hidden;
   flex-shrink: 0;
   font-size: 0.8rem;
+  cursor: default;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
@@ -24,7 +25,7 @@
 
   &.stamp-mode {
     cursor: crosshair;
-    
+
     &:hover {
       box-shadow: 0 0 0 2px #667eea;
     }
@@ -170,7 +171,7 @@
     cursor: pointer;
     transition: all 0.2s;
     opacity: 0.7;
-    
+
     svg {
       width: 100%;
       height: 100%;
@@ -398,32 +399,23 @@
     }
   }
 
-  // Blur styles
-  &.blurred {
-    cursor: default;
-    
-    &:hover {
-      transform: none;
-    }
-  }
-
-  &__content--blurred {
-    filter: blur(6px);
-    user-select: none;
+  &--blurred {
+    position: relative;
     pointer-events: none;
+    user-select: none;
+
+    .retro-card__content,
+    .retro-card__footer,
+    .retro-card__stamp {
+      filter: blur(6px);
+    }
   }
 
   &__blur-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    color: rgba(0, 0, 0, 0.35);
-    pointer-events: none;
+    inset: 0;
+    z-index: 5;
+    border-radius: inherit;
+    cursor: default;
   }
 }

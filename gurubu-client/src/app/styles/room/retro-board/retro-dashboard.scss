@@ -286,6 +286,11 @@
         opacity: 0.7;
       }
     }
+
+    &--completed {
+      opacity: 0.85;
+      border: 1px solid rgba(167, 139, 250, 0.2);
+    }
   }
 
   @keyframes cardSlideIn {
@@ -483,6 +488,14 @@
       color: #f87171;
       background: rgba(248, 113, 113, 0.1);
     }
+
+    &--completed {
+      color: #a78bfa;
+      background: rgba(167, 139, 250, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
   }
 
   &__card-status-dot {
@@ -540,6 +553,17 @@
 
       &:hover {
         background: rgba(248, 113, 113, 0.25);
+      }
+    }
+
+    &--view {
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+      color: white;
+      box-shadow: 0 2px 12px rgba(167, 139, 250, 0.3);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(167, 139, 250, 0.45);
       }
     }
 
