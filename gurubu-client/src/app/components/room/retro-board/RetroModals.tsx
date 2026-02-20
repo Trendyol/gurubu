@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { sanitizeForInnerHTML } from "@/shared/utils/sanitizeHTML";
 
 interface ImportedColumn {
   column: string;
@@ -172,9 +173,18 @@ const RetroModals = ({
               <p className="retro-end-modal__subtitle">{retroTitle}</p>
             </div>
             <div className="retro-end-modal__body">
-              <div className="retro-end-modal__report" dangerouslySetInnerHTML={{
-                __html: endRetroReport.replace(/\n/g, '<br/>').replace(/^# (.*?)(<br\/>)/gm, '<h3>$1</h3>').replace(/^## (.*?)(<br\/>)/gm, '<h4>$1</h4>').replace(/^### (.*?)(<br\/>)/gm, '<h5>$1</h5>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/^- (.*?)(<br\/>)/gm, '<div class="retro-end-modal__item">• $1</div>')
-              }} />
+              <div 
+                className="retro-end-modal__report" 
+                dangerouslySetInnerHTML={sanitizeForInnerHTML(
+                  endRetroReport
+                    .replace(/\n/g, '<br/>')
+                    .replace(/^# (.*?)(<br\/>)/gm, '<h3>$1</h3>')
+                    .replace(/^## (.*?)(<br\/>)/gm, '<h4>$1</h4>')
+                    .replace(/^### (.*?)(<br\/>)/gm, '<h5>$1</h5>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/^- (.*?)(<br\/>)/gm, '<div class="retro-end-modal__item">• $1</div>')
+                )} 
+              />
             </div>
             <div className="retro-end-modal__footer">
               <p className="retro-end-modal__note">This retro is now read-only. You can still view it but cannot add new cards.</p>

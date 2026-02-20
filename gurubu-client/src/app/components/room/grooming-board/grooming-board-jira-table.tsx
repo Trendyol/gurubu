@@ -14,6 +14,7 @@ import { useToast } from "@/contexts/ToastContext";
 import { EstimateInput } from "./estimate-input";
 import { FilterableSelect, SelectOption } from "./filterable-select";
 import { SingleValue } from "react-select";
+import { sanitizeForInnerHTML } from "@/shared/utils/sanitizeHTML";
 
 interface IProps {
   roomId: string;
@@ -362,7 +363,7 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
                 <div key={issue.id} className="issue-item">
                   <div
                     className="issue-description"
-                    dangerouslySetInnerHTML={{ __html: formattedDescription }}
+                    dangerouslySetInnerHTML={sanitizeForInnerHTML(formattedDescription)}
                   />
                 </div>
               )
