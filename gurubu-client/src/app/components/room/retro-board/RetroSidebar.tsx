@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { IconUser, IconNote, IconMoodSmile, IconPhoto, IconRefresh, IconSparkles, IconChevronLeft, IconChevronRight, IconPalette, IconMoon, IconLayoutDashboard } from "@tabler/icons-react";
+import { IconUser, IconNote, IconMoodSmile, IconPhoto, IconRefresh, IconSparkles, IconChevronLeft, IconChevronRight, IconPalette, IconCoffee, IconLayoutDashboard, IconLayoutBottombar } from "@tabler/icons-react";
 import classNames from "classnames";
 
 interface RetroSidebarProps {
@@ -49,6 +49,10 @@ interface RetroSidebarProps {
   // AFK
   isAfk?: boolean;
   onToggleAfk?: () => void;
+
+  // Sidebar mode
+  sidebarMode?: 'sidebar' | 'bottombar';
+  onToggleSidebarMode?: () => void;
 }
 
 const RetroSidebar = ({
@@ -80,6 +84,8 @@ const RetroSidebar = ({
   onToggleBackground,
   isAfk,
   onToggleAfk,
+  sidebarMode,
+  onToggleSidebarMode,
 }: RetroSidebarProps) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'profile' | 'cards' | 'stamps' | 'images' | null>(null);
@@ -184,9 +190,9 @@ const RetroSidebar = ({
         <button
           className={classNames("retro-sidebar__icon", { active: isAfk })}
           onClick={onToggleAfk}
-          title={isAfk ? "You are AFK - Click to return" : "Go AFK"}
+          title={isAfk ? "Geri döndüm" : "Mola (AFK)"}
         >
-          <IconMoon size={20} />
+          <IconCoffee size={20} />
         </button>
 
         <div className="retro-sidebar__spacer"></div>
@@ -281,6 +287,18 @@ const RetroSidebar = ({
                 <button
                   className={classNames("retro-profile__toggle", { active: animatedBackground })}
                   onClick={onToggleBackground}
+                >
+                  <span className="retro-profile__toggle-knob" />
+                </button>
+              </label>
+              <label className="retro-profile__setting">
+                <span className="retro-profile__setting-label">
+                  <IconLayoutBottombar size={16} />
+                  Bottom Bar Mode
+                </span>
+                <button
+                  className={classNames("retro-profile__toggle", { active: sidebarMode === 'bottombar' })}
+                  onClick={onToggleSidebarMode}
                 >
                   <span className="retro-profile__toggle-knob" />
                 </button>

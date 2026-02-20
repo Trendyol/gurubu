@@ -19,9 +19,11 @@ interface IProps {
   authorAvatarSvg?: string;
   authorName?: string;
   hideAuthorAvatar?: boolean;
+  isBlurred?: boolean;
+  isReadonly?: boolean;
 }
 
-const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar }: IProps) => {
+const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, selectedStamp, onStampClick, participants = [], authorAvatarSvg, authorName, hideAuthorAvatar, isBlurred, isReadonly }: IProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(card.text);
   const [imagePreview, setImagePreview] = useState<string | null>(card.image);
@@ -124,7 +126,8 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
       ref={cardRef}
       className={classNames("retro-card", {
         editing: isEditing,
-        'stamp-mode': selectedStamp
+        'stamp-mode': selectedStamp,
+        'retro-card--blurred': isBlurred,
       })}
       onClick={handleCardClick}
       style={{
@@ -132,6 +135,9 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
         ...(isEditing && editSize ? { minWidth: editSize.width, minHeight: editSize.height } : {}),
       }}
     >
+      {isBlurred && (
+        <div className="retro-card__blur-overlay" />
+      )}
       {stamps.map((stamp, index) => (
         <div
           key={index}
@@ -171,7 +177,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
         </div>
       ) : (
         <div className="retro-card__view-mode">
-          <div className="retro-card__content">
+          <div className={classNames("retro-card__content", { "retro-card__content--blurred": isBlurred })}>
             <p className="retro-card__text">{renderTextWithMentions(card.text)}</p>
             {card.image && (
               <div className="retro-card__image">
@@ -179,9 +185,12 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
               </div>
             )}
           </div>
+          {isBlurred && (
+            <div className="retro-card__blur-overlay" />
+          )}
           <div className="retro-card__footer">
             <div className="retro-card__vote-section">
-              {onVote && (
+              {onVote && !isBlurred && (
                 <button
                   className={classNames("retro-card__vote-btn", {
                     'voted': card.votes?.includes(currentUserId || 0)
@@ -197,7 +206,7 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
               )}
             </div>
             <div className="retro-card__footer-right">
-              {isOwner && (
+              {isOwner && !isReadonly && (
                 <div className="retro-card__owner-actions">
                   <button
                     className="retro-card__edit-btn"
@@ -215,10 +224,10 @@ const RetroCard = ({ card, onDelete, onUpdate, onVote, currentUserId, isOwner, s
                   </button>
                 </div>
               )}
-              {/* Author avatar */}
-              {authorAvatarSvg && !hideAuthorAvatar && (
+              {/* Author avatar - hide if blurred or card is anonymous */}
+              {authorAvatarSvg && !hideAuthorAvatar && !isBlurred && (
                 <div className="retro-card__author-avatar-wrapper">
-                  <div 
+                  <div
                     className="retro-card__author-avatar"
                     dangerouslySetInnerHTML={{ __html: authorAvatarSvg }}
                   />

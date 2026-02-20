@@ -314,3 +314,197 @@
     }
   }
 }
+
+// Custom template summary in the template list item
+.retro-template-item__custom-summary {
+  font-size: 0.7rem;
+  color: #667eea;
+  font-weight: 400;
+  margin-left: auto;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Custom Template Modal
+.retro-custom-modal {
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.2s ease;
+  }
+
+  background: white;
+  border-radius: 16px;
+  width: 420px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.25s ease;
+
+  &__header {
+    padding: 1.5rem 1.5rem 0;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitle {
+    font-size: 0.85rem;
+    color: #718096;
+    margin: 0;
+  }
+
+  &__body {
+    padding: 1.25rem 1.5rem;
+  }
+
+  &__section {
+    margin-bottom: 1.25rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+  }
+
+  &__count-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__count-btn {
+    width: 44px;
+    height: 40px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: white;
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: rgba(102, 126, 234, 0.4);
+      background: rgba(102, 126, 234, 0.04);
+    }
+
+    &.selected {
+      border-color: #667eea;
+      background: #667eea;
+      color: white;
+    }
+  }
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #2d3748;
+    background: #f8fafc;
+    transition: all 0.2s;
+    outline: none;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    &::placeholder {
+      color: #a0aec0;
+    }
+  }
+
+  &__note {
+    font-size: 0.75rem;
+    color: #718096;
+    margin: 0.75rem 0 0;
+    font-style: italic;
+  }
+
+  &__footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+
+  &__btn {
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &--cancel {
+      background: #f1f5f9;
+      color: #64748b;
+
+      &:hover {
+        background: #e2e8f0;
+      }
+    }
+
+    &--confirm {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+
+      &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

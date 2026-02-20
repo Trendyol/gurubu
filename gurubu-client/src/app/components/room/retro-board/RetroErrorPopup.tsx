@@ -3,6 +3,7 @@
 import { useRetroRoom } from "@/contexts/RetroRoomContext";
 import { useRetroSocket } from "@/contexts/RetroSocketContext";
 import { getCurrentRetroLobby } from "@/shared/helpers/lobbyStorage";
+import { sanitizeHTML } from "@/shared/utils/sanitizeHTML";
 import "@/styles/room/retro-board/retro-error-popup.scss";
 
 interface IProps {
@@ -38,7 +39,7 @@ const RetroErrorPopup = ({ title, retroId }: IProps) => {
       <div className="retro-error-popup active">
         <div className="retro-error-popup__icon">⚠️</div>
         <div className="retro-error-popup__header">
-          <h4>{title}</h4>
+          <h4 dangerouslySetInnerHTML={{ __html: sanitizeHTML(title) }} />
         </div>
         <p className="retro-error-popup__body">
           Connection lost. Please click reconnect to continue your retro session.

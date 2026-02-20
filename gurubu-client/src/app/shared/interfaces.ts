@@ -95,6 +95,8 @@ export interface RetroCard {
   mentions?: string[];
   votes?: number[];
   voteCount?: number;
+  isAnonymous?: boolean;
+  isRevealed?: boolean;
 }
 
 export interface RetroCards {
@@ -115,6 +117,8 @@ export interface RetroInfo {
   music: RetroMusic;
   boardImages?: Array<{id: string, src: string, x: number, y: number, width: number, height: number}>;
   columnHeaderImages?: Record<string, string | null>;
+  columnHeaderImagePositions?: Record<string, { x: number; y: number }>;
+  cardsRevealed?: boolean;
   cardGroups?: Record<string, { name: string }>;
   template?: {
     id: string;
@@ -131,6 +135,7 @@ export interface RetroInfo {
     }>;
   };
   status: string;
+  cardsRevealed?: boolean;
 }
 
 export interface GroomingInfo {

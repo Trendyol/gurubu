@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { IconAlarm, IconMusic, IconDownload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus } from "@tabler/icons-react";
+import { IconAlarm, IconMusic, IconDownload, IconUpload, IconShare, IconFileTypeCsv, IconFileTypePdf, IconChecklist, IconLink, IconUserPlus, IconEye, IconClipboardList, IconFlag } from "@tabler/icons-react";
 import RetroTimerV2 from "./retro-timer-v2";
 import RetroMusicPlayer from "./retro-music-player";
 
@@ -22,6 +22,16 @@ interface RetroHeaderProps {
   onExportPDF: () => void;
   onExportActionItemsPDF: () => void;
   onCopyInviteLink: () => void;
+  onImportCards: () => void;
+  onShowPreviousActionItems: () => void;
+  hasPreviousRetro?: boolean;
+  cardsRevealed?: boolean;
+  onRevealAllCards?: () => void;
+  onRevealMyCards?: () => void;
+  onHideAllCards?: () => void;
+  hasCards?: boolean;
+  onEndRetro?: () => void;
+  isReadonly?: boolean;
 }
 
 const RetroHeader = ({
@@ -41,13 +51,23 @@ const RetroHeader = ({
   onExportPDF,
   onExportActionItemsPDF,
   onCopyInviteLink,
+  onImportCards,
+  onShowPreviousActionItems,
+  hasPreviousRetro,
+  cardsRevealed,
+  onRevealAllCards,
+  onRevealMyCards,
+  onHideAllCards,
+  hasCards,
+  onEndRetro,
+  isReadonly,
 }: RetroHeaderProps) => {
   const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [showRevealedBadge, setShowRevealedBadge] = useState(false);
   const [showInviteDropdown, setShowInviteDropdown] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
   const inviteRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
@@ -61,10 +81,18 @@ const RetroHeader = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Show revealed badge when cards are revealed, auto-hide after 5 seconds
+  useEffect(() => {
+    if (cardsRevealed) {
+      setShowRevealedBadge(true);
+      const timer = setTimeout(() => setShowRevealedBadge(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [cardsRevealed]);
+
   const inviteUrl = typeof window !== 'undefined' ? `${window.location.origin}/retro/${roomId}` : '';
 
-  // Sort participants by nickname alphabetically
-  const sortedParticipants = [...participants].sort((a, b) => 
+  const sortedParticipants = [...participants].sort((a, b) =>
     a.nickname.localeCompare(b.nickname, 'tr', { sensitivity: 'base' })
   );
 
@@ -87,35 +115,34 @@ const RetroHeader = ({
           ))}
         </div>
       </div>
-      
+
       <div className="retro-board__header-right">
-      {/* Timer - Show to owner if panel is open, or to everyone if running */}
-      {(isOwner && showTimer) || (!isOwner && timer.isRunning) ? (
-        <div className="retro-board__timer">
-          <IconAlarm size={18} />
-          <RetroTimerV2
-            timer={timer}
-            isOwner={isOwner}
-            onTimerUpdate={onTimerUpdate}
-          />
-        </div>
-      ) : null}
+        {/* Expanded timer */}
+        {(isOwner && showTimer) || (!isOwner && timer.isRunning) ? (
+          <div className="retro-board__timer">
+            <RetroTimerV2
+              timer={timer}
+              isOwner={isOwner}
+              onTimerUpdate={onTimerUpdate}
+            />
+          </div>
+        ) : null}
 
-      {/* Music - Show to owner if panel is open, or to everyone if playing */}
-      {(music.isPlaying || (isOwner && showMusic)) && (
-        <div className="retro-board__music">
-          <IconMusic size={18} />
-          <RetroMusicPlayer
-            music={music}
-            isOwner={isOwner}
-            onMusicUpdate={onMusicUpdate}
-          />
-        </div>
-      )}
+        {/* Expanded music */}
+        {(music.isPlaying || (isOwner && showMusic)) && (
+          <div className="retro-board__music">
+            <RetroMusicPlayer
+              music={music}
+              isOwner={isOwner}
+              onMusicUpdate={onMusicUpdate}
+            />
+          </div>
+        )}
 
-      <div className="retro-board__controls">
-        {isOwner && (
-          <>
+        {/* All icon buttons in a single row */}
+        <div className="retro-board__controls">
+          {/* Timer toggle - owner only */}
+          {isOwner && !isReadonly && (
             <button
               className={`retro-board__control-btn ${showTimer ? "active" : ""}`}
               onClick={() => setShowTimer(!showTimer)}
@@ -123,16 +150,24 @@ const RetroHeader = ({
             >
               <IconAlarm size={20} />
             </button>
+          )}
+
+          {/* Music - Soon */}
+          {isOwner && !isReadonly && (
             <div className="retro-board__control-wrapper">
               <button
                 className="retro-board__control-btn retro-board__control-btn--disabled"
                 disabled
+                title="Background Music (Coming Soon)"
               >
                 <IconMusic size={20} />
               </button>
-              <span className="retro-board__control-tooltip">Soon</span>
+              <span className="retro-board__control-tooltip">Background Music - Soon</span>
             </div>
-            {/* Export Dropdown */}
+          )}
+
+          {/* Export Dropdown - owner only */}
+          {isOwner && (
             <div className="retro-board__dropdown-wrapper" ref={exportRef}>
               <button
                 className={`retro-board__control-btn ${showExportDropdown ? 'active' : ''}`}
@@ -159,44 +194,107 @@ const RetroHeader = ({
                     <IconChecklist size={18} />
                     <span>Export Action Items</span>
                   </button>
+                  <div className="retro-board__dropdown-divider" />
+                  <div className="retro-board__dropdown-item retro-board__dropdown-item--disabled" title="Import from Ludi, MetroRetro, Zoom Retro (Coming Soon)">
+                    <IconUpload size={18} />
+                    <span>Import Cards</span>
+                    <span className="retro-board__dropdown-soon">Import from Other Tools - Soon</span>
+                  </div>
                 </div>
               )}
             </div>
-          </>
-        )}
+          )}
 
-        {/* Invite Dropdown */}
-        <div className="retro-board__dropdown-wrapper" ref={inviteRef}>
-          <button
-            className={`retro-board__invite-btn ${showInviteDropdown ? 'active' : ''}`}
-            onClick={() => {
-              setShowInviteDropdown(!showInviteDropdown);
-              setShowExportDropdown(false);
-            }}
-            title="Invite"
-          >
-            <IconShare size={20} />
-          </button>
-          {showInviteDropdown && (
-            <div className="retro-board__dropdown retro-board__dropdown--invite">
-              <div className="retro-board__dropdown-url">
-                <IconLink size={16} />
-                <input 
-                  type="text" 
-                  value={inviteUrl} 
-                  readOnly 
-                  className="retro-board__dropdown-url-input"
-                  onClick={(e) => (e.target as HTMLInputElement).select()}
-                />
+          {/* Invite Dropdown */}
+          <div className="retro-board__dropdown-wrapper" ref={inviteRef}>
+            <button
+              className={`retro-board__control-btn ${showInviteDropdown ? 'active' : ''}`}
+              onClick={() => {
+                setShowInviteDropdown(!showInviteDropdown);
+                setShowExportDropdown(false);
+              }}
+              title="Invite"
+            >
+              <IconShare size={20} />
+            </button>
+            {showInviteDropdown && (
+              <div className="retro-board__dropdown retro-board__dropdown--invite">
+                <div className="retro-board__dropdown-url">
+                  <IconLink size={16} />
+                  <input
+                    type="text"
+                    value={inviteUrl}
+                    readOnly
+                    className="retro-board__dropdown-url-input"
+                    onClick={(e) => (e.target as HTMLInputElement).select()}
+                  />
+                </div>
+                <button className="retro-board__dropdown-invite-btn" onClick={() => { onCopyInviteLink(); setShowInviteDropdown(false); }}>
+                  <IconUserPlus size={18} />
+                  <span>Copy Invite Link</span>
+                </button>
               </div>
-              <button className="retro-board__dropdown-invite-btn" onClick={() => { onCopyInviteLink(); setShowInviteDropdown(false); }}>
-                <IconUserPlus size={18} />
-                <span>Copy Invite Link</span>
+            )}
+          </div>
+
+          {/* Divider between tool buttons and action buttons */}
+          <div className="retro-board__divider" />
+
+          {/* Reveal Cards - once revealed, buttons disappear (no hiding back) */}
+          {hasCards && !isReadonly && !cardsRevealed && (
+            <div className="retro-board__reveal-controls">
+              <button
+                className="retro-board__reveal-btn"
+                onClick={onRevealMyCards}
+                title="Reveal your cards"
+              >
+                <IconEye size={18} />
+                <span>Reveal Mine</span>
               </button>
+              {isOwner && (
+                <button
+                  className="retro-board__reveal-btn retro-board__reveal-btn--all"
+                  onClick={onRevealAllCards}
+                  title="Reveal all cards"
+                >
+                  <IconEye size={18} />
+                  <span>Reveal All</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Previous Action Items - disabled for now */}
+          <div className="retro-board__control-wrapper">
+            <button
+              className="retro-board__control-btn retro-board__control-btn--disabled"
+              disabled
+              title="View action items from previous retro (Coming Soon)"
+            >
+              <IconClipboardList size={20} />
+            </button>
+            <span className="retro-board__control-tooltip">Previous Actions - Soon</span>
+          </div>
+
+          {/* End Retro - Admin Only */}
+          {isOwner && !isReadonly && (
+            <button
+              className="retro-board__end-retro-btn"
+              onClick={onEndRetro}
+              title="End this retro"
+            >
+              <IconFlag size={16} />
+              <span>End Retro</span>
+            </button>
+          )}
+
+          {/* Readonly Badge */}
+          {isReadonly && (
+            <div className="retro-board__readonly-badge">
+              <span>Read Only</span>
             </div>
           )}
         </div>
-      </div>
       </div>
     </div>
   );

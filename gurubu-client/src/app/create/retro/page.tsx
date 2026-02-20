@@ -29,6 +29,11 @@ const CreateRetro = () => {
   const [loadingTemplates, setLoadingTemplates] = useState(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  // Custom template state
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [customColumnCount, setCustomColumnCount] = useState(3);
+  const [customColumnNames, setCustomColumnNames] = useState<string[]>(["", "", ""]);
+
   const retroService = new RetroService(process.env.NEXT_PUBLIC_API_URL || "");
 
   useEffect(() => {
@@ -63,6 +68,26 @@ const CreateRetro = () => {
     }
   };
 
+  const handleCustomColumnCountChange = (count: number) => {
+    setCustomColumnCount(count);
+    setCustomColumnNames((prev) => {
+      const next = [...prev];
+      // Grow or shrink the array
+      while (next.length < count) next.push("");
+      return next.slice(0, count);
+    });
+  };
+
+  const handleCustomColumnNameChange = (index: number, value: string) => {
+    setCustomColumnNames((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
+
+  const isCustomValid = selectedTemplate !== "custom" || customColumnNames.every((n) => n.trim().length > 0);
+
   const handleCreateRetro = async () => {
     setLoading(true);
 
@@ -74,12 +99,16 @@ const CreateRetro = () => {
 
     localStorage.setItem("retroNickname", trimmedNickName);
 
-    const payload = {
+    const payload: any = {
       nickName: trimmedNickName,
       title: title.trim() || "Team Retrospective",
       templateId: selectedTemplate,
       retentionDays,
     };
+
+    if (selectedTemplate === "custom") {
+      payload.customColumns = customColumnNames.map((n) => n.trim());
+    }
 
     const response = await retroService.createRetro(payload);
 
@@ -157,6 +186,7 @@ const CreateRetro = () => {
                 {loadingTemplates ? (
                   <div className="retro-template-selector__loading">Loading...</div>
                 ) : (
+                  <>
                   <div className="retro-template-scroll">
                     <div className="retro-template-list">
                       {templates.map((template) => (
@@ -175,16 +205,13 @@ const CreateRetro = () => {
                                 const tooltip = e.currentTarget.querySelector('.retro-template-item__tooltip') as HTMLElement;
                                 if (tooltip) {
                                   const iconRect = e.currentTarget.getBoundingClientRect();
-                                  const tooltipHeight = 400; // Approximate tooltip height
+                                  const tooltipHeight = 400;
                                   const viewportHeight = window.innerHeight;
 
-                                  // Check if tooltip would go below viewport
                                   if (iconRect.bottom + tooltipHeight > viewportHeight) {
-                                    // Open upwards
                                     tooltip.style.top = 'auto';
                                     tooltip.style.bottom = '0';
                                   } else {
-                                    // Open downwards (default)
                                     tooltip.style.top = '-8px';
                                     tooltip.style.bottom = 'auto';
                                   }
@@ -230,8 +257,28 @@ const CreateRetro = () => {
                           </div>
                         </div>
                       ))}
+
+                      {/* Custom Template Option */}
+                      <div
+                        className={`retro-template-item ${selectedTemplate === 'custom' ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedTemplate('custom');
+                          setShowCustomModal(true);
+                        }}
+                      >
+                        <div className="retro-template-item__main">
+                          <span className="retro-template-item__icon">🛠️</span>
+                          <span className="retro-template-item__name">Custom</span>
+                          {selectedTemplate === 'custom' && (
+                            <span className="retro-template-item__custom-summary">
+                              {customColumnNames.filter(n => n.trim()).join(', ') || 'Click to configure'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  </>
                 )}
               </div>
 
@@ -260,7 +307,7 @@ const CreateRetro = () => {
               <button
                 className="retro-nickname-form__submit"
                 onClick={handleCreateRetro}
-                disabled={loading || !nickname.trim() || loadingTemplates}
+                disabled={loading || !nickname.trim() || loadingTemplates || !isCustomValid}
               >
                 {loading ? "Creating..." : "Create Retro 🚀"}
               </button>
@@ -268,6 +315,76 @@ const CreateRetro = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom Template Modal */}
+      {showCustomModal && (
+        <div className="retro-custom-modal__overlay" onClick={() => setShowCustomModal(false)}>
+          <div className="retro-custom-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="retro-custom-modal__header">
+              <h2 className="retro-custom-modal__title">🛠️ Custom Template</h2>
+              <p className="retro-custom-modal__subtitle">Define your own retrospective columns</p>
+            </div>
+
+            <div className="retro-custom-modal__body">
+              <div className="retro-custom-modal__section">
+                <label className="retro-custom-modal__label">Number of columns</label>
+                <div className="retro-custom-modal__count-buttons">
+                  {[2, 3, 4, 5, 6].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      className={`retro-custom-modal__count-btn ${customColumnCount === n ? 'selected' : ''}`}
+                      onClick={() => handleCustomColumnCountChange(n)}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="retro-custom-modal__section">
+                <label className="retro-custom-modal__label">Column names</label>
+                <div className="retro-custom-modal__inputs">
+                  {customColumnNames.map((name, index) => (
+                    <input
+                      key={index}
+                      type="text"
+                      className="retro-custom-modal__input"
+                      placeholder={`Column ${index + 1}`}
+                      value={name}
+                      onChange={(e) => handleCustomColumnNameChange(index, e.target.value)}
+                      maxLength={40}
+                      autoFocus={index === 0}
+                    />
+                  ))}
+                </div>
+                <p className="retro-custom-modal__note">
+                  An &quot;Action Items&quot; side panel will be added automatically.
+                </p>
+              </div>
+            </div>
+
+            <div className="retro-custom-modal__footer">
+              <button
+                className="retro-custom-modal__btn retro-custom-modal__btn--cancel"
+                onClick={() => {
+                  setShowCustomModal(false);
+                  setSelectedTemplate('what-went-well');
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="retro-custom-modal__btn retro-custom-modal__btn--confirm"
+                onClick={() => setShowCustomModal(false)}
+                disabled={!customColumnNames.every((n) => n.trim().length > 0)}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
