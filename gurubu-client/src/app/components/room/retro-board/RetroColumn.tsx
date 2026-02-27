@@ -356,6 +356,7 @@ const RetroColumn = ({
             <input
               type="file"
               accept="image/*"
+              multiple={false}
               onChange={(e) => onColumnHeaderImageUpload(columnKey, e)}
               style={{ display: "none" }}
             />

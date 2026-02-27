@@ -206,6 +206,11 @@ export const useRetroSocketEvents = ({
     socket.on("emoteReaction", handleEmoteReaction);
     socket.on("retroEnded", handleRetroEnded);
 
+    const handleDisconnect = () => {
+      setShowErrorPopup(true);
+    };
+    socket.on("disconnect", handleDisconnect);
+
     return () => {
       clearInterval(heartbeatInterval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -235,6 +240,7 @@ export const useRetroSocketEvents = ({
       socket.off("cardsImported", handleCardsImported);
       socket.off("emoteReaction", handleEmoteReaction);
       socket.off("retroEnded", handleRetroEnded);
+      socket.off("disconnect", handleDisconnect);
     };
   }, [socket, roomId, avatarSeed]);
 };

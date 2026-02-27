@@ -21,6 +21,9 @@ const RetroErrorPopup = ({ title, retroId }: IProps) => {
     const lobby = getCurrentRetroLobby(retroId);
 
     if (retroNickname && lobby) {
+      if (!socket.connected) {
+        socket.connect();
+      }
       socket.emit("joinRetro", {
         nickname: retroNickname,
         retroId: retroId,

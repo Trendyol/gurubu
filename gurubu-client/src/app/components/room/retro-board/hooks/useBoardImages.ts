@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+
+const MAX_HEADER_IMAGE_SIZE_BYTES = 1024 * 1024; // 1MB
+const MAX_HEADER_IMAGE_DIMENSION = 1200;
 
 interface UseBoardImagesParams {
   socket: any;
@@ -152,36 +156,54 @@ export const useBoardImages = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      const img = new Image();
-      img.onload = () => {
-        const maxSize = 300;
-        let width = img.naturalWidth;
-        let height = img.naturalHeight;
-        if (width > maxSize || height > maxSize) {
-          const ratio = Math.min(maxSize / width, maxSize / height);
-          width = width * ratio;
-          height = height * ratio;
-        }
-        const newImage = {
-          id: Date.now().toString(),
-          src: result,
-          x: -99999,
-          y: -99999,
-          width,
-          height
-        };
-        const updatedImages = [...boardImages, newImage];
-        setBoardImages(updatedImages);
-        if (userInfo.lobby) {
-          socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
+    try {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const result = event.target?.result as string;
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const maxSize = 300;
+              let width = img.naturalWidth;
+              let height = img.naturalHeight;
+              if (width > maxSize || height > maxSize) {
+                const ratio = Math.min(maxSize / width, maxSize / height);
+                width = width * ratio;
+                height = height * ratio;
+              }
+              const newImage = {
+                id: Date.now().toString(),
+                src: result,
+                x: -99999,
+                y: -99999,
+                width,
+                height
+              };
+              const updatedImages = [...boardImages, newImage];
+              setBoardImages(updatedImages);
+              if (userInfo.lobby) {
+                socket.emit("updateBoardImages", roomId, updatedImages, userInfo.lobby.credentials);
+              }
+            } catch (err) {
+              console.error("Board image process error:", err);
+              toast.error("Failed to process image");
+            }
+          };
+          img.onerror = () => toast.error("Invalid image file");
+          img.src = result;
+        } catch (err) {
+          console.error("Board image load error:", err);
+          toast.error("Failed to load image");
         }
       };
-      img.src = result;
-    };
-    reader.readAsDataURL(file);
+      reader.onerror = () => toast.error("Failed to read file");
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Board image upload error:", err);
+      toast.error("Failed to upload image");
+    }
+    e.target.value = "";
   };
 
   const handleImageDragStart = (image: any, e: React.DragEvent) => {
@@ -213,16 +235,77 @@ export const useBoardImages = ({
   const handleColumnHeaderImageUpload = (columnKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      const updatedImages = { ...columnHeaderImages, [columnKey]: result };
-      setColumnHeaderImages(updatedImages);
-      if (userInfo.lobby) {
-        socket.emit("updateColumnHeaderImages", roomId, updatedImages, userInfo.lobby.credentials);
-      }
-    };
-    reader.readAsDataURL(file);
+
+    // Tek image: zaten varsa yükleme (UI'da gizli ama yine de guard)
+    if (columnHeaderImages[columnKey]) {
+      toast.error("Only one image per column. Remove the current image first.");
+      return;
+    }
+
+    if (file.size > MAX_HEADER_IMAGE_SIZE_BYTES) {
+      toast.error("Image must be under 1MB");
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const result = event.target?.result as string;
+          const img = new Image();
+          img.onload = () => {
+            try {
+              let width = img.naturalWidth;
+              let height = img.naturalHeight;
+              if (width > MAX_HEADER_IMAGE_DIMENSION || height > MAX_HEADER_IMAGE_DIMENSION) {
+                const ratio = Math.min(MAX_HEADER_IMAGE_DIMENSION / width, MAX_HEADER_IMAGE_DIMENSION / height);
+                width = Math.round(width * ratio);
+                height = Math.round(height * ratio);
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                  ctx.drawImage(img, 0, 0, width, height);
+                  const resizedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+                  const updatedImages = { ...columnHeaderImages, [columnKey]: resizedBase64 };
+                  setColumnHeaderImages(updatedImages);
+                  if (userInfo.lobby) {
+                    socket.emit("updateColumnHeaderImages", roomId, updatedImages, userInfo.lobby.credentials);
+                  }
+                } else {
+                  const updatedImages = { ...columnHeaderImages, [columnKey]: result };
+                  setColumnHeaderImages(updatedImages);
+                  if (userInfo.lobby) {
+                    socket.emit("updateColumnHeaderImages", roomId, updatedImages, userInfo.lobby.credentials);
+                  }
+                }
+              } else {
+                const updatedImages = { ...columnHeaderImages, [columnKey]: result };
+                setColumnHeaderImages(updatedImages);
+                if (userInfo.lobby) {
+                  socket.emit("updateColumnHeaderImages", roomId, updatedImages, userInfo.lobby.credentials);
+                }
+              }
+            } catch (err) {
+              console.error("Header image process error:", err);
+              toast.error("Failed to process image");
+            }
+          };
+          img.onerror = () => toast.error("Invalid image file");
+          img.src = result;
+        } catch (err) {
+          console.error("Header image load error:", err);
+          toast.error("Failed to load image");
+        }
+      };
+      reader.onerror = () => toast.error("Failed to read file");
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Header image upload error:", err);
+      toast.error("Failed to upload image");
+    }
+    e.target.value = "";
   };
 
   const handleRemoveColumnHeaderImage = (columnKey: string) => {
