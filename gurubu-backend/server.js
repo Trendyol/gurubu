@@ -1,3 +1,11 @@
+const { init } = require("@fixify/agent");
+
+init({
+  apiKey: "proj_ed4895dea9c34c03b8e984e1ce8c1d14",
+  serverUrl: "https://fixifyserver-production.up.railway.app",
+  collectInterval: 5000,
+});
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
