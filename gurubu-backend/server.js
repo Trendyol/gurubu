@@ -1,7 +1,7 @@
 const { init } = require("@fixify/agent");
 
 init({
-  apiKey: "proj_ed4895dea9c34c03b8e984e1ce8c1d14",
+  apiKey: "proj_8ba8e9871ef24e15bef92deb97536d47",
   serverUrl: "https://fixifyserver-production.up.railway.app",
   collectInterval: 5000,
 });
