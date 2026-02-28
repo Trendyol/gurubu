@@ -13,6 +13,19 @@ const { cleanRetros } = require("./utils/retros");
 
 require("dotenv").config();
 
+const { init } = require("@fixify/agent");
+init({
+  apiKey: process.env.FIXIFY_API_KEY,
+  serverUrl: "https://fixifyserver-production.up.railway.app",
+  collectInterval: 5000,
+  traceEnabled: true,
+  logEnabled: true,
+  slowThreshold: 100,
+  profilingEnabled: true,
+  profileDuration: 5000,
+  profileCooldown: 300000, // 5 dakikada bir profil
+});
+
 const corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,
