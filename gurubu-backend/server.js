@@ -1,13 +1,5 @@
 require("dotenv").config();
 
-const { init } = require("@fixify/agent");
-
-init({
-  apiKey: process.env.FIXIFY_API_KEY,
-  serverUrl: "https://fixifyserver-production.up.railway.app",
-  collectInterval: 5000,
-});
-
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -21,9 +13,8 @@ const pTokenResolveMiddleware = require("./middlewares/pTokenResolveMiddleware")
 const { cleanRoomsAndUsers } = require("./utils/groomings");
 const { cleanRetros } = require("./utils/retros");
 
-require("dotenv").config();
-
 const { init } = require("@fixify/agent");
+
 init({
   apiKey: process.env.FIXIFY_API_KEY,
   serverUrl: "https://fixifyserver-production.up.railway.app",
