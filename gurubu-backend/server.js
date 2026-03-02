@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const { init } = require("@fixify/agent");
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -12,8 +14,6 @@ const pTokenResolveMiddleware = require("./middlewares/pTokenResolveMiddleware")
 
 const { cleanRoomsAndUsers } = require("./utils/groomings");
 const { cleanRetros } = require("./utils/retros");
-
-const { init } = require("@fixify/agent");
 
 init({
   apiKey: process.env.FIXIFY_API_KEY,
