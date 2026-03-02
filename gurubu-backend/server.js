@@ -15,8 +15,6 @@ const pTokenResolveMiddleware = require("./middlewares/pTokenResolveMiddleware")
 const { cleanRoomsAndUsers } = require("./utils/groomings");
 const { cleanRetros } = require("./utils/retros");
 
-require("dotenv").config();
-
 init({
   apiKey: process.env.FIXIFY_API_KEY,
   serverUrl: "https://fixifyserver-production.up.railway.app",
