@@ -44,12 +44,12 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
         throw new Error('Issue key or project key not found');
       }
 
-      const response = await storyPointService.estimateStoryPoint(
-        { issueKey, projectKey },
-        abortControllerRef.current.signal
-      );
+      // const response = await storyPointService.estimateStoryPoint(
+      //   { issueKey, projectKey },
+      //   abortControllerRef.current.signal
+      // );
 
-      return response;
+      return null;
     } catch (error: any) {
       if (error.message === 'Request was cancelled') {
         return null;
@@ -146,49 +146,51 @@ const GurubuAIParticipant = ({ roomId }: Props) => {
     return null;
   }
 
-  return (
-    <motion.li
-      ref={participantRef}
-      layout
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      key="gurubu-ai-participant"
-      className="gurubu-ai-participant"
-      onClick={handleParticipantClick}
-    >
-      <GurubuAITooltip
-        estimation={aiMessage}
-        confidence={groomingInfo?.gurubuAI?.confidence}
-        reasoning={groomingInfo?.gurubuAI?.reasoning}
-        historicalComparison={groomingInfo?.gurubuAI?.historicalComparison}
-        status={groomingInfo?.gurubuAI?.status}
-        splitRecommendation={groomingInfo?.gurubuAI?.splitRecommendation}
-        isVisible={showTooltip}
-        anchorRef={participantRef as React.RefObject<HTMLElement>}
-        onClose={handleCloseTooltip}
-      />
-      <div className="profile-container">
-        <div className="avatar">
-          <Image
-            src="https://cdn.dsmcdn.com/web/production/armagan-ai.jpg"
-            alt="GuruBu AI"
-            width={32}
-            height={32}
-          />
-        </div>
-        <div className="name">
-          GuruBu AI <span className="beta-badge">Beta</span>
-        </div>
-      </div>
-      <div className="score">
-        {isResultShown && aiMessage && !isAnalyzing
-          ? Number(aiMessage)?.toFixed(0)
-          : "Thinking..."}
-      </div>
-    </motion.li>
-  );
+  return null;
+
+  // return (
+  //   <motion.li
+  //     ref={participantRef}
+  //     layout
+  //     initial={{ opacity: 0, scale: 0.9 }}
+  //     animate={{ opacity: 1, scale: 1 }}
+  //     exit={{ opacity: 0, scale: 0.9 }}
+  //     transition={{ duration: 0.3, ease: "easeInOut" }}
+  //     key="gurubu-ai-participant"
+  //     className="gurubu-ai-participant"
+  //     onClick={handleParticipantClick}
+  //   >
+  //     <GurubuAITooltip
+  //       estimation={aiMessage}
+  //       confidence={groomingInfo?.gurubuAI?.confidence}
+  //       reasoning={groomingInfo?.gurubuAI?.reasoning}
+  //       historicalComparison={groomingInfo?.gurubuAI?.historicalComparison}
+  //       status={groomingInfo?.gurubuAI?.status}
+  //       splitRecommendation={groomingInfo?.gurubuAI?.splitRecommendation}
+  //       isVisible={showTooltip}
+  //       anchorRef={participantRef as React.RefObject<HTMLElement>}
+  //       onClose={handleCloseTooltip}
+  //     />
+  //     <div className="profile-container">
+  //       <div className="avatar">
+  //         <Image
+  //           src="https://cdn.dsmcdn.com/web/production/armagan-ai.jpg"
+  //           alt="GuruBu AI"
+  //           width={32}
+  //           height={32}
+  //         />
+  //       </div>
+  //       <div className="name">
+  //         GuruBu AI <span className="beta-badge">Beta</span>
+  //       </div>
+  //     </div>
+  //     <div className="score">
+  //       {isResultShown && aiMessage && !isAnalyzing
+  //         ? Number(aiMessage)?.toFixed(0)
+  //         : "Thinking..."}
+  //     </div>
+  //   </motion.li>
+  // );
 };
 
 export default GurubuAIParticipant;
