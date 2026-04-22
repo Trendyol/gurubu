@@ -33,7 +33,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
     setModalOpen(false);
   };
 
-  const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded } = useGroomingRoom();
+  const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded, setIsAnnouncementBannerVisible } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
   const isVotingWindowVisible = groomingInfo?.issues && groomingInfo?.issues?.length > 0;
@@ -73,7 +73,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
 
   return (
     <>
-      <AnnouncementBanner />
+      <AnnouncementBanner onClose={() => setIsAnnouncementBannerVisible(false)} />
       <nav className={classNames("grooming-navbar", { "grooming-navbar--nickname-form": showNickNameForm })}>
         <div className={classNames("grooming-navbar__content", { "jira-sidebar-expanded": jiraSidebarExpanded })}>
           <Logo />

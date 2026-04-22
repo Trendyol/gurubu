@@ -7,10 +7,10 @@ import classNames from "classnames";
 
 const GroomingFooter = () => {
   const currentDate = new Date().getFullYear();
-  const { jiraSidebarExpanded } = useGroomingRoom();
+  const { jiraSidebarExpanded, isAnnouncementBannerVisible } = useGroomingRoom();
 
   return (
-    <footer className={classNames("grooming-footer", {"jira-sidebar-expanded": jiraSidebarExpanded})}>
+    <footer className={classNames("grooming-footer", {"jira-sidebar-expanded": jiraSidebarExpanded, "banner-closed": !isAnnouncementBannerVisible})}>
       <div className="grooming-footer__content">
         <div className="grooming-footer__content-copyright">
           © 2023 - {currentDate} GuruBu

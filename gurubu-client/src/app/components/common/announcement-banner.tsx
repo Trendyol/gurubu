@@ -17,9 +17,14 @@ const announcements = [
   }
 ];
 
-const AnnouncementBanner = () => {
+interface AnnouncementBannerProps {
+  onClose?: () => void;
+}
+
+const AnnouncementBanner = ({ onClose }: AnnouncementBannerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isClosed, setIsClosed] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,6 +45,15 @@ const AnnouncementBanner = () => {
     window.open(currentAnnouncement.link, '_blank');
   };
 
+  const handleClose = () => {
+    setIsClosed(true);
+    onClose?.();
+  };
+
+  if (isClosed) {
+    return null;
+  }
+
   return (
     <div className="announcement-banner">
       <div className="announcement-banner__content">
@@ -56,6 +70,13 @@ const AnnouncementBanner = () => {
           {currentAnnouncement.buttonText}
         </button>
       </div>
+      <button
+        className="announcement-banner__close"
+        onClick={handleClose}
+        aria-label="Close announcement"
+      >
+        ✕
+      </button>
     </div>
   );
 };

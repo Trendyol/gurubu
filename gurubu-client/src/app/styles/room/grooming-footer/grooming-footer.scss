@@ -8,6 +8,9 @@
   position: relative;
   background-color: #ffffff;
   margin-top: 10px;
+  &.banner-closed {
+    margin-top: 0;
+  }
   &.jira-sidebar-expanded{
     margin-inline: 0;
     justify-content: start;
