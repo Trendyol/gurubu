@@ -19,6 +19,7 @@
   "dependencies": {
     "@dicebear/collection": "^9.2.2",
     "@dicebear/core": "^9.2.2",
+    "@monaco-editor/react": "^4.7.0",
     "@tabler/icons-react": "^3.33.0",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.3",
@@ -30,6 +31,7 @@
     "intro.js": "^7.2.0",
     "lodash.debounce": "^4.0.8",
     "marked": "^15.0.4",
+    "monaco-editor": "^0.55.1",
     "next": "15.1.9",
     "react": "^19",
     "react-dom": "^19",

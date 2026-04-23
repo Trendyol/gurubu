@@ -1,0 +1,117 @@
+.presentation-camera {
+  width: 160px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  user-select: none;
+
+  &.dragging {
+    cursor: grabbing;
+    opacity: 0.9;
+  }
+
+  &--circular {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: visible;
+  }
+
+  &__video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #000;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+
+  &__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  &__close {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: rgba(231, 76, 60, 0.95);
+    color: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+
+    &:hover {
+      background: #c0392b;
+      transform: scale(1.1);
+    }
+  }
+
+  &__toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.9);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: scale(1.1);
+    }
+  }
+
+  &__resize {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50% 0 50% 0;
+    cursor: nwse-resize;
+    z-index: 11;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.2);
+    }
+  }
+
+  &.resizing {
+    cursor: nwse-resize;
+  }
+}

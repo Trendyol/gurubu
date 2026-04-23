@@ -3,6 +3,7 @@ import "@/styles/page/style.scss";
 import PlanningPokerCard from "./components/page/PlanningPokerCard";
 import SprintPlannerCard from "./components/page/SprintPlannerCard";
 import RetrospectiveCard from "./components/page/RetrospectiveCard";
+import PresentationCard from "./components/page/PresentationCard";
 import Footer from "./components/page/Footer";
 import Image from "next/image";
 import AnnouncementBanner from "./components/common/announcement-banner";
@@ -31,6 +32,7 @@ export default function Home() {
           <PlanningPokerCard />
           <SprintPlannerCard />
           <RetrospectiveCard />
+          <PresentationCard />
         </div>
         <Footer />
       </main>

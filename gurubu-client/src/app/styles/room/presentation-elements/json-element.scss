@@ -1,0 +1,116 @@
+.json-element {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &.selected {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+  }
+
+  &.dragging {
+    opacity: 0.7;
+    cursor: grabbing !important;
+  }
+
+  &.invalid {
+    outline: 2px solid #f48771;
+    outline-offset: 2px;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #252526;
+    border-bottom: 1px solid #3e3e42;
+    gap: 8px;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__error-indicator {
+    color: #f48771;
+    font-size: 11px;
+    padding: 2px 6px;
+    background: rgba(244, 135, 113, 0.1);
+    border-radius: 4px;
+  }
+
+  &__copy-btn {
+    background: #3c3c3c;
+    color: #cccccc;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: #454545;
+      border-color: #555;
+      color: #4ec9b0;
+    }
+  }
+
+  &__editor-wrapper {
+    flex: 1;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+
+    .monaco-editor {
+      border-radius: 0;
+    }
+  }
+
+  &__error-panel {
+    padding: 12px;
+    background: #3a1d1d;
+    color: #f48771;
+    font-size: 12px;
+    border-top: 1px solid #3e3e42;
+
+    strong {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+  }
+
+  &__display {
+    height: 100%;
+    overflow: hidden;
+
+    .monaco-editor {
+      border-radius: 0;
+    }
+  }
+}
