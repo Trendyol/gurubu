@@ -5,7 +5,31 @@ dotenv.config();
 
 class PService {
   constructor() {
-    this.baseUrl = process.env.P_GATEWAY_URL;
+    // Validate required environment variables
+    const requiredEnvVars = {
+      P_GATEWAY_URL: process.env.P_GATEWAY_URL
+    };
+
+    const missingVars = [];
+    for (const [key, value] of Object.entries(requiredEnvVars)) {
+      if (!value || value.trim() === '') {
+        missingVars.push(key);
+      }
+    }
+
+    if (missingVars.length > 0) {
+      throw new Error(
+        `Missing required environment variables for P service: ${missingVars.join(', ')}. ` +
+        'Please check your .env file and ensure P_GATEWAY_URL is set.'
+      );
+    }
+
+    // Validate P_GATEWAY_URL format
+    try {
+      new URL(this.baseUrl = process.env.P_GATEWAY_URL);
+    } catch (error) {
+      throw new Error(`Invalid P_GATEWAY_URL format: ${process.env.P_GATEWAY_URL}. Must be a valid URL.`);
+    }
   }
 
   async getOrganizations() {
@@ -77,7 +101,7 @@ class PService {
           },
         }
       );
-      
+
       return response.data;
     } catch (error) {
       console.error("Error searching users:", error);
