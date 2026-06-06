@@ -54,7 +54,6 @@ const RetroBoard = ({ roomId }: IProps) => {
   const [newCardImage, setNewCardImage] = useState<string | null>(null);
   const [newCardColor, setNewCardColor] = useState<string | null>(null);
   const [showTimer, setShowTimer] = useState(false);
-  const [showMusic, setShowMusic] = useState(false);
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
   const [draggedCard, setDraggedCard] = useState<{color: string, emoji: string} | null>(null);
   const [draggedImage, setDraggedImage] = useState<any>(null);
@@ -821,8 +820,6 @@ const RetroBoard = ({ roomId }: IProps) => {
             isOwner={isOwner}
             showTimer={showTimer}
             setShowTimer={setShowTimer}
-            showMusic={showMusic}
-            setShowMusic={setShowMusic}
             timer={timer}
             music={music}
             participants={participantsWithAvatars}
