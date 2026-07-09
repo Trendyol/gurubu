@@ -144,6 +144,9 @@ exports.getIssuesByStoryPoints = async (req, res) => {
 
     return res.json({ total: data.total || issues.length, issues });
   } catch (error) {
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ error: error.message });
+    }
     console.error("Error searching issues by story points:", error);
     return res.status(500).json({ error: error.message || "Failed to search issues" });
   }

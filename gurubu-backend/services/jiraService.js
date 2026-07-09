@@ -4,6 +4,30 @@ const dotenv = require("dotenv");
 // Ensure dotenv is configured
 dotenv.config();
 
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
+const PROJECT_KEY_RE = /^[A-Z][A-Z0-9_-]{1,9}$/;
+
+const validateProjectKey = (projectKey) => {
+  if (typeof projectKey !== "string" || !PROJECT_KEY_RE.test(projectKey)) {
+    throw new ValidationError("Invalid projectKey");
+  }
+  return projectKey;
+};
+
+const validateStoryPoints = (storyPoints) => {
+  const sp = Number(storyPoints);
+  if (!Number.isInteger(sp) || sp < 0 || sp > 1000) {
+    throw new ValidationError("Invalid storyPoints");
+  }
+  return sp;
+};
+
 class JiraService {
   baseUrl;
   auth;
@@ -287,13 +311,16 @@ class JiraService {
   }
 
   async searchIssuesByStoryPoints(projectKey, storyPoints, maxResults = 20, excludeDone = true) {
+    const safeProjectKey = validateProjectKey(projectKey);
+    const safeStoryPoints = validateStoryPoints(storyPoints);
+
     try {
       const storyPointCustomField = process.env.JIRA_PROJECT_KEY_FOUR || "";
       const customFieldIdMatch = storyPointCustomField.match(/customfield_(\d+)/);
       const cfId = customFieldIdMatch ? customFieldIdMatch[1] : null;
 
-      const storyPointClause = cfId ? `cf[${cfId}] = ${storyPoints}` : `'Story Points' = ${storyPoints}`;
-      const baseClauses = [`project = ${projectKey}`, storyPointClause];
+      const storyPointClause = cfId ? `cf[${cfId}] = ${safeStoryPoints}` : `'Story Points' = ${safeStoryPoints}`;
+      const baseClauses = [`project = ${safeProjectKey}`, storyPointClause];
       if (excludeDone) {
         baseClauses.push("statusCategory != Done");
       }
