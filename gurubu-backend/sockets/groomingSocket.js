@@ -1,4 +1,4 @@
-const { updateUserSocket, userLeave } = require("../utils/users");
+const { updateUserSocket, userLeave, getCurrentUser } = require("../utils/users");
 const {
   getGrooming,
   leaveUserFromGrooming,
@@ -131,7 +131,17 @@ module.exports = (io) => {
     });
 
     socket.on("removeUser", (roomID, userID, credentials) => {
-      // joinRoomMiddleware(socket, roomID, credentials);
+      const caller = getCurrentUser(credentials, socket);
+
+      // Resolve the caller from server-issued credentials, not from the client-supplied userID.
+      // Only allow a user to remove themselves — never another participant.
+      if (!caller || caller.userID !== userID) {
+        socket.emit("encounteredError", {
+          id: 2,
+          message: "You are not authorized to remove this user.",
+        });
+        return;
+      }
 
       const isUserPermanentlyLeave = userLeave(socket.id);
 

@@ -1,5 +1,27 @@
 const axios = require("axios");
 
+const resolveJiraApiUrl = (endpoint) => {
+  const jiraBaseUrl = (process.env.JIRA_BASE_URL || "").replace(/\/$/, "");
+  if (!jiraBaseUrl) {
+    return { error: "JIRA_BASE_URL is not configured" };
+  }
+
+  let decodedEndpoint = decodeURIComponent(endpoint).trim();
+  if (!decodedEndpoint.match(/^https?:\/\//)) {
+    decodedEndpoint = `https://${decodedEndpoint}`;
+  }
+
+  const parsedUrl = new URL(decodedEndpoint);
+  const baseOrigin = new URL(jiraBaseUrl).origin;
+  if (parsedUrl.origin !== baseOrigin) {
+    return { error: "URL host is not allowed" };
+  }
+
+  return {
+    apiUrl: `${jiraBaseUrl}${parsedUrl.pathname}${parsedUrl.search}`,
+  };
+};
+
 exports.fetchGet = async (req, res) => {
   const { endpoint } = req.query;
   if (!endpoint || endpoint.trim() === "") {
@@ -7,10 +29,12 @@ exports.fetchGet = async (req, res) => {
       .status(400)
       .json({ error: "Endpoint is required and must be a non-empty" });
   }
-  let apiUrl = decodeURIComponent(endpoint);
-  if (!apiUrl.match(/^https?:\/\//)) {
-    apiUrl = `https://${apiUrl}`;
+  const resolvedUrl = resolveJiraApiUrl(endpoint);
+  if (resolvedUrl.error) {
+    return res.status(403).json({ message: resolvedUrl.error });
   }
+
+  const apiUrl = resolvedUrl.apiUrl;
   const apiUrlPath = new URL(apiUrl).pathname;
   const apiUrlSearch = new URL(apiUrl).search;
 
@@ -81,10 +105,12 @@ exports.fetchPut = async (req, res) => {
       .status(400)
       .json({ error: "Endpoint is required and must be a non-empty" });
   }
-  let apiUrl = decodeURIComponent(endpoint);
-  if (!apiUrl.match(/^https?:\/\//)) {
-    apiUrl = `https://${apiUrl}`;
+  const resolvedUrl = resolveJiraApiUrl(endpoint);
+  if (resolvedUrl.error) {
+    return res.status(403).json({ message: resolvedUrl.error });
   }
+
+  const apiUrl = resolvedUrl.apiUrl;
   const apiUrlPath = new URL(apiUrl).pathname;
   const apiUrlSearch = new URL(apiUrl).search;
 
