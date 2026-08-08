@@ -243,6 +243,8 @@
 
   .retro-template-scroll {
     max-height: 120px;
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
 
   .retro-template-tooltip {
