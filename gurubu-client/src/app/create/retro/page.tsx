@@ -142,7 +142,7 @@ const CreateRetro = () => {
 
   return (
     <main className="create-room">
-      <div className="retro-nickname-wrapper">
+      <div className="retro-nickname-create-wrapper">
         <div className="retro-nickname-background">
           <div className="retro-nickname-background__gradient retro-nickname-background__gradient--1"></div>
           <div className="retro-nickname-background__gradient retro-nickname-background__gradient--2"></div>
