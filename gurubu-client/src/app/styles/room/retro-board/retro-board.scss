@@ -3313,6 +3313,158 @@
   }
 }
 
+// Music Dropdown Styles
+.retro-board__dropdown--music {
+  min-width: 340px;
+  padding: 0.75rem;
+}
+
+.retro-board__dropdown-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+.retro-board__music-url-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  input {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #2d3748;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus {
+      border-color: #667eea;
+      background: #f7fafc;
+    }
+
+    &::placeholder {
+      color: #a0aec0;
+    }
+  }
+}
+
+.retro-board__dropdown-btn {
+  width: 100%;
+  padding: 0.625rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &--primary {
+    background: #667eea;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+}
+
+.retro-board__music-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.retro-board__music-volume {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  color: #4a5568;
+}
+
+.retro-board__volume-slider {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: scale(1.2);
+      background: #5568d3;
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: scale(1.2);
+      background: #5568d3;
+    }
+  }
+}
+
+.retro-board__volume-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #667eea;
+  min-width: 36px;
+  text-align: right;
+}
+
+.retro-board__dropdown-hint {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.retro-board__dropdown-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
 .retro-column__card-bottom-row {
   display: flex;
   align-items: center;
