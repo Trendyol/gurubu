@@ -138,6 +138,91 @@ export interface RetroInfo {
   cardsRevealed?: boolean;
 }
 
+export interface PresentationElement {
+  id: string;
+  type: 'heading' | 'text' | 'code' | 'image' | 'video' | 'gif' | 'animation' | 'chart' | 'table' | 'json';
+  content: string;
+  style: {
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: string;
+    language?: string;
+    chartType?: string;
+    tableData?: any[][];
+    referencedPageId?: string; // For code elements that reference other pages
+    [key: string]: any;
+  };
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  animation?: {
+    type: string;
+    duration: number;
+    delay?: number;
+  };
+}
+
+export interface PresentationPage {
+  id: string;
+  order: number;
+  elements: PresentationElement[];
+  background: {
+    color?: string;
+    image?: string;
+    gradient?: string;
+  };
+  transition: {
+    type: string;
+    duration: number;
+  };
+}
+
+export interface PresentationParticipant {
+  userID: number;
+  nickname: string;
+  avatarSeed?: string;
+  connected?: boolean;
+  isViewer?: boolean;
+}
+
+export interface PresentationInfo {
+  presentationId?: string;
+  title: string;
+  owner: number;
+  participants: Record<string, PresentationParticipant>;
+  pages: PresentationPage[];
+  currentPage: number;
+  templateId: string;
+  template?: {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    popular: boolean;
+    defaultPages?: PresentationPage[];
+    defaultStyles?: Record<string, any>;
+    elementExamples?: Array<{
+      name: string;
+      description: string;
+      elements: Array<{
+        type: string;
+        content: string;
+        style: any;
+        position: { x: number; y: number };
+        size: { width: number; height: number };
+      }>;
+    }>;
+  };
+  settings: {
+    retentionDays: number | null;
+    isPublic: boolean;
+    allowViewers: boolean;
+  };
+  createdAt: number;
+  expiredAt: number | null;
+  status: 'draft' | 'presenting' | 'archived';
+}
+
 export interface GroomingInfo {
   mode: string;
   participants: Participants;

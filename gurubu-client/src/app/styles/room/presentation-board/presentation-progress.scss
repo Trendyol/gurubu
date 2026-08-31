@@ -1,0 +1,31 @@
+.presentation-progress {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  &__bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    background: #3498db;
+    transition: width 0.3s ease;
+  }
+
+  &__info {
+    color: #ffffff;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  &__text {
+    font-weight: 500;
+  }
+}

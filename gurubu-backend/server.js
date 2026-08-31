@@ -24,10 +24,12 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const groomingSocket = require("./sockets/groomingSocket");
 const retroSocket = require("./sockets/retroSocket");
+const presentationSocket = require("./sockets/presentationSocket");
 const pTokenResolveMiddleware = require("./middlewares/pTokenResolveMiddleware");
 
 const { cleanRoomsAndUsers } = require("./utils/groomings");
 const { cleanRetros } = require("./utils/retros");
+const { cleanPresentations } = require("./utils/presentations");
 
 const corsOptions = {
   origin: process.env.CLIENT_URL,
@@ -47,6 +49,8 @@ const storyPointRoutes = require("./routes/storyPointRoutes");
 const initialStoryPointRoutes = require("./routes/initialStoryPointRoutes");
 const aiWorkflowRoutes = require("./routes/aiWorkflowRoutes");
 const retroRoutes = require("./routes/retroRoutes");
+const presentationRoutes = require("./routes/presentationRoutes");
+const codeExecutionRoutes = require("./routes/codeExecutionRoutes");
 
 app.use("/room", cors(corsOptions), roomRoutes);
 app.use("/healthcheck", cors(corsOptions), healthCheckRoute);
@@ -56,6 +60,8 @@ app.use("/storypoint", cors(corsOptions), storyPointRoutes);
 app.use("/initial-storypoint", cors(corsOptions), initialStoryPointRoutes);
 app.use("/ai-workflow", cors(corsOptions), aiWorkflowRoutes);
 app.use("/retro", cors(corsOptions), retroRoutes);
+app.use("/presentation", cors(corsOptions), presentationRoutes);
+app.use("/code", cors(corsOptions), codeExecutionRoutes);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
@@ -70,11 +76,14 @@ const io = socketIO(server, {
   },
 });
 
-// Separate namespaces for grooming and retro
+// Separate namespaces for grooming, retro, and presentation
 const groomingNamespace = io.of("/grooming");
 const retroNamespace = io.of("/retro");
+const presentationNamespace = io.of("/presentation");
 
 groomingSocket(groomingNamespace);
 retroSocket(retroNamespace);
+presentationSocket(presentationNamespace);
 cleanRoomsAndUsers();
 cleanRetros();
+cleanPresentations();

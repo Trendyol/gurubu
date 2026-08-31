@@ -1,0 +1,87 @@
+.presentation-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  pointer-events: all;
+
+  &__icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s;
+    position: relative;
+
+    &:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &--primary {
+      background: #667eea;
+      color: white;
+      margin-left: auto;
+
+      &:hover {
+        background: #5568d3;
+        color: white;
+      }
+    }
+
+    // Tooltip
+    &::after {
+      content: attr(title);
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
+  &__divider {
+    width: 1px;
+    height: 24px;
+    background: #e0e0e0;
+    margin: 0 4px;
+  }
+}
