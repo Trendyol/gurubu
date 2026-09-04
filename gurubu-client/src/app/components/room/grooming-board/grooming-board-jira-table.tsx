@@ -12,6 +12,7 @@ import { marked } from "marked";
 import { useLoader } from "@/contexts/LoaderContext";
 import { useToast } from "@/contexts/ToastContext";
 import { EstimateInput } from "./estimate-input";
+import { IssueLabels } from "./issue-labels";
 import { FilterableSelect, SelectOption } from "./filterable-select";
 import { SingleValue } from "react-select";
 import { sanitizeForInnerHTML } from "@/shared/utils/sanitizeHTML";
@@ -321,6 +322,13 @@ const GroomingBoardJiraTable = ({ roomId }: IProps) => {
           onCancel={() => setTestEstimate("")}
           defaultValue={groomingInfo.issues?.[selectedIssueIndex]?.testPoint?.toString()}
         />
+        {groomingInfo.issues?.[selectedIssueIndex] && (
+          <IssueLabels
+            roomId={roomId}
+            issueId={groomingInfo.issues[selectedIssueIndex].id}
+            labels={groomingInfo.issues[selectedIssueIndex].labels || []}
+          />
+        )}
         <div className="grooming-board-jira-reporter-container">
             <div className="grooming-board-jira-reporter-item">
               <p className="grooming-board-jira-reporter-label">Reporter:</p>

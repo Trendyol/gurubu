@@ -5,6 +5,7 @@ const plannerJiraController = require("../controllers/plannerJiraController");
 
 router.get("/fetch", jiraController.fetchGet);
 router.put("/fetch", jiraController.fetchPut);
+router.get("/labels", jiraController.getLabels);
 router.get("/:boardId/future", plannerJiraController.getFutureSprints);
 router.get("/board", plannerJiraController.getBoardByName);
 router.get("/:sprintId/issues", plannerJiraController.getSprintIssues);

@@ -1,4 +1,5 @@
 const axios = require("axios");
+const jiraService = require("../services/jiraService");
 
 const resolveJiraApiUrl = (endpoint) => {
   const jiraBaseUrl = (process.env.JIRA_BASE_URL || "").replace(/\/$/, "");
@@ -158,6 +159,17 @@ exports.fetchPut = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    // Label (and other update-based) payloads must not enter story-point retry
+    if (req.body?.update) {
+      const status = error.response?.status || 400;
+      return res.status(status).json({
+        message:
+          error.response?.data?.errorMessages?.[0] ||
+          error.message ||
+          "Error updating Jira issue",
+      });
+    }
+
     try {
       const { fields } = req.body || {};
       const jiraProjectKeyFour = process.env.JIRA_PROJECT_KEY_FOUR;
@@ -187,5 +199,22 @@ exports.fetchPut = async (req, res) => {
         retryError: retryError.message,
       });
     }
+  }
+};
+
+exports.getLabels = async (req, res) => {
+  const query = typeof req.query.query === "string" ? req.query.query : "";
+
+  try {
+    const labels = await jiraService.searchLabels(query);
+    return res.status(200).json({ labels });
+  } catch (error) {
+    if (error.status === 401) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const status = error.status && error.status >= 400 ? error.status : 400;
+    return res.status(status).json({
+      message: error.message || "Error fetching labels from JIRA API",
+    });
   }
 };
