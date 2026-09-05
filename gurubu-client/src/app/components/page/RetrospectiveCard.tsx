@@ -15,7 +15,7 @@ export default function RetrospectiveCard() {
       title="Team Retrospective"
       description="Reflect on your team's performance with structured retrospective boards. Share what went well, what could be improved, and define action items."
       buttonText="Start Retrospective"
-      buttonLink="/retro/dashboard"
+      buttonLink={process.env.NEXT_PUBLIC_RETRO_URL || "https://retro.tyinternal.com/"}
       bgColor="orange"
     />
   );
