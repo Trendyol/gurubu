@@ -1,0 +1,9 @@
+#!/bin/bash
+# >>> 5key
+# 5key post-commit hook: consolidate AI-edit markers and report to the API.
+# FAIL-OPEN: This hook must NEVER block a commit.
+# For questions or issues, visit: https://pandora.tyinternal.com/qa/pandora
+trap 'exit 0' ERR
+set +e
+/usr/local/bin/5key on-commit --repo "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+# <<< 5key

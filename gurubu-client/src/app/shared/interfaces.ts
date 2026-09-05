@@ -24,15 +24,8 @@ export interface Metric {
   points: string[];
 }
 
-export interface RetroParticipant {
-  userID: number;
-  nickname: string;
-  avatarSeed?: string;
-  connected?: boolean;
-}
-
 export interface Participants {
-  [key: string]: User | RetroParticipant;
+  [key: string]: User;
 }
 
 export interface MetricAverages {
@@ -81,61 +74,6 @@ export interface GurubuAI {
   historicalComparison?: string;
   status?: string;
   splitRecommendation?: string | null;
-}
-
-export interface RetroCard {
-  id: string;
-  text: string;
-  image: string | null;
-  color?: string | null;
-  author: string;
-  authorId: number;
-  createdAt: number;
-  stamps?: Array<{emoji: string, x: number, y: number}>;
-  mentions?: string[];
-  votes?: number[];
-  voteCount?: number;
-  isAnonymous?: boolean;
-  isRevealed?: boolean;
-}
-
-export interface RetroCards {
-  [key: string]: RetroCard[];
-}
-
-export interface RetroMusic {
-  isPlaying: boolean;
-  url: string | null;
-}
-
-export interface RetroInfo {
-  title: string;
-  owner: number;
-  participants: Participants;
-  retroCards: RetroCards;
-  timer: Timer;
-  music: RetroMusic;
-  boardImages?: Array<{id: string, src: string, x: number, y: number, width: number, height: number}>;
-  columnHeaderImages?: Record<string, string | null>;
-  columnHeaderImagePositions?: Record<string, { x: number; y: number }>;
-  cardsRevealed?: boolean;
-  cardGroups?: Record<string, { name: string }>;
-  template?: {
-    id: string;
-    name: string;
-    icon: string;
-    description: string;
-    popular: boolean;
-    columns: Array<{
-      key: string;
-      title: string;
-      color: string;
-      description: string;
-      isMain?: boolean;
-    }>;
-  };
-  status: string;
-  cardsRevealed?: boolean;
 }
 
 export interface GroomingInfo {

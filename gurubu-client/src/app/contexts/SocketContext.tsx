@@ -14,26 +14,11 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }: SocketProviderProps) {
-  // Try to get grooming context, but don't fail if it doesn't exist (for retro pages)
-  let roomStatus: string | undefined = undefined;
-  let setGroomingInfo: Function | undefined = undefined;
-  let setUserVote: Function | undefined = undefined;
-  let setEditVoteClicked: Function | undefined = undefined;
-  
-  try {
-    const groomingContext = useGroomingRoom();
-    roomStatus = groomingContext.roomStatus;
-    setGroomingInfo = groomingContext.setGroomingInfo;
-    setUserVote = groomingContext.setUserVote;
-    setEditVoteClicked = groomingContext.setEditVoteClicked;
-  } catch (e) {
-    // Not in a grooming context, probably in retro
-    console.debug("Not in grooming context, skipping grooming-specific setup");
-  }
+  const { roomStatus, setGroomingInfo, setUserVote, setEditVoteClicked } =
+    useGroomingRoom();
 
   useEffect(() => {
-    // Connect socket for grooming rooms when status is FOUND, or always for retro
-    if (!roomStatus || roomStatus === ROOM_STATUS.FOUND) {
+    if (roomStatus === ROOM_STATUS.FOUND) {
       socket.connect();
     }
     // Clean up the socket connection when the component unmounts
@@ -43,11 +28,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
   }, [roomStatus]);
 
   useEffect(() => {
-    // Only set up grooming-specific handlers if we have the context
-    if (!setGroomingInfo) {
-      return;
-    }
-
     const handleVoteSent = (data: GroomingInfo) => {
       setGroomingInfo(data);
     };
@@ -67,9 +47,9 @@ export function SocketProvider({ children }: SocketProviderProps) {
     const handleShowResults = (data: GroomingInfo) => setGroomingInfo(data);
 
     const handleResetVotes = (data: GroomingInfo) => {
-      setUserVote?.({});
+      setUserVote({});
       setGroomingInfo(data);
-      setEditVoteClicked?.(false);
+      setEditVoteClicked(false);
     };
 
     const updateAvatar = (data: GroomingInfo) => {
