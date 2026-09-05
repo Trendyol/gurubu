@@ -110,9 +110,64 @@ export class JiraService {
         description: issue.fields.description,
         reporter: issue.fields.creator,
         assigneeForAnalysis: issue.fields["customfield_16800"] ?? "",
-        epic: issue.fields.epic
+        epic: issue.fields.epic,
+        labels: issue.fields.labels ?? [],
       }));
       return { isSuccess: true, data: sprintIssues };
+    } catch (error) {
+      return { isSuccess: false };
+    }
+  }
+
+  async searchLabels(query: string): Promise<ServiceResponse<string[]>> {
+    try {
+      const trimmed = query.trim();
+      if (!trimmed) {
+        return { isSuccess: true, data: [] };
+      }
+
+      const url = `${this.baseUrl}/jira/labels`;
+      const response = await axios.get(url, {
+        params: { query: trimmed },
+      } as AxiosRequestConfig);
+
+      return {
+        isSuccess: true,
+        data: response.data?.labels || [],
+      };
+    } catch (error) {
+      return { isSuccess: false };
+    }
+  }
+
+  async updateIssueLabels(
+    issueId: string,
+    change: { add?: string; remove?: string }
+  ): Promise<ServiceResponse<void>> {
+    try {
+      const labelOps: Array<{ add: string } | { remove: string }> = [];
+      if (change.add) {
+        labelOps.push({ add: change.add });
+      }
+      if (change.remove) {
+        labelOps.push({ remove: change.remove });
+      }
+      if (labelOps.length === 0) {
+        return { isSuccess: false, error: "No label change provided" };
+      }
+
+      const url = `${
+        this.baseUrl
+      }/jira/fetch?endpoint=${this.getJiraUrl()}/rest/api/2/issue/${encodeURIComponent(
+        issueId
+      )}`;
+      const body = {
+        update: {
+          labels: labelOps,
+        },
+      };
+      await axios.put(url, body);
+      return { isSuccess: true };
     } catch (error) {
       return { isSuccess: false };
     }

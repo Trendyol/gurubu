@@ -213,13 +213,14 @@ export interface Issue {
     color: {
       key: string;
     },
-    summary: string;  
+    summary: string;
     key: string;
     id: string;
     done: boolean;
     name: string;
     self: string;
-  }
+  };
+  labels?: string[];
 }
 
 export interface ServiceResponse<T> {

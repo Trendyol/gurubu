@@ -310,6 +310,46 @@ class JiraService {
     }
   }
 
+  async searchLabels(query) {
+    const trimmed = typeof query === "string" ? query.trim() : "";
+    if (!trimmed) {
+      return [];
+    }
+
+    try {
+      const response = await axios.get(
+        `${this.baseUrl}/rest/api/2/jql/autocompletedata/suggestions`,
+        {
+          params: {
+            fieldName: "labels",
+            fieldValue: trimmed,
+          },
+          auth: this.auth,
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const results = response.data?.results || [];
+      return results
+        .map((item) => item.value)
+        .filter((value) => typeof value === "string" && value.length > 0);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+        const err = new Error(`Failed to search labels: ${error.message}`);
+        err.status = error.response?.status;
+        throw err;
+      }
+      throw error;
+    }
+  }
+
   async searchIssuesByStoryPoints(projectKey, storyPoints, maxResults = 20, excludeDone = true) {
     const safeProjectKey = validateProjectKey(projectKey);
     const safeStoryPoints = validateStoryPoints(storyPoints);
