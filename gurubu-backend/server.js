@@ -26,6 +26,7 @@ const groomingSocket = require("./sockets/groomingSocket");
 const pTokenResolveMiddleware = require("./middlewares/pTokenResolveMiddleware");
 
 const { cleanRoomsAndUsers } = require("./utils/groomings");
+const { startDailyReporter } = require("./services/usageMetricsReporter");
 
 const corsOptions = {
   origin: process.env.CLIENT_URL,
@@ -70,3 +71,4 @@ const groomingNamespace = io.of("/grooming");
 
 groomingSocket(groomingNamespace);
 cleanRoomsAndUsers();
+startDailyReporter();
