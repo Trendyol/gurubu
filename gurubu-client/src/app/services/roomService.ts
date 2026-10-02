@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HTTP_STATUS } from "@/shared/enums";
+import { HTTP_STATUS, GroomingType } from "@/shared/enums";
 
 export class RoomService {
   baseUrl: string;
@@ -46,8 +46,10 @@ export class RoomService {
 
 interface CreateRoomPayload {
   nickName: string;
+  groomingType: GroomingType | string;
 }
 
 interface joinRoomPayload {
   nickName: string;
 }
+

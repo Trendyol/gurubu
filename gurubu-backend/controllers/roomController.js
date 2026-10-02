@@ -3,6 +3,7 @@ const {
   checkRoomExistance,
   handleJoinRoom,
 } = require("../utils/groomings");
+const { isValidGroomingType } = require("../enums/groomingType");
 const { recordJoin } = require("../utils/usageMetricsCounter");
 
 exports.createRoom = async (req, res) => {
@@ -14,6 +15,10 @@ exports.createRoom = async (req, res) => {
 
   if(!groomingType){
     return res.status(400).json({ error: "groomingType is required" });
+  }
+
+  if (!isValidGroomingType(groomingType)) {
+    return res.status(400).json({ error: "invalid groomingType" });
   }
 
   const result = generateNewRoom(nickName, groomingType);

@@ -15,8 +15,8 @@ export enum GroomingType {
 }
 
 export enum GroomingMode {
-  PlanningPoker = "0",
-  ScoreGrooming = "1",
+  PlanningPoker = "PlanningPoker",
+  ScoreGrooming = "ScoreGrooming",
 }
 
 export enum PARTICIPANT_VOTES_COUNT
