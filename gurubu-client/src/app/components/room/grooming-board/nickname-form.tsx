@@ -51,8 +51,7 @@ const NicknameForm = ({ roomId }: IProps) => {
 
     const payload = {
       nickName: trimmedNickName,
-      // TODO?: Actually, backend api should be accept string value for groomingType
-      groomingType: groomingType === "PlanningPoker" ? "0" : "1",
+      groomingType,
     };
     const response = await roomService.createRoom(payload);
 

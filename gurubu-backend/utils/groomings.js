@@ -1,8 +1,9 @@
 const uuid = require("uuid");
 const { userJoin, getCurrentUser, clearUser, getCurrentUserWithSocket } = require("../utils/users");
+const { GroomingType, normalizeGroomingType } = require("../enums/groomingType");
 
 const groomingMode = {
-  0: [
+  [GroomingType.PlanningPoker]: [
     {
       id: 1,
       name: "storyPoint",
@@ -11,7 +12,7 @@ const groomingMode = {
       text: "Story point of task",
     },
   ],
-  1: [
+  [GroomingType.ScoreGrooming]: [
     {
       id: 1,
       name: "developmentEase",
@@ -63,6 +64,12 @@ const groomingMode = {
   ],
 };
 
+// Aliases for backwards compatibility
+groomingMode[0] = groomingMode[GroomingType.PlanningPoker];
+groomingMode["0"] = groomingMode[GroomingType.PlanningPoker];
+groomingMode[1] = groomingMode[GroomingType.ScoreGrooming];
+groomingMode["1"] = groomingMode[GroomingType.ScoreGrooming];
+
 let rooms = [];
 const groomings = {};
 
@@ -110,11 +117,12 @@ const generateNewRoom = (nickName, groomingType) => {
   user.connected = true;
 
   const { credentials, ...userWithoutCredentials } = user;
+  const normalizedType = normalizeGroomingType(groomingType);
 
   groomings[roomID] = {
-    mode: groomingType,
+    mode: normalizedType,
     participants: { [user.userID]: userWithoutCredentials },
-    metrics: groomingMode[groomingType],
+    metrics: groomingMode[normalizedType] || groomingMode[groomingType],
     score: 0,
     status: "ongoing",
     isResultShown: false,
@@ -225,7 +233,9 @@ const getGrooming = (roomID) => {
 };
 
 const calculateScore = (mode, participants, roomID) => {
-  if (mode === "0") {
+  const normalizedMode = normalizeGroomingType(mode);
+
+  if (normalizedMode === GroomingType.PlanningPoker) {
     let totalVoter = 0;
     let totalStoryPoint = 0;
     Object.keys(participants).forEach((participantKey) => {
@@ -244,7 +254,7 @@ const calculateScore = (mode, participants, roomID) => {
     return findClosestFibonacci(totalStoryPoint / totalVoter).toFixed(2);
   }
 
-  if (mode === "1") {
+  if (normalizedMode === GroomingType.ScoreGrooming) {
     let metricAverages = {};
 
     groomings[roomID].metrics.forEach((metric) => {
@@ -531,5 +541,7 @@ module.exports = {
   updateTimer,
   updateAvatar,
   setGurubuAI,
-  updateProfilePicture
+  updateProfilePicture,
+  calculateScore,
+  groomingMode,
 };
