@@ -46,7 +46,7 @@ export class RoomService {
 
 interface CreateRoomPayload {
   nickName: string;
-  groomingType: GroomingType | string;
+  groomingType: GroomingType;
 }
 
 interface joinRoomPayload {

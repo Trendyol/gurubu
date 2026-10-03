@@ -13,7 +13,7 @@ exports.createRoom = async (req, res) => {
     return res.status(400).json({ error: "nickName is required" });
   }
 
-  if(!groomingType){
+  if (groomingType === undefined || groomingType === null || groomingType === "") {
     return res.status(400).json({ error: "groomingType is required" });
   }
 

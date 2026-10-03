@@ -43,6 +43,20 @@ describe("roomController.createRoom", () => {
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
+  test("creates room successfully with legacy numeric groomingType 0", async () => {
+    const req = {
+      body: {
+        nickName: "Charlie",
+        groomingType: 0,
+      },
+    };
+    const res = mockResponse();
+
+    await createRoom(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+  });
+
   test("returns 400 if nickName is missing", async () => {
     const req = {
       body: {
