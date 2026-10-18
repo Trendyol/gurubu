@@ -2,7 +2,7 @@
 
 import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
-import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
+import { getCurrentLobby, getCurrentNickname } from "@/shared/helpers/lobbyStorage";
 import { EncounteredError, GroomingInfo, UserInfo, UserVote } from "@/shared/interfaces";
 
 interface GroomingContextValues {
@@ -69,7 +69,7 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
   }, []);
 
   useEffect(() => {
-    const nickname = localStorage.getItem("nickname");
+    const nickname = getCurrentNickname(roomId);
     const lobby = getCurrentLobby(roomId);
 
     if (!nickname || !lobby) {

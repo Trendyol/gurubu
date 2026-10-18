@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useSocket } from "@/contexts/SocketContext";
-import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
+import { getCurrentLobby, getCurrentNickname } from "@/shared/helpers/lobbyStorage";
 import { ENCOUTERED_ERROR_TYPE } from "@/shared/enums";
 import { handleRoomJoin } from "@/shared/helpers/roomJoin";
 
@@ -30,7 +30,7 @@ const GroomingBoardErrorPopup = ({ title, roomId }: IProps) => {
       handleRoomJoin(userInfo.nickname, true, roomId, userInfo.lobby.isAdmin)
       return;
     }
-    const nickname = localStorage.getItem("nickname");
+    const nickname = getCurrentNickname(roomId);
     const lobby = getCurrentLobby(roomId);
     socket.emit("joinRoom", {
       nickname,

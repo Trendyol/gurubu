@@ -3,6 +3,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { GroomingInfo } from "@/shared/interfaces";
+import { setCurrentNickname } from "@/shared/helpers/lobbyStorage";
 
 type Props = {
   closeModal: () => void;
@@ -28,6 +29,7 @@ export const ChangeNameForm = ({ closeModal }: Props) => {
       socket.emit("updateNickName", userInfo.lobby?.roomID, newNickname, userInfo.lobby?.credentials);
       setUserinfo({ ...userInfo, nickname: newNickname.trim() });
       localStorage.setItem("nickname", newNickname.trim());
+      setCurrentNickname(userInfo.lobby?.roomID, newNickname.trim());
       closeModal();
     }
   };
