@@ -1,6 +1,6 @@
 import Avatar from "@/components/common/avatar";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Modal } from "@/components/common/modal";
+import { useModal } from "@/contexts/ModalContext";
 import { ChangeNameForm } from "@/components/room/grooming-navbar/change-name";
 import { LeaveRoom } from "./leave-room";
 import { useAvatar } from "@/contexts/AvatarContext";
@@ -24,13 +24,12 @@ type Props = {
   roomId: string;
 };
 
-type ModalType = "changeName" | "leaveRoom" | "changeAvatar" | "Psync" | null;
+type ModalType = "changeName" | "leaveRoom" | "changeAvatar" | "Psync";
 
 const GroomingBoardProfile = ({ roomId }: Props) => {
   const [showProfileBar, setShowProfileBar] = useState(false);
-  const [selectedModal, setSelectedModal] = useState<ModalType>(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const { openModal, isOpen } = useModal();
   const {
     createAvatarSvg,
     updateAvatar,
@@ -44,15 +43,31 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
   const selectorRef = useRef<HTMLDivElement>(null);
   const isGroomingInfoLoaded = Boolean(Object.keys(groomingInfo).length);
 
-  const openModal = (modalType: ModalType) => {
-    setModalOpen(true);
-    setSelectedModal(modalType);
+  const openProfileModal = (modalType: ModalType) => {
+    openModal({
+      content: (closeModal) =>
+        modalType === "changeName" ? (
+          <ChangeNameForm closeModal={closeModal} />
+        ) : modalType === "changeAvatar" ? (
+          <ChangeAvatar closeModal={closeModal} />
+        ) : modalType === "Psync" ? (
+          <PsyncModalContent
+            updateProfile={updateProfile}
+            closeModal={closeModal}
+          />
+        ) : (
+          <LeaveRoom roomId={roomId} closeModal={closeModal} />
+        ),
+    });
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setShowProfileBar(false);
-  };
+  // Any close path (X, overlay, Escape, form action) also collapses the bar,
+  // same as the previous component-local closeModal did.
+  useEffect(() => {
+    if (!isOpen) {
+      setShowProfileBar(false);
+    }
+  }, [isOpen]);
 
   const handleClick = () => {
     setShowProfileBar(!showProfileBar);
@@ -267,7 +282,7 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
             {process.env.NEXT_PUBLIC_P_ENABLED === "true" && (
               <button
                 className="grooming-board-profile__p-sync-button"
-                onClick={() => openModal("Psync")}
+                onClick={() => openProfileModal("Psync")}
               >
                 <PLogo className="grooming-board-profile__p-logo" />
                 <p>Profile</p>
@@ -276,39 +291,25 @@ const GroomingBoardProfile = ({ roomId }: Props) => {
             )}
             <button
               className="grooming-board-profile__update-avatar-button"
-              onClick={() => openModal("changeAvatar")}
+              onClick={() => openProfileModal("changeAvatar")}
             >
               Avatar
             </button>
             <button
               className="grooming-board-profile__update-nickname-button"
-              onClick={() => openModal("changeName")}
+              onClick={() => openProfileModal("changeName")}
             >
               Change name
             </button>
             <button
               className="grooming-board-profile__leave-room-button"
-              onClick={() => openModal("leaveRoom")}
+              onClick={() => openProfileModal("leaveRoom")}
             >
               Leave Room
             </button>
           </div>
         )}
       </div>
-      <Modal isOpen={modalOpen} onClose={closeModal}>
-        {selectedModal === "changeName" ? (
-          <ChangeNameForm closeModal={closeModal} />
-        ) : selectedModal === "changeAvatar" ? (
-          <ChangeAvatar closeModal={closeModal} />
-        ) : selectedModal === "Psync" ? (
-          <PsyncModalContent
-            updateProfile={updateProfile}
-            closeModal={closeModal}
-          />
-        ) : (
-          <LeaveRoom roomId={roomId} closeModal={closeModal} />
-        )}
-      </Modal>
     </>
   );
 };

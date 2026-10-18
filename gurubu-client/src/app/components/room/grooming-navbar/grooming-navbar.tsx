@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { IconClipboardCheck, IconCopy, IconFileImport, IconExternalLink } from "@tabler/icons-react";
 import { ROOM_STATUS } from "@/room/[id]/enums";
-import { Modal } from "@/components/common/modal";
+import { useModal } from "@/contexts/ModalContext";
 import { ImportJiraIssuesForm } from "@/components/room/grooming-navbar/import-jira-issues";
 import { GroomingMode } from "@/shared/enums";
 import { AnnouncementTooltip } from "./announcement-tooltip";
@@ -19,22 +19,18 @@ interface Props {
 }
 
 const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
-  type ModalType = "importJiraIssues" | null;
-  const [selectedModal, setSelectedModal] = useState<ModalType>(null);
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const openModal = (modalType: ModalType) => {
-    setModalOpen(true);
-    setSelectedModal(modalType);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
+  const { openModal } = useModal();
 
   const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded, setIsAnnouncementBannerVisible } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
+
+  const openImportJiraIssuesModal = () => {
+    openModal({
+      content: (closeModal) => (
+        <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
+      ),
+    });
+  };
 
   const isVotingWindowVisible = groomingInfo?.issues && groomingInfo?.issues?.length > 0;
 
@@ -99,7 +95,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
                   <div>
                     <button
                       className="grooming-navbar__content-import-jira-issues"
-                      onClick={() => openModal("importJiraIssues")}
+                      onClick={openImportJiraIssuesModal}
                     >
                       <IconFileImport size={20} />
                       Import Jira Issues
@@ -125,9 +121,6 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
               <GroomingBoardProfile roomId={roomId} />
             </div>
           </div>
-          <Modal isOpen={modalOpen} onClose={closeModal}>
-            <ImportJiraIssuesForm roomId={roomId} closeModal={closeModal} />
-          </Modal>
         </div>
       </nav>
     </>
