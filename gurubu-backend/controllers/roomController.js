@@ -3,7 +3,9 @@ const {
   checkRoomExistance,
   handleJoinRoom,
 } = require("../utils/groomings");
-const { recordJoin } = require("../utils/usageMetricsCounter");
+const {
+  reportSidehubUsageIncrement,
+} = require("../services/usageMetricsReporter");
 
 exports.createRoom = async (req, res) => {
   const nickName = req.body.nickName;
@@ -17,7 +19,7 @@ exports.createRoom = async (req, res) => {
   }
 
   const result = generateNewRoom(nickName, groomingType);
-  recordJoin();
+  reportSidehubUsageIncrement();
 
   res.status(201).json(result);
 };
@@ -33,7 +35,7 @@ exports.joinRoom = async (req, res) => {
     return res.status(404).json({ message: "Room not found" });
   }
 
-  recordJoin();
+  reportSidehubUsageIncrement();
   res.status(200).json(result);
 };
 
