@@ -40,5 +40,39 @@
       border: none;
       cursor: pointer;
     }
+
+    & .modal-title {
+      margin: 0 0 12px;
+      padding-right: 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #101828;
+    }
+
+    & .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+
+      button {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+
+      .modal-actions__cancel {
+        background: #fff;
+        border-color: #d0d5dd;
+        color: #344054;
+      }
+
+      .modal-actions__confirm {
+        background: #101828;
+        color: #fff;
+      }
+    }
   }
 }
