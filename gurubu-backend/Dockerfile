@@ -85,4 +85,4 @@ ENV TYAI_EXECUTION_ID=$TYAI_EXECUTION_ID
 
 EXPOSE 5000
 
-CMD [ "yarn", "start" ]
+ENTRYPOINT [ "node", "server.js" ]

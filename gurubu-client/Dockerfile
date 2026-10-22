@@ -59,4 +59,4 @@ ENV NEXT_PUBLIC_P_LINK=$P_LINK
 
 EXPOSE 3000
 
-CMD [ "yarn", "start" ]
+ENTRYPOINT [ "node", "node_modules/next/dist/bin/next", "start" ]
