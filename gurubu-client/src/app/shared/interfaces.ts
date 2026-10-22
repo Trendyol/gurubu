@@ -114,6 +114,7 @@ export interface UserInfo {
     createdAt: string;
     expiredAt: string;
     isAdmin: boolean;
+    nickname?: string;
   };
 }
 

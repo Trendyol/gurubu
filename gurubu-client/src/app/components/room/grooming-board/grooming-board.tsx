@@ -12,6 +12,7 @@ import GroomingBoardLiveChart from "./grooming-board-live-chart";
 import {
   checkUserJoinedLobbyBefore,
   getCurrentLobby,
+  getCurrentNickname,
 } from "@/shared/helpers/lobbyStorage";
 import { useEffect } from "react";
 import { useRouter, notFound } from "next/navigation";
@@ -97,7 +98,7 @@ const GroomingBoard = ({
       return;
     }
 
-    const nickname = localStorage.getItem("nickname");
+    const nickname = getCurrentNickname(roomId);
     const lobby = getCurrentLobby(roomId);
     if(!lobby){
       setRoomStatus(ROOM_STATUS.NOT_FOUND);
