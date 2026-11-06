@@ -1,11 +1,13 @@
 import debounce from "lodash.debounce";
 import { useState, useEffect, useCallback } from "react";
 import { JiraService } from "@/services/jiraService";
+import { agentEstimationService } from "@/services/agentEstimationService";
+import { isAgentEstimationActive } from "@/shared/featureFlags";
 import { useSocket } from "@/contexts/SocketContext";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { useLoader } from "@/contexts/LoaderContext";
 import { useToast } from "@/contexts/ToastContext";
-import { IconHelp } from "@tabler/icons-react";
+import { IconSparkles } from "@tabler/icons-react";
 
 type Props = {
   roomId: string;
@@ -22,16 +24,19 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
   const [boards, setBoards] = useState<{ id: string; name: string }[]>([]);
   const [selectedSprint, setSelectedSprint] = useState<string>("");
   const [sprints, setSprints] = useState<{ id: string; name: string }[]>([]);
-  const { currentJiraIssueIndex } = useGroomingRoom();
+  const {
+    currentJiraIssueIndex,
+    userInfo,
+    setAgentGuideStatus,
+  } = useGroomingRoom();
   const { showFailureToast, showSuccessToast } = useToast();
+  const agentEstimationActive = isAgentEstimationActive(userInfo?.nickname);
 
   const { setShowLoader } = useLoader();
 
   const jiraService = new JiraService(process.env.NEXT_PUBLIC_API_URL || "");
   const jiraIssueImporterHelp =
     process.env.NEXT_PUBLIC_JIRA_ISSUE_IMPORTER_HELP || "";
-
-  const { userInfo } = useGroomingRoom();
 
   useEffect(() => {
     const retrieveFromLocalStorage = (
@@ -92,6 +97,12 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
         "top-center"
       );
       setBoards(response.data);
+
+      if (agentEstimationActive && searchQuery.trim()) {
+        const projectKey = searchQuery.trim().toUpperCase();
+        const status = await agentEstimationService.prepareSkill(projectKey);
+        setAgentGuideStatus(status);
+      }
     } else {
       showFailureToast(
         "Search Board Error",
@@ -156,7 +167,10 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
       socket.emit(
         "setGurubuAI",
         roomId,
-        { selectedBoardName },
+        {
+          selectedBoardName,
+          projectName: (boardSearch.trim() || selectedBoardName).toUpperCase(),
+        },
         userInfo.lobby.credentials
       );
       closeModal();
@@ -231,6 +245,25 @@ export const ImportJiraIssuesForm = ({ roomId, closeModal }: Props) => {
           ))}
         </select>
       </div>
+
+      {agentEstimationActive && (
+        <div className="import-jira-issues__ai-info">
+          <div className="import-jira-issues__ai-info-header">
+            <IconSparkles size={18} className="import-jira-issues__ai-info-icon" />
+            <span className="import-jira-issues__ai-info-title">
+              AI estimation for this project
+            </span>
+            <span className="import-jira-issues__ai-info-badge">
+              Ready on first use
+            </span>
+          </div>
+          <p className="import-jira-issues__ai-info-text">
+            If an AI skill already exists for the selected project, it will be
+            reused. Otherwise, GuruBu will create one automatically the first
+            time this project uses AI estimation.
+          </p>
+        </div>
+      )}
 
       <div className="import-jira-issues__row">
         <button

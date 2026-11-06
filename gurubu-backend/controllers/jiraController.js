@@ -1,5 +1,6 @@
 const axios = require("axios");
 const jiraService = require("../services/jiraService");
+const { buildJiraRequestOptions } = require("../utils/jiraAuth");
 
 const resolveJiraApiUrl = (endpoint) => {
   const jiraBaseUrl = (process.env.JIRA_BASE_URL || "").replace(/\/$/, "");
@@ -73,12 +74,7 @@ exports.fetchGet = async (req, res) => {
     return res.status(403).json({ message: "Unsupported endpoint" });
   }
 
-  const options = {
-    auth: {
-      username: process.env.JIRA_USERNAME || "",
-      password: process.env.JIRA_API_TOKEN || "",
-    },
-  };
+  const options = buildJiraRequestOptions();
   try {
     const response = await axios.get(apiUrl, options);
     if (response.status == 401) {
@@ -133,15 +129,11 @@ exports.fetchPut = async (req, res) => {
     return res.status(403).json({ message: "Unsupported endpoint" });
   }
 
-  const options = {
+  const options = buildJiraRequestOptions({
     headers: {
       "Content-Type": "application/json",
     },
-    auth: {
-      username: process.env.JIRA_USERNAME || "",
-      password: process.env.JIRA_API_TOKEN || "",
-    },
-  };
+  });
   try {
     const response = await axios.put(apiUrl, req.body, options);
     if (response.status == 401) {

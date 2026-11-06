@@ -1,7 +1,7 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
+const { buildJiraRequestOptions } = require("../utils/jiraAuth");
 
-// Ensure dotenv is configured
 dotenv.config();
 
 class ValidationError extends Error {
@@ -30,14 +30,13 @@ const validateStoryPoints = (storyPoints) => {
 
 class JiraService {
   baseUrl;
-  auth;
 
   constructor() {
     this.baseUrl = process.env.JIRA_BASE_URL || "";
-    this.auth = {
-      username: process.env.JIRA_USERNAME || "",
-      password: process.env.JIRA_API_TOKEN || "",
-    };
+  }
+
+  requestOptions(extra = {}) {
+    return buildJiraRequestOptions(extra);
   }
 
   mapIssueResponse(response) {
@@ -188,10 +187,7 @@ class JiraService {
           params: {
             state: "future",
           },
-          auth: this.auth,
-          headers: {
-            Accept: "application/json",
-          },
+          ...this.requestOptions(),
         }
       );
       return response.data;
@@ -213,10 +209,7 @@ class JiraService {
       const response = await axios.get(
         `${this.baseUrl}/rest/agile/1.0/sprint/${sprintId}/issue`,
         {
-          auth: this.auth,
-          headers: {
-            Accept: "application/json",
-          },
+          ...this.requestOptions(),
         }
       );
       return this.mapIssueResponse(response.data);
@@ -263,10 +256,7 @@ class JiraService {
         params: {
           name,
         },
-        auth: this.auth,
-        headers: {
-          Accept: "application/json",
-        },
+        ...this.requestOptions(),
       });
 
       const board = response.data.values.find((board) => board.name === name);
@@ -298,10 +288,7 @@ class JiraService {
           projectKeyOrId: projectKey,
           type: "scrum",
         },
-        auth: this.auth,
-        headers: {
-          Accept: "application/json",
-        },
+        ...this.requestOptions(),
       });
 
       return response.data;
@@ -324,10 +311,7 @@ class JiraService {
             fieldName: "labels",
             fieldValue: trimmed,
           },
-          auth: this.auth,
-          headers: {
-            Accept: "application/json",
-          },
+          ...this.requestOptions(),
         }
       );
 
@@ -377,10 +361,7 @@ class JiraService {
             "assignee",
           ].join(","),
         },
-        auth: this.auth,
-        headers: {
-          Accept: "application/json",
-        },
+        ...this.requestOptions(),
       });
 
       return response.data;

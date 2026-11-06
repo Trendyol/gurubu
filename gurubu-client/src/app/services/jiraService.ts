@@ -10,8 +10,8 @@ export class JiraService {
 
   private getJiraUrl(): string {
     const jiraUrl =
-      localStorage.getItem("jiraUrl") ||
-      JSON.stringify(process.env.NEXT_PUBLIC_JIRA_URL);
+      JSON.stringify(process.env.NEXT_PUBLIC_JIRA_URL) ||
+      localStorage.getItem("jiraUrl");
 
     if (!jiraUrl) {
       throw new Error("Jira URL not found in local storage.");
@@ -29,7 +29,7 @@ export class JiraService {
     ) {
       parsedJiraUrl = `https://${parsedJiraUrl}`;
     }
-    return parsedJiraUrl;
+    return parsedJiraUrl.replace(/\/+$/, "");
   }
 
   async getBoardId(name: string): Promise<ServiceResponse<string>> {

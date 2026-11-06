@@ -3,6 +3,7 @@ import GroomingBoardParticipants from "./grooming-board-participants";
 import GroomingBoardResultV2 from "./grooming-board-result-v2";
 import GroomingBoardActions from "./grooming-board-actions";
 import ConsensusBanner from "./consensus-banner";
+import AgentEstimateCard from "./agent-estimate/agent-estimate-card";
 import classNames from "classnames";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { MetricToggleTooltip } from "./metricToggleTooltip";
@@ -56,6 +57,7 @@ const GroomingBoardLogs = ({ roomId }: Props) => {
                 roomId={roomId}
               />
             )}
+          <AgentEstimateCard roomId={roomId} />
         </>
       )}
     </section>

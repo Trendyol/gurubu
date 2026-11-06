@@ -1,0 +1,131 @@
+.agent-estimate-card {
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: $white;
+  border: 1px solid $gray-20;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__sparkle {
+    color: $primary-600;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    margin: 0;
+    color: $gray-900;
+    font-size: 15px;
+    font-weight: $semibold;
+    line-height: 20px;
+  }
+
+  &__body {
+    padding: 16px;
+    border-radius: 10px;
+    background: $gray-50-v2;
+    border: 1px solid $gray-20;
+  }
+
+  &__label {
+    display: block;
+    color: $gray-500;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    margin-bottom: 4px;
+  }
+
+  &__value {
+    color: $primary-600;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 36px;
+    letter-spacing: -0.02em;
+  }
+
+  &__divider {
+    height: 1px;
+    background: $gray-20;
+    margin: 14px 0;
+  }
+
+  &__reasoning {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__reasoning-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  &__reasoning-icon {
+    color: $primary-600;
+    display: inline-flex;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  &__reasoning-text {
+    color: $gray-700;
+    font-size: 13px;
+    line-height: 18px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  &__preparing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 56px;
+    padding: 4px 0;
+  }
+
+  &__preparing-spinner {
+    color: $primary-600;
+    flex-shrink: 0;
+    animation: agent-estimate-spin 0.8s linear infinite;
+  }
+
+  &__preparing-text {
+    color: $gray-600;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+
+  &__message {
+    margin: 0;
+    color: $gray-600;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: center;
+    padding: 8px 4px;
+
+    &--error {
+      color: $gray-700;
+    }
+  }
+}
+
+@keyframes agent-estimate-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

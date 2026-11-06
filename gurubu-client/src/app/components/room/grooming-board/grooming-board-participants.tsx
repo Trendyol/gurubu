@@ -4,17 +4,19 @@ import GurubuAIParticipant from "./gurubu-ai/gurubu-ai-participant";
 import { useGroomingRoom } from "@/contexts/GroomingRoomContext";
 import { AnimatePresence } from "framer-motion";
 import { GroomingMode } from "@/shared/enums";
+import { isAgentEstimationActive } from "@/shared/featureFlags";
 import classNames from "classnames";
 interface Props {
   roomId: string;
 }
 
 const GroomingBoardParticipants = ({roomId}: Props) => {
-  const { groomingInfo } = useGroomingRoom();
+  const { groomingInfo, userInfo } = useGroomingRoom();
   const groomingInfoParticipants = Object.keys(groomingInfo.participants || {});
   const [sortedParticipants, setSortedParticipants] = useState<string[]>([]);
 
   const isStoryPointMode = groomingInfo?.mode === GroomingMode.PlanningPoker;
+  const showLegacyGurubuAI = !isAgentEstimationActive(userInfo?.nickname);
 
   useEffect(() => {
     if (groomingInfo.isResultShown) {
@@ -39,7 +41,7 @@ const GroomingBoardParticipants = ({roomId}: Props) => {
     <>
       <ul className={classNames("grooming-board-participants", { "story-point-mode": isStoryPointMode })}>
         <AnimatePresence>
-          <GurubuAIParticipant roomId={roomId} />
+          {showLegacyGurubuAI && <GurubuAIParticipant roomId={roomId} />}
           {sortedParticipants.map((participantKey) => (
             <GroomingBoardParticipant
               key={participantKey}
