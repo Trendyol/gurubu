@@ -226,8 +226,8 @@ const getGrooming = (roomID) => {
 
 const calculateScore = (mode, participants, roomID) => {
   if (mode === "0") {
-    let totalVoter = 0;
-    let totalStoryPoint = 0;
+    // Collect all story point votes
+    const storyPointVotes = [];
     Object.keys(participants).forEach((participantKey) => {
       if (
         participants[participantKey].votes &&
@@ -235,13 +235,47 @@ const calculateScore = (mode, participants, roomID) => {
       ) {
         const storyPoint = Number(participants[participantKey].votes.storyPoint);
         if (storyPoint) {
-          totalVoter++;
-          totalStoryPoint += storyPoint;
+          storyPointVotes.push(storyPoint);
         }
       }
     });
 
-    return findClosestFibonacci(totalStoryPoint / totalVoter).toFixed(2);
+    // If no votes, return 0
+    if (storyPointVotes.length === 0) {
+      return "0.00";
+    }
+
+    // Calculate mode (most frequent value)
+    const frequencyMap = {};
+    storyPointVotes.forEach(vote => {
+      frequencyMap[vote] = (frequencyMap[vote] || 0) + 1;
+    });
+
+    // Find the value(s) with highest frequency
+    let maxFrequency = 0;
+    let modeValues = [];
+    
+    for (const [value, frequency] of Object.entries(frequencyMap)) {
+      if (frequency > maxFrequency) {
+        maxFrequency = frequency;
+        modeValues = [Number(value)];
+      } else if (frequency === maxFrequency) {
+        modeValues.push(Number(value));
+      }
+    }
+
+    // If multiple modes exist, take the one closest to the arithmetic mean
+    let result;
+    if (modeValues.length === 1) {
+      result = modeValues[0];
+    } else {
+      const arithmeticMean = storyPointVotes.reduce((sum, vote) => sum + vote, 0) / storyPointVotes.length;
+      result = modeValues.reduce((closest, current) => {
+        return Math.abs(current - arithmeticMean) < Math.abs(closest - arithmeticMean) ? current : closest;
+      });
+    }
+
+    return findClosestFibonacci(result).toFixed(2);
   }
 
   if (mode === "1") {
