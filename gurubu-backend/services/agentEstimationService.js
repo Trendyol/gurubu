@@ -125,7 +125,8 @@ class AgentEstimationService {
       };
     } catch (error) {
       console.error(
-        `[agent-estimation] LLM estimate failed issueKey=${normalizedIssueKey}:`,
+        "[agent-estimation] LLM estimate failed",
+        normalizedIssueKey,
         error.message
       );
       return { status: "failed" };

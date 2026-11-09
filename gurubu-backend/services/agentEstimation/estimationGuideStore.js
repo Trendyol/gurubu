@@ -73,7 +73,9 @@ class EstimationGuideStore {
 
       if (response.status < 200 || response.status >= 300) {
         console.error(
-          `[agent-estimation] GitLab guide fetch failed status=${response.status} projectKey=${projectKey}`
+          "[agent-estimation] GitLab guide fetch failed",
+          response.status,
+          projectKey
         );
         return { status: "unavailable", guide: null };
       }
@@ -83,7 +85,8 @@ class EstimationGuideStore {
       return { status: "ready", guide };
     } catch (error) {
       console.error(
-        `[agent-estimation] GitLab guide fetch error projectKey=${projectKey}:`,
+        "[agent-estimation] GitLab guide fetch error",
+        projectKey,
         error.message
       );
       return { status: "unavailable", guide: null };
