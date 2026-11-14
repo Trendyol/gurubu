@@ -16,11 +16,16 @@ function resolveNickname(nickname?: string): string {
   return (window.localStorage.getItem("nickname") || "").trim();
 }
 
-export function isAgentEstimationActive(nickname?: string): boolean {
-  const envEnabled =
+export function isAgentEstimationEnvEnabled(): boolean {
+  return (
     String(process.env.NEXT_PUBLIC_AGENT_ESTIMATION_ACTIVE || "").toLowerCase() ===
-    "true";
-  if (!envEnabled) {
+    "true"
+  );
+}
+
+/** Env flag + allowlist nickname; gates agent UI and grooming board layout. */
+export function isAgentEstimationActive(nickname?: string): boolean {
+  if (!isAgentEstimationEnvEnabled()) {
     return false;
   }
 

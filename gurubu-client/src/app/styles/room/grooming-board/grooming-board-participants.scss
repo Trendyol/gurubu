@@ -64,23 +64,13 @@
     }
   }
   &.story-point-mode{
-    li {
-      gap: 8px;
-    }
-    li label {
-      max-width: none;
-      flex: 1 1 auto;
-      min-width: 0;
+    li{
+      label{
+        max-width: 140px;
+      }
     }
     .grooming-board-participants__nickname-container{
-      min-width: 0;
-      flex: 1 1 auto;
-      overflow: hidden;
-    }
-    .grooming-board-participants__point-cards-container {
-      width: auto;
-      flex: 0 0 auto;
-      margin-left: auto;
+      min-width: auto;
     }
   }
   &__nickname-container {
@@ -89,17 +79,6 @@
     padding: 10px 0 10px 14px;
     align-items: center;
     gap: 0 $space-medium;
-
-    > div {
-      flex-shrink: 0;
-    }
-
-    .avatar-container,
-    .admin-avatar,
-    .disconnected-avatar,
-    .profile-picture {
-      flex-shrink: 0;
-    }
     .icon-star-filled {
       min-width: 16px;
       min-height: 16px;
@@ -238,5 +217,41 @@
   }
   50% {
     transform: translateY(-4px);
+  }
+}
+
+.grooming-board.agent-estimation-active {
+  .grooming-board-participants.story-point-mode {
+    li {
+      gap: 8px;
+    }
+    li label {
+      max-width: none;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .grooming-board-participants__nickname-container {
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+    .grooming-board-participants__point-cards-container {
+      width: auto;
+      flex: 0 0 auto;
+      margin-left: auto;
+    }
+  }
+
+  .grooming-board-participants__nickname-container {
+    > div {
+      flex-shrink: 0;
+    }
+
+    .avatar-container,
+    .admin-avatar,
+    .disconnected-avatar,
+    .profile-picture {
+      flex-shrink: 0;
+    }
   }
 }

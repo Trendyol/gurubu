@@ -23,6 +23,7 @@ import { EncounteredError, GroomingInfo } from "@/shared/interfaces";
 import { ENCOUTERED_ERROR_TYPE, GroomingMode } from "@/shared/enums";
 import { useLoader } from "@/contexts/LoaderContext";
 import { PreviousVotedTasks } from "./previous-voted-tasks/previous-voted-tasks";
+import { isAgentEstimationActive } from "@/shared/featureFlags";
 
 interface IProps {
   roomId: string;
@@ -155,7 +156,13 @@ const GroomingBoard = ({
   }
 
   return (
-    <div className={classNames("grooming-board", {jiraSidebarExpanded: jiraSidebarExpanded, announcementBannerActive: isAnnouncementBannerVisible})}>
+    <div
+      className={classNames("grooming-board", {
+        jiraSidebarExpanded: jiraSidebarExpanded,
+        announcementBannerActive: isAnnouncementBannerVisible,
+        "agent-estimation-active": isAgentEstimationActive(userInfo?.nickname),
+      })}
+    >
       {showLoader && <Loading />}
       <section
         className={classNames("grooming-board__playground", {
