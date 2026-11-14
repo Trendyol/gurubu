@@ -57,7 +57,7 @@ const groomingMode = {
       name: "storyPoint",
       displayName: "Story Point",
       weight: 0,
-      points: ["1", "2", "3", "5", "8", "13", "21", "?"],
+      points: ["0.5", "1", "2", "3", "5", "8", "13", "21", "?"],
       text: "Story point of task",
     },
   ],

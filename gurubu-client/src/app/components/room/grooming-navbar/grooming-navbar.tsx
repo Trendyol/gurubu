@@ -36,7 +36,7 @@ const GroomingNavbar = ({ showNickNameForm, roomId }: Props) => {
   const { groomingInfo, roomStatus, userInfo, jiraSidebarExpanded, setIsAnnouncementBannerVisible } = useGroomingRoom();
   const [isGroomingLinkCopied, setIsGroomingLinkCopied] = useState(false);
 
-  const isVotingWindowVisible = groomingInfo?.issues && groomingInfo?.issues?.length > 0;
+  const isVotingWindowVisible = (groomingInfo?.metrics?.length ?? 0) > 0;
 
   if (roomStatus !== ROOM_STATUS.FOUND || showNickNameForm) {
     return null;
