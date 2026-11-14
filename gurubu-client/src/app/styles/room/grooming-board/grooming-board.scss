@@ -22,8 +22,10 @@
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+    min-height: 0;
     &.story-point-mode {
       justify-content: flex-start;
+      overflow-y: auto;
       @media (max-width: 850px) {
         width: 100%;
       }
@@ -31,9 +33,24 @@
   }
   &__logs-chart{
     display: flex;
+    align-items: flex-start;
     gap: 16px;
-    overflow-y: auto;
+    overflow: visible;
     overflow-anchor: none;
+    flex: 0 0 auto;
+    width: 100%;
+
+    .grooming-board__logs-section.story-point-mode {
+      max-height: none;
+      height: auto;
+      overflow: visible;
+      flex-shrink: 0;
+    }
+
+    .grooming-board-live-chart {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
   }
   &__toggle-button-wrapper {
     width: 100%;
@@ -147,15 +164,19 @@
     border: 1px solid $gray-20;
     padding: 0 12px 12px 12px;
     max-height: max-content;
-    width: 300px;
+    width: 390px;
+    min-height: 0;
     &.story-point-mode{
+      max-height: 100%;
+      overflow-x: visible;
+      overflow-y: auto;
       .grooming-board__metrics{
         justify-content: space-between;
         padding: 12px 14px;
       }
     }
     &.score-grooming{
-      min-width: 300px;
+      min-width: 390px;
       width: auto;
     }
   }

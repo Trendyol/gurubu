@@ -65,6 +65,7 @@ export interface AIWorkflowResponse {
 
 export interface GurubuAI {
   selectedBoardName: string;
+  projectName?: string;
   aiMessage: string;
   selectedIssueIndex: number;
   threadId: string | null;

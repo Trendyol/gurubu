@@ -4,6 +4,7 @@ import React, { ReactNode, createContext, useContext, useEffect, useMemo, useSta
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import { getCurrentLobby } from "@/shared/helpers/lobbyStorage";
 import { EncounteredError, GroomingInfo, UserInfo, UserVote } from "@/shared/interfaces";
+import { AgentGuideStatus } from "@/services/agentEstimationService";
 
 interface GroomingContextValues {
   roomStatus: keyof typeof ROOM_STATUS;
@@ -26,6 +27,8 @@ interface GroomingContextValues {
   setJiraSidebarExpanded: (value: boolean) => void;
   isAnnouncementBannerVisible: boolean;
   setIsAnnouncementBannerVisible: (value: boolean) => void;
+  agentGuideStatus: AgentGuideStatus;
+  setAgentGuideStatus: (value: AgentGuideStatus) => void;
   pProfileStorage: {
     isSelected: boolean;
     isLoginClicked: boolean;
@@ -51,6 +54,7 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
   const [currentJiraIssueIndex, setCurrentJiraIssueIndex] = useState(0);
   const [jiraSidebarExpanded, setJiraSidebarExpanded] = useState(false);
   const [isAnnouncementBannerVisible, setIsAnnouncementBannerVisible] = useState(true);
+  const [agentGuideStatus, setAgentGuideStatus] = useState<AgentGuideStatus>("unknown");
   const [pProfileStorage, setPProfileStorage] = useState({
     isSelected: false,
     isLoginClicked: false,
@@ -104,6 +108,8 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       setJiraSidebarExpanded,
       isAnnouncementBannerVisible,
       setIsAnnouncementBannerVisible,
+      agentGuideStatus,
+      setAgentGuideStatus,
       pProfileStorage,
       setPProfileStorage
     }),
@@ -128,6 +134,8 @@ export function GroomingRoomProvider({ children, roomId }: GroomingRoomProviderP
       setJiraSidebarExpanded,
       isAnnouncementBannerVisible,
       setIsAnnouncementBannerVisible,
+      agentGuideStatus,
+      setAgentGuideStatus,
       pProfileStorage,
       setPProfileStorage
     ]
