@@ -43,5 +43,30 @@
         }
       }
     }
+
+    &__link--sidehub {
+      background: linear-gradient(90deg, #1a1528, #4a2f7a);
+      border-color: rgba(233, 215, 254, 0.35);
+      color: $white;
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:hover {
+        color: $white;
+        background: linear-gradient(90deg, #221c33, #5a3a96);
+        border-color: rgba(233, 215, 254, 0.5);
+        box-shadow: 0 2px 10px rgba(127, 86, 217, 0.35);
+
+        svg {
+          transform: none;
+        }
+
+        p {
+          transform: none;
+        }
+      }
+    }
   }
 }

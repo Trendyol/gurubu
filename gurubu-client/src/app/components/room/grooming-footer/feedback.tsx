@@ -1,19 +1,19 @@
 import React from "react";
-import { IconMessagePlus } from "@tabler/icons-react";
+import { IconExternalLink } from "@tabler/icons-react";
+import { SIDEHUB_GURUBU_URL } from "@/shared/sidehub";
 
 const Feedback = () => {
-  const feedbackSheetLink = process.env.NEXT_PUBLIC_FEEDBACK_SHEET_LINK;
-
-  if(!feedbackSheetLink){
-    return null;
-  }
-
   return (
     <div className="feedback-container">
       <div className="feedback-content">
-        <a href={feedbackSheetLink} className="feedback-content__link" target="_blank">
-          <p>Give Feedback</p>
-          <IconMessagePlus width={16} height={16} />
+        <a
+          href={SIDEHUB_GURUBU_URL}
+          className="feedback-content__link feedback-content__link--sidehub"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <p>Give Feedback on SideHub</p>
+          <IconExternalLink width={16} height={16} />
         </a>
       </div>
     </div>
