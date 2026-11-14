@@ -2,18 +2,18 @@
 
 import { IconBell, IconX } from "@tabler/icons-react";
 import { useState, useEffect, useRef } from "react";
+import { SIDEHUB_GURUBU_URL } from "@/shared/sidehub";
 
 export const AnnouncementTooltip = () => {
   const [showTooltip, setShowTooltip] = useState(
-    localStorage.getItem("hasSeenAnnouncementV2") === "true" ? false : true
+    localStorage.getItem("hasSeenSideHubPromo") === "true" ? false : true
   );
   const [hasUnread, setHasUnread] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
-  const whatsNewText = "Profile Pictures Beta!";
 
   useEffect(() => {
-    const hasSeenAnnouncement = localStorage.getItem("hasSeenAnnouncementV2");
-    setHasUnread(!hasSeenAnnouncement);
+    const hasSeen = localStorage.getItem("hasSeenSideHubPromo");
+    setHasUnread(!hasSeen);
   }, []);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const AnnouncementTooltip = () => {
       ) {
         setShowTooltip(false);
         setHasUnread(false);
-        localStorage.setItem("hasSeenAnnouncementV2", "true");
+        localStorage.setItem("hasSeenSideHubPromo", "true");
       }
     };
 
@@ -34,22 +34,22 @@ export const AnnouncementTooltip = () => {
 
   const handleClick = () => {
     setShowTooltip(!showTooltip);
-    if (!localStorage.getItem("hasSeenAnnouncementV2")) {
-      localStorage.setItem("hasSeenAnnouncementV2", "true");
+    if (!localStorage.getItem("hasSeenSideHubPromo")) {
+      localStorage.setItem("hasSeenSideHubPromo", "true");
       setHasUnread(false);
     }
   };
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
-    localStorage.setItem("hasSeenAnnouncementV2", "true");
+    localStorage.setItem("hasSeenSideHubPromo", "true");
     setShowTooltip(false);
     setHasUnread(false);
   };
 
-  useEffect(() => {
-    localStorage.removeItem("hasSeenAnnouncement");
-  }, []);
+  const openSideHub = () => {
+    window.open(SIDEHUB_GURUBU_URL, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="announcement-tooltip" ref={selectorRef}>
@@ -58,23 +58,26 @@ export const AnnouncementTooltip = () => {
         {hasUnread && <span className="announcement-tooltip__notification" />}
       </div>
       {showTooltip && (
-        <div className="announcement-tooltip__content">
+        <div className="announcement-tooltip__content announcement-tooltip__content--sidehub">
           <div className="announcement-tooltip__header">
-            <h3>{whatsNewText}</h3>
-            <button onClick={handleClose}>
+            <h3>GuruBu turns 3 🎂</h3>
+            <button type="button" onClick={handleClose}>
               <IconX size={16} />
             </button>
           </div>
           <div className="announcement-tooltip__body">
-            <p>Welcome to GuruBu! Here are the latest updates:</p>
-            <ul>
-              <li>Profile Pictures Added (Beta)</li>
-              <li>{process.env.NEXT_PUBLIC_P_ANNOUNCEMENT_TEXT ?? ""}</li>
-            </ul>
             <p>
-              This feature is still in beta and we would love to hear your
-              feedback!
+              Thanks for celebrating GuruBu&apos;s 3rd birthday with us! Dropping a
+              quick like or comment on SideHub really helps us out—and if you have
+              any feedback to help us improve, we&apos;re all ears!
             </p>
+            <button
+              type="button"
+              className="announcement-tooltip__link-btn"
+              onClick={openSideHub}
+            >
+              Celebrate on SideHub
+            </button>
           </div>
         </div>
       )}
