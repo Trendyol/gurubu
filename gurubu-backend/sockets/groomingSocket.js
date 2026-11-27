@@ -1,4 +1,5 @@
 const { updateUserSocket, userLeave, getCurrentUser } = require("../utils/users");
+const { toPublicGrooming } = require("../utils/votePrivacy");
 const {
   getGrooming,
   leaveUserFromGrooming,
@@ -27,7 +28,15 @@ module.exports = (io) => {
       socket.join(roomID);
 
       updateUserSocket(lobby?.credentials, socket.id);
-      io.to(roomID).emit("initialize", getGrooming(roomID));
+
+      const joiner = getCurrentUser(lobby?.credentials, socket);
+      // The room only ever sees masked votes, while the joiner gets their own
+      // vote back so a refresh does not lose it.
+      io.to(roomID).emit("initialize", toPublicGrooming(getGrooming(roomID)));
+      socket.emit(
+        "initialize",
+        toPublicGrooming(getGrooming(roomID), joiner?.userID)
+      );
     });
 
     socket.on("userVote", (data, roomID, credentials) => {
@@ -37,7 +46,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("voteSent", result);
+      io.to(roomID).emit("voteSent", toPublicGrooming(result));
     });
 
     socket.on("showResults", (roomID, credentials) => {
@@ -67,7 +76,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("updateNickName", result);
+      io.to(roomID).emit("updateNickName", toPublicGrooming(result));
     });
 
     socket.on("setIssues", (roomID, data, credentials) => {
@@ -77,7 +86,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("setIssues", result);
+      io.to(roomID).emit("setIssues", toPublicGrooming(result));
     });
 
     socket.on("setGurubuAI", (roomID, data, credentials) => {
@@ -87,7 +96,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("setGurubuAI", result);
+      io.to(roomID).emit("setGurubuAI", toPublicGrooming(result));
     });
 
     socket.on("updateTimer", (roomID, data, credentials) => {
@@ -97,7 +106,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("updateTimer", result);
+      io.to(roomID).emit("updateTimer", toPublicGrooming(result));
     });
 
     socket.on("updateAvatar", (roomID, data, credentials) => {
@@ -107,7 +116,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("updateAvatar", result);
+      io.to(roomID).emit("updateAvatar", toPublicGrooming(result));
     });
 
     socket.on("updateProfilePicture", (roomID, data, credentials) => {
@@ -117,7 +126,7 @@ module.exports = (io) => {
         io.to(socket.id).emit("encounteredError", result);
         return;
       }
-      io.to(roomID).emit("updateProfilePicture", result);
+      io.to(roomID).emit("updateProfilePicture", toPublicGrooming(result));
     });
 
     socket.on("disconnect", (reason) => {
@@ -125,7 +134,7 @@ module.exports = (io) => {
       const isUserPermanentlyLeave = userLeave(socket.id);
 
       if (isUserPermanentlyLeave) {
-        io.to(roomID).emit("userDisconnected", getGrooming(roomID));
+        io.to(roomID).emit("userDisconnected", toPublicGrooming(getGrooming(roomID)));
         console.log("A user disconnected, reason:", reason);
       }
     });
@@ -147,7 +156,7 @@ module.exports = (io) => {
 
       removeUserFromOngoingGrooming(roomID, userID);
       if (isUserPermanentlyLeave) {
-        io.to(roomID).emit("removeUser", getGrooming(roomID), userID);
+        io.to(roomID).emit("removeUser", toPublicGrooming(getGrooming(roomID)), userID);
       }
     });
   });
