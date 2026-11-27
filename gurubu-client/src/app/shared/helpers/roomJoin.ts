@@ -31,10 +31,12 @@ export const handleRoomJoin = async (
       },
     };
     lobby = lobbyContent;
-    localStorage.setItem("lobby", JSON.stringify(lobbyContent));
   }
 
-  lobby.state.rooms[response.roomID] = response;
+  lobby.state.rooms[response.roomID] = {
+    ...response,
+    nickname: trimmedNickName,
+  };
   localStorage.setItem("lobby", JSON.stringify(lobby));
 
   const url = `/room/${response.roomID}${isFastJoin ? '?isFastJoin=true' : ''}`;

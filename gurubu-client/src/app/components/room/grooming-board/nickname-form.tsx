@@ -6,22 +6,27 @@ import Image from "next/image";
 import classNames from "classnames";
 import { GroomingType } from "@/shared/enums";
 import { handleRoomJoin } from "@/shared/helpers/roomJoin";
+import { getCurrentNickname } from "@/shared/helpers/lobbyStorage";
 
 interface IProps {
   roomId?: string;
 }
 
-const defaultNickname = () => {
-  return (
-    (typeof window !== "undefined" &&
-      window.localStorage.getItem("nickname")) ||
-    ""
-  );
+const defaultNickname = (roomId?: string) => {
+  if (typeof window === "undefined") {
+    return "";
+  }
+  // The create-room page has no room yet, so it keeps using the global
+  // "last used" key; joining a specific room prefills from that room.
+  if (roomId) {
+    return getCurrentNickname(roomId);
+  }
+  return window.localStorage.getItem("nickname") || "";
 };
 
 // If roomId is provided, then the user is joining a room.
 const NicknameForm = ({ roomId }: IProps) => {
-  const [nickname, setNickname] = useState(defaultNickname);
+  const [nickname, setNickname] = useState(defaultNickname(roomId));
   const [groomingType, setGroomingType] = useState<GroomingType>(
     GroomingType.PlanningPoker
   );
@@ -74,7 +79,10 @@ const NicknameForm = ({ roomId }: IProps) => {
       localStorage.setItem("lobby", JSON.stringify(lobbyContent));
     }
 
-    lobby.state.rooms[response.roomID] = response;
+    lobby.state.rooms[response.roomID] = {
+      ...response,
+      nickname: trimmedNickName,
+    };
     localStorage.setItem("lobby", JSON.stringify(lobby));
 
     window.location.assign(`/room/${response.roomID}`);
@@ -86,11 +94,12 @@ const NicknameForm = ({ roomId }: IProps) => {
   };
 
   const handleFastJoin = async () => {
-    if (!roomId || !defaultNickname()) {
+    const roomNickname = roomId && getCurrentNickname(roomId);
+    if (!roomNickname) {
       return;
     }
     setLoading(true);
-    await handleRoomJoin(nickname, true, roomId); 
+    await handleRoomJoin(roomNickname, true, roomId);
   };
 
   const connectionButtonText = () => {
@@ -123,7 +132,7 @@ const NicknameForm = ({ roomId }: IProps) => {
     executeFastJoin();
   }, []);
 
-  if (defaultNickname() && roomId) {
+  if (defaultNickname(roomId) && roomId) {
     return null;
   }
 

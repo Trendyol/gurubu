@@ -13,7 +13,7 @@ import VotingStick from "@/components/room/grooming-board/voting-stick";
 import VotingStickV2 from "@/components/room/grooming-board/voting-stick-v2";
 import Loading from "@/components/room/loading";
 import { GroomingMode } from "@/shared/enums";
-import { checkUserJoinedLobbyBefore, getCurrentLobby } from "@/shared/helpers/lobbyStorage";
+import { checkUserJoinedLobbyBefore, getCurrentLobby, getCurrentNickname } from "@/shared/helpers/lobbyStorage";
 import { GroomingInfo } from "@/shared/interfaces";
 import { ROOM_STATUS } from "@/room/[id]/enums";
 import "@/styles/voting-window/style.scss";
@@ -124,7 +124,7 @@ const VotingWindowContent = ({ roomId }: { roomId: string }) => {
       setGroomingInfo(data);
     };
 
-    const nickname = localStorage.getItem("nickname");
+    const nickname = getCurrentNickname(roomId);
     const lobby = getCurrentLobby(roomId);
     
     if (!lobby) {
