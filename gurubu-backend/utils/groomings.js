@@ -197,6 +197,20 @@ const checkIsRoomExpired = (roomID) => {
   return expiredRoomIDs.includes(roomID);
 }
 
+// Admin-only actions must be authorized on the server. The client only hides
+// the related buttons with `lobby.isAdmin`, which lives in localStorage and
+// can be tampered with.
+const authorizeAdmin = (user) => {
+  if (!user?.isAdmin) {
+    return {
+      id: 2,
+      isSuccess: false,
+      message: "You are not authorized to perform this action."
+    };
+  }
+  return null;
+};
+
 const updateParticipantsVote = (data, credentials, roomID, socket) => {
   const user = getCurrentUser(credentials, socket);
   const isRoomExpired = checkIsRoomExpired(roomID);
@@ -331,6 +345,10 @@ const getResults = (credentials, roomID, socket) => {
   if (!user || isRoomExpired) {
     return handleErrors("getResults", roomID, socket, isRoomExpired);
   }
+  const notAuthorized = authorizeAdmin(user);
+  if (notAuthorized) {
+    return notAuthorized;
+  }
 
   groomings[user.roomID].isResultShown = true;
 
@@ -344,6 +362,10 @@ const setIssues = (data, credentials, roomID, socket) => {
   if (!user || isRoomExpired) {
     return handleErrors("setIssues", roomID, socket, isRoomExpired);
   }
+  const notAuthorized = authorizeAdmin(user);
+  if (notAuthorized) {
+    return notAuthorized;
+  }
 
   groomings[user.roomID].issues = data;
   return groomings[user.roomID];
@@ -355,6 +377,10 @@ const setGurubuAI = (data, credentials, roomID, socket) => {
   if (!user || isRoomExpired) {
     return handleErrors("setGurubuAI", roomID, socket, isRoomExpired);
   }
+  const notAuthorized = authorizeAdmin(user);
+  if (notAuthorized) {
+    return notAuthorized;
+  }
 
   groomings[user.roomID].gurubuAI = data;
   return groomings[user.roomID];
@@ -365,6 +391,10 @@ const updateTimer = (data, credentials, roomID, socket) => {
   const isRoomExpired = checkIsRoomExpired(roomID);
   if (!user || isRoomExpired) {
     return handleErrors("updateTimer", roomID, socket, isRoomExpired);
+  }
+  const notAuthorized = authorizeAdmin(user);
+  if (notAuthorized) {
+    return notAuthorized;
   }
 
   groomings[user.roomID].timer = data;
@@ -415,6 +445,10 @@ const resetVotes = (credentials, roomID, socket) => {
   const isRoomExpired = checkIsRoomExpired(roomID);
   if (!user || isRoomExpired) {
     return handleErrors("resetVotes", roomID, socket, isRoomExpired);
+  }
+  const notAuthorized = authorizeAdmin(user);
+  if (notAuthorized) {
+    return notAuthorized;
   }
 
   groomings[user.roomID].isResultShown = false;
